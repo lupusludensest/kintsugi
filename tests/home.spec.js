@@ -20,6 +20,8 @@ test.describe('Kintsugi Website Tests', () => {
     });
 
     test('should navigate to different sections', async ({ homePage }) => {
+
+        // Navigate to home page
         await homePage.navigateToHome();
         
         // Test navigation to Platform page
@@ -29,6 +31,14 @@ test.describe('Kintsugi Website Tests', () => {
         // Test navigation to About page
         await homePage.navigateToSection('about');
         await expect(homePage.page).toHaveURL(/.*\/about/);
+
+        // Test navigate to Contacts page
+        await homePage.navigateToSection('contacts');
+        await expect(homePage.page).toHaveURL(/.*\/contacts/);
+
+        // Test navigate to Legislation page
+        await homePage.navigateToSection('legislation');
+        await expect(homePage.page).toHaveURL(/.*\/legislation/);
 
         // Return to home page
         await homePage.navigateToSection('home');
