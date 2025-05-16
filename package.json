@@ -1,0 +1,31 @@
+{
+  "name": "kintsugi",
+  "version": "1.0.0",
+  "description": "UI, API, STRESS, PERFORMANCE testing. kintsugi.su,  Comprehensive digital solution to improve the efficiency and reliability of insurance business for the benefit of insurers and policyholders.",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "show-report": "playwright show-report",
+    "codegen": "playwright codegen https://kintsugi.su/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lupusludensest/kintsugi.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/lupusludensest/kintsugi/issues"
+  },
+  "homepage": "https://github.com/lupusludensest/kintsugi#readme",
+  "dependencies": {
+    "@executeautomation/playwright-mcp-server": "^1.0.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  }
+}
