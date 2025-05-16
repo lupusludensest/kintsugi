@@ -7,18 +7,39 @@ This project contains automated tests for the Kintsugi website (https://kintsugi
 ```
 kintsugi/
 ├── tests/
-│   ├── backup/          # Backup files
 │   ├── fixtures/        # Test fixtures
+│   │   └── kintsugi.fixture.js
 │   ├── pages/          # Page Object classes
-│   ├── utils/          # Utility functions and configurations
+│   │   ├── basePage.js
+│   │   ├── homePage.js
+│   │   └── platformPage.js
 │   ├── home.spec.js    # Home page tests
 │   ├── platform.spec.js # Platform page tests
 │   └── README.md       # Test documentation
-├── package.json        # Project configuration
-├── package-lock.json   # NPM dependencies lock file
-├── playwright.config.js # Playwright configuration
-└── README.md          # Project documentation
+├── test-results/       # Test execution results
+├── playwright-report/  # HTML test reports
+├── performance_lighthouse/ # Performance test results
+├── .gitignore         # Git ignore rules
+├── package.json       # Project configuration
+└── playwright.config.js # Playwright configuration
 ```
+
+## Test Coverage
+
+### Home Page Tests (`home.spec.js`)
+- Main heading and description visibility
+- Navigation links presence and functionality
+- Contact information display
+- Section navigation
+
+### Platform Page Tests (`platform.spec.js`)
+- Platform features visibility
+- Documentation links accessibility:
+  - API Documentation (`/docs/api.html`)
+  - User Agreement (`./files/agreement.pdf`)
+  - Privacy Policy (`./files/policy.pdf`)
+- Navigation between sections
+- PDF document handling
 
 ## Setup
 
@@ -36,40 +57,70 @@ kintsugi/
 
 - Run all tests:
   ```bash
-  npm test
+  npx playwright test
   ```
 
 - Run tests with UI mode:
   ```bash
-  npm run test:ui
+  npx playwright test --ui
   ```
 
-- Run tests in headed mode:
+- Run specific test file:
   ```bash
-  npm run test:headed
+  npx playwright test platform.spec.js
   ```
 
-- View test report:
+- Run tests in debug mode:
   ```bash
-  npm run show-report
+  npx playwright test --debug
   ```
 
-## Test Structure
+## Page Objects
 
-- Uses Page Object Pattern for better maintainability
-- Implements custom fixtures for common setup
-- Includes utility functions for common operations
-- Optimized for Chromium browser testing
-- Generates HTML reports
+### BasePage
+- Common functionality for all pages
+- Navigation methods
+- Wait utilities
+- Basic assertions
 
-## Best Practices
+### HomePage
+- Main page interactions
+- Navigation menu handling
+- Contact information verification
 
-- Each page has its own Page Object class
-- Base Page class for common functionality
-- Clear and maintainable selectors
-- Async/await for all operations
-- Proper error handling and timeouts
-- Screenshot capture on failure
-- Network idle waiting
-- Proper page load checks
-- JSDoc documentation for methods
+### PlatformPage
+- Platform-specific features verification
+- Document links handling
+- PDF and HTML document navigation
+- Link attribute verification
+
+## Best Practices Implemented
+
+1. **Link Verification**
+   - Checks both visibility and href attributes
+   - Handles relative paths correctly
+   - Separate handling for HTML and PDF links
+
+2. **Timeouts and Waits**
+   - Appropriate timeout values for different operations
+   - Page load state handling
+   - Network idle checks when needed
+
+3. **Error Handling**
+   - Descriptive error messages
+   - Proper timeout configurations
+   - Screenshot capture on failure
+
+4. **Clean Code**
+   - Page Object Pattern
+   - DRY (Don't Repeat Yourself) principle
+   - Clear method naming
+   - Comprehensive comments
+
+## Maintenance
+
+- Tests are designed to be maintainable and scalable
+- Selectors use reliable attributes
+- Common functionality is abstracted to base classes
+- Configuration is externalized
+- Git ignores appropriate files and directories

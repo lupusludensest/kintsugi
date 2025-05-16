@@ -1,0 +1,50 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Playwright specific
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/performance_lighthouse/lighthouse_test_results/
+/blob-report/
+/playwright/.auth/
+
+# IDE and Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Debug logs
+debug.log
+logs/
+*.log
+
+# Operating System
+Thumbs.db
+.DS_Store
+
+# Test artifacts
+/screenshots/
+/videos/
+/traces/
+/downloads/
+/artifacts/
+
+# Coverage reports
+/coverage/
+.nyc_output/
+
+# Build artifacts
+/dist/
+/build/
