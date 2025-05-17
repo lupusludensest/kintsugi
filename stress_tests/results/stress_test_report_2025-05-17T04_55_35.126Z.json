@@ -1,0 +1,59 @@
+{
+  "timestamp": "2025-05-17T04:55:35.118Z",
+  "config": {
+    "concurrentUsers": 20,
+    "timeBetweenWaves": 2000,
+    "targetUrl": "https://kintsugi.su/",
+    "waves": 3,
+    "thresholds": {
+      "maxAvgResponseTime": 1500,
+      "maxErrorRate": 0.05
+    }
+  },
+  "summary": {
+    "totalRequests": 60,
+    "successfulRequests": 60,
+    "failedRequests": 0,
+    "errorRate": 0,
+    "totalDuration": 6751,
+    "avgResponseTime": 799.0833333333334
+  },
+  "waves": [
+    {
+      "waveNumber": 1,
+      "totalRequests": 20,
+      "successfulRequests": 20,
+      "failedRequests": 0,
+      "errorRate": 0,
+      "avgResponseTime": 1238.9,
+      "duration": 1373
+    },
+    {
+      "waveNumber": 2,
+      "totalRequests": 20,
+      "successfulRequests": 20,
+      "failedRequests": 0,
+      "errorRate": 0,
+      "avgResponseTime": 412.45,
+      "duration": 529
+    },
+    {
+      "waveNumber": 3,
+      "totalRequests": 20,
+      "successfulRequests": 20,
+      "failedRequests": 0,
+      "errorRate": 0,
+      "avgResponseTime": 745.9,
+      "duration": 814
+    }
+  ],
+  "responseTimes": {
+    "min": 364,
+    "max": 1294,
+    "avg": 799.0833333333334,
+    "p50": 745.5,
+    "p90": 1256,
+    "p95": 1278.05,
+    "p99": 1290.46
+  }
+}

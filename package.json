@@ -26,6 +26,8 @@
     "@executeautomation/playwright-mcp-server": "^1.0.5"
   },
   "devDependencies": {
-    "@playwright/test": "^1.52.0"
+    "@playwright/test": "^1.52.0",
+    "chrome-launcher": "^1.2.0",
+    "lighthouse": "^12.6.0"
   }
 }
