@@ -34,12 +34,25 @@ kintsugi/
 
 ### Platform Page Tests (`platform.spec.js`)
 - Platform features visibility
-- Documentation links accessibility:
-  - API Documentation (`/docs/api.html`)
-  - User Agreement (`./files/agreement.pdf`)
-  - Privacy Policy (`./files/policy.pdf`)
-- Navigation between sections
-- PDF document handling
+- Documentation links verification:
+  - API Documentation (`/docs/api.html`):
+    * Link presence and visibility
+    * New tab navigation
+    * URL verification
+    * Tab closure and return to platform
+  - User Agreement (`./files/agreement.pdf`):
+    * Link presence and visibility
+    * Target attribute verification
+    * Href attribute verification (`./files/agreement.pdf`)
+    * Click handling with browser-specific behavior
+  - Privacy Policy (`./files/policy.pdf`):
+    * Link presence and visibility
+    * Target attribute verification
+    * Href attribute verification (`./files/policy.pdf`)
+    * Click handling with browser-specific behavior
+- Navigation handling:
+  * Stays on platform page after PDF interactions
+  * Returns to platform page after API docs viewing
 
 ## Setup
 

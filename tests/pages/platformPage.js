@@ -55,5 +55,21 @@ export class PlatformPage extends BasePage {    constructor(page) {
         await expect(link).toBeVisible();
         await expect(link).toHaveAttribute('href', './files/policy.pdf');
         return this.page;
+    }    async navigateToAgreementPdf() {
+        const link = this.page.locator(this.agreementLink);
+        await expect(link).toHaveAttribute('target', 'blank');
+        await link.click();
+        // Give a small delay to ensure the click is processed
+        await this.page.waitForTimeout(1000);
+        return this.page;
+    }
+
+    async navigateToPolicyPdf() {
+        const link = this.page.locator(this.policyLink);
+        await expect(link).toHaveAttribute('target', 'blank');
+        await link.click();
+        // Give a small delay to ensure the click is processed
+        await this.page.waitForTimeout(1000);
+        return this.page;
     }
 }
