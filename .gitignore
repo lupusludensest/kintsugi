@@ -13,6 +13,13 @@ package-lock.json
 /stress_tests/results/
 /blob-report/
 /playwright/.auth/
+/test-reports/
+/artifacts/
+/archive/
+/reports/
+/user-data-dir/
+**/chrome_user_data/
+**/performance_logs/
 
 # IDE and Editor files
 .idea/
@@ -40,12 +47,3 @@ Thumbs.db
 /videos/
 /traces/
 /downloads/
-/artifacts/
-
-# Coverage reports
-/coverage/
-.nyc_output/
-
-# Build artifacts
-/dist/
-/build/
