@@ -15,8 +15,8 @@ const mkdirAsync = promisify(fs.mkdir);
 // Configuration for stress test
 const STRESS_TEST_CONFIG = {
   // 1. Users quantity (concurrent requests)
-  concurrentUsers: [20, 50, 100], // Change to array for progressive testing
-  
+  concurrentUsers: [200, 500, 1000], // Change to array for progressive testing
+
   // 2. Time span (milliseconds between waves)
   timeBetweenWaves: 2000,
   
