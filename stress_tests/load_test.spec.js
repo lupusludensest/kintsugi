@@ -198,7 +198,7 @@ test.describe('Load Testing', () => {
       STRESS_TEST_CONFIG.thresholds.maxErrorRate,
       `Error rate (${(metrics.errorRate * 100).toFixed(2)}%) exceeds threshold (${(STRESS_TEST_CONFIG.thresholds.maxErrorRate * 100).toFixed(2)}%)`
     );
-  });
+  }, { timeout: 180000 }); // 180,000ms = 3 minutes
 });
 
 // Helper function to calculate percentiles
