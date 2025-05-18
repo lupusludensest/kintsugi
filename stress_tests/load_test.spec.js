@@ -14,22 +14,33 @@ const mkdirAsync = promisify(fs.mkdir);
 
 // Configuration for stress test
 const STRESS_TEST_CONFIG = {
-  // 1. Users quantity (concurrent requests)
-  concurrentUsers: 20,
-  
-  // 2. Time span (milliseconds between waves)
+  // User load configuration
+  concurrentUsers: [200, 500, 1000], // Array of user counts to test progressively
   timeBetweenWaves: 2000,
-  
-  // 3. URL - target endpoint
   targetUrl: 'https://kintsugi.su/',
-  
-  // 4. Number of waves to run
   waves: 3,
   
-  // Thresholds for acceptable performance
+  // Extended test configurations
+  extendedDurationTest: {
+    enabled: false, // Set to true when you want to run an extended test
+    durationMinutes: 15, // How long to run the extended test
+    usersCount: 20 // Constant user load during extended test
+  },
+  
+  // More endpoints to test
+  endpoints: [
+    { name: 'Home', url: 'https://kintsugi.su/' },
+    { name: 'About', url: 'https://kintsugi.su/about' },
+    { name: 'Contacts', url: 'https://kintsugi.su/contacts' },
+    { name: 'App', url: 'https://kintsugi.su/app' }
+  ],
+  
+  // Performance thresholds
   thresholds: {
     maxAvgResponseTime: 1500, // ms
-    maxErrorRate: 0.05 // 5%
+    maxErrorRate: 0.05, // 5%
+    p95ResponseTime: 3000, // 95% of requests should be faster than this
+    ttfbThreshold: 800 // Time to first byte threshold
   }
 };
 
@@ -50,77 +61,82 @@ test.describe('Load Testing', () => {
       waves: []
     };
 
-    // Run multiple waves of requests
-    for (let wave = 1; wave <= STRESS_TEST_CONFIG.waves; wave++) {
-      console.log(`\nStarting wave ${wave} of ${STRESS_TEST_CONFIG.waves} with ${STRESS_TEST_CONFIG.concurrentUsers} concurrent users`);
+    // Fix the wave loop to use each concurrency level
+    for (const userCount of STRESS_TEST_CONFIG.concurrentUsers) {
+      console.log(`\nTesting with ${userCount} concurrent users`);
       
-      const waveStartTime = Date.now();
-      const waveResults = [];
-      
-      try {
-        // Run concurrent requests
-        await Promise.all(Array(STRESS_TEST_CONFIG.concurrentUsers).fill().map(async (_, i) => {
-          const requestStartTime = Date.now();
-          
-          try {
-            const response = await request.get(STRESS_TEST_CONFIG.targetUrl);
-            const responseTime = Date.now() - requestStartTime;
+      // Run waves with this user count
+      for (let wave = 1; wave <= STRESS_TEST_CONFIG.waves; wave++) {
+        console.log(`Starting wave ${wave} of ${STRESS_TEST_CONFIG.waves} with ${userCount} concurrent users`);
+        
+        const waveStartTime = Date.now();
+        const waveResults = [];
+        
+        try {
+          // Run concurrent requests
+          await Promise.all(Array(userCount).fill().map(async (_, i) => {
+            const requestStartTime = Date.now();
             
-            waveResults.push({
-              id: `wave${wave}-user${i}`,
-              status: response.status(),
-              success: response.ok(),
-              responseTime: responseTime,
-              timestamp: new Date().toISOString()
-            });
-            
-            metrics.responseTimes.push(responseTime);
-            metrics.totalRequests++;
-            
-            if (response.ok()) {
-              metrics.successfulRequests++;
-            } else {
+            try {
+              const response = await request.get(STRESS_TEST_CONFIG.targetUrl);
+              const responseTime = Date.now() - requestStartTime;
+              
+              waveResults.push({
+                id: `wave${wave}-user${i}`,
+                status: response.status(),
+                success: response.ok(),
+                responseTime: responseTime,
+                timestamp: new Date().toISOString()
+              });
+              
+              metrics.responseTimes.push(responseTime);
+              metrics.totalRequests++;
+              
+              if (response.ok()) {
+                metrics.successfulRequests++;
+              } else {
+                metrics.failedRequests++;
+              }
+            } catch (error) {
+              waveResults.push({
+                id: `wave${wave}-user${i}`,
+                error: error.message,
+                success: false,
+                responseTime: Date.now() - requestStartTime,
+                timestamp: new Date().toISOString()
+              });
+              
+              metrics.totalRequests++;
               metrics.failedRequests++;
             }
-          } catch (error) {
-            waveResults.push({
-              id: `wave${wave}-user${i}`,
-              error: error.message,
-              success: false,
-              responseTime: Date.now() - requestStartTime,
-              timestamp: new Date().toISOString()
-            });
-            
-            metrics.totalRequests++;
-            metrics.failedRequests++;
-          }
-        }));
-      } catch (error) {
-        console.error(`Error during wave ${wave}: ${error.message}`);
-      }
-      
-      const waveTime = Date.now() - waveStartTime;
-      console.log(`Wave ${wave} completed in ${waveTime}ms`);
-      
-      // Calculate wave metrics
-      const waveSuccessful = waveResults.filter(r => r.success).length;
-      const waveErrorRate = (waveResults.length - waveSuccessful) / waveResults.length;
-      const waveAvgResponseTime = waveResults.reduce((sum, r) => sum + (r.responseTime || 0), 0) / waveResults.length;
-      
-      metrics.waves.push({
-        waveNumber: wave,
-        totalRequests: waveResults.length,
-        successfulRequests: waveSuccessful,
-        failedRequests: waveResults.length - waveSuccessful,
-        errorRate: waveErrorRate,
-        avgResponseTime: waveAvgResponseTime,
-        duration: waveTime
-      });
-      
-      // Wait between waves
-      if (wave < STRESS_TEST_CONFIG.waves) {
-        console.log(`Waiting ${STRESS_TEST_CONFIG.timeBetweenWaves}ms before next wave...`);
-        await new Promise(resolve => setTimeout(resolve, STRESS_TEST_CONFIG.timeBetweenWaves));
+          }));
+        } catch (error) {
+          console.error(`Error during wave ${wave}: ${error.message}`);
+        }
+        
+        const waveTime = Date.now() - waveStartTime;
+        console.log(`Wave ${wave} completed in ${waveTime}ms`);
+        
+        // Calculate wave metrics
+        const waveSuccessful = waveResults.filter(r => r.success).length;
+        const waveErrorRate = (waveResults.length - waveSuccessful) / waveResults.length;
+        const waveAvgResponseTime = waveResults.reduce((sum, r) => sum + (r.responseTime || 0), 0) / waveResults.length;
+        
+        metrics.waves.push({
+          waveNumber: wave,
+          totalRequests: waveResults.length,
+          successfulRequests: waveSuccessful,
+          failedRequests: waveResults.length - waveSuccessful,
+          errorRate: waveErrorRate,
+          avgResponseTime: waveAvgResponseTime,
+          duration: waveTime
+        });
+        
+        // Wait between waves
+        if (wave < STRESS_TEST_CONFIG.waves) {
+          console.log(`Waiting ${STRESS_TEST_CONFIG.timeBetweenWaves}ms before next wave...`);
+          await new Promise(resolve => setTimeout(resolve, STRESS_TEST_CONFIG.timeBetweenWaves));
+        }
       }
     }
     
