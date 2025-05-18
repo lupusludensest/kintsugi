@@ -9,7 +9,8 @@ package-lock.json
 /test-results/
 /playwright-report/
 /playwright/.cache/
-/performance_lighthouse/lighthouse_test_results/
+/performance_tests/lighthouse_test_results/
+/stress_tests/results/
 /blob-report/
 /playwright/.auth/
 
