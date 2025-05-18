@@ -15,7 +15,7 @@ const mkdirAsync = promisify(fs.mkdir);
 // Configuration for stress test
 const STRESS_TEST_CONFIG = {
   // 1. Users quantity (concurrent requests)
-  concurrentUsers: 20,
+  concurrentUsers: [20, 50, 100], // Change to array for progressive testing
   
   // 2. Time span (milliseconds between waves)
   timeBetweenWaves: 2000,
@@ -50,77 +50,83 @@ test.describe('Load Testing', () => {
       waves: []
     };
 
-    // Run multiple waves of requests
-    for (let wave = 1; wave <= STRESS_TEST_CONFIG.waves; wave++) {
-      console.log(`\nStarting wave ${wave} of ${STRESS_TEST_CONFIG.waves} with ${STRESS_TEST_CONFIG.concurrentUsers} concurrent users`);
+    // Loop through each concurrency level
+    for (const userCount of STRESS_TEST_CONFIG.concurrentUsers) {
+      console.log(`\nTesting with ${userCount} concurrent users`);
       
-      const waveStartTime = Date.now();
-      const waveResults = [];
-      
-      try {
-        // Run concurrent requests
-        await Promise.all(Array(STRESS_TEST_CONFIG.concurrentUsers).fill().map(async (_, i) => {
-          const requestStartTime = Date.now();
-          
-          try {
-            const response = await request.get(STRESS_TEST_CONFIG.targetUrl);
-            const responseTime = Date.now() - requestStartTime;
+      // Run multiple waves of requests for this concurrency level
+      for (let wave = 1; wave <= STRESS_TEST_CONFIG.waves; wave++) {
+        console.log(`Starting wave ${wave} of ${STRESS_TEST_CONFIG.waves} with ${userCount} concurrent users`);
+        
+        const waveStartTime = Date.now();
+        const waveResults = [];
+        
+        try {
+          // Run concurrent requests
+          await Promise.all(Array(userCount).fill().map(async (_, i) => {
+            const requestStartTime = Date.now();
             
-            waveResults.push({
-              id: `wave${wave}-user${i}`,
-              status: response.status(),
-              success: response.ok(),
-              responseTime: responseTime,
-              timestamp: new Date().toISOString()
-            });
-            
-            metrics.responseTimes.push(responseTime);
-            metrics.totalRequests++;
-            
-            if (response.ok()) {
-              metrics.successfulRequests++;
-            } else {
+            try {
+              const response = await request.get(STRESS_TEST_CONFIG.targetUrl);
+              const responseTime = Date.now() - requestStartTime;
+              
+              waveResults.push({
+                id: `${userCount}users-wave${wave}-user${i}`,
+                status: response.status(),
+                success: response.ok(),
+                responseTime: responseTime,
+                timestamp: new Date().toISOString()
+              });
+              
+              metrics.responseTimes.push(responseTime);
+              metrics.totalRequests++;
+              
+              if (response.ok()) {
+                metrics.successfulRequests++;
+              } else {
+                metrics.failedRequests++;
+              }
+            } catch (error) {
+              waveResults.push({
+                id: `${userCount}users-wave${wave}-user${i}`,
+                error: error.message,
+                success: false,
+                responseTime: Date.now() - requestStartTime,
+                timestamp: new Date().toISOString()
+              });
+              
+              metrics.totalRequests++;
               metrics.failedRequests++;
             }
-          } catch (error) {
-            waveResults.push({
-              id: `wave${wave}-user${i}`,
-              error: error.message,
-              success: false,
-              responseTime: Date.now() - requestStartTime,
-              timestamp: new Date().toISOString()
-            });
-            
-            metrics.totalRequests++;
-            metrics.failedRequests++;
-          }
-        }));
-      } catch (error) {
-        console.error(`Error during wave ${wave}: ${error.message}`);
-      }
-      
-      const waveTime = Date.now() - waveStartTime;
-      console.log(`Wave ${wave} completed in ${waveTime}ms`);
-      
-      // Calculate wave metrics
-      const waveSuccessful = waveResults.filter(r => r.success).length;
-      const waveErrorRate = (waveResults.length - waveSuccessful) / waveResults.length;
-      const waveAvgResponseTime = waveResults.reduce((sum, r) => sum + (r.responseTime || 0), 0) / waveResults.length;
-      
-      metrics.waves.push({
-        waveNumber: wave,
-        totalRequests: waveResults.length,
-        successfulRequests: waveSuccessful,
-        failedRequests: waveResults.length - waveSuccessful,
-        errorRate: waveErrorRate,
-        avgResponseTime: waveAvgResponseTime,
-        duration: waveTime
-      });
-      
-      // Wait between waves
-      if (wave < STRESS_TEST_CONFIG.waves) {
-        console.log(`Waiting ${STRESS_TEST_CONFIG.timeBetweenWaves}ms before next wave...`);
-        await new Promise(resolve => setTimeout(resolve, STRESS_TEST_CONFIG.timeBetweenWaves));
+          }));
+        } catch (error) {
+          console.error(`Error during wave ${wave} with ${userCount} users: ${error.message}`);
+        }
+        
+        const waveTime = Date.now() - waveStartTime;
+        console.log(`Wave ${wave} with ${userCount} users completed in ${waveTime}ms`);
+        
+        // Calculate wave metrics
+        const waveSuccessful = waveResults.filter(r => r.success).length;
+        const waveErrorRate = (waveResults.length - waveSuccessful) / waveResults.length;
+        const waveAvgResponseTime = waveResults.reduce((sum, r) => sum + (r.responseTime || 0), 0) / waveResults.length;
+        
+        metrics.waves.push({
+          userCount,
+          waveNumber: wave,
+          totalRequests: waveResults.length,
+          successfulRequests: waveSuccessful,
+          failedRequests: waveResults.length - waveSuccessful,
+          errorRate: waveErrorRate,
+          avgResponseTime: waveAvgResponseTime,
+          duration: waveTime
+        });
+        
+        // Wait between waves
+        if (wave < STRESS_TEST_CONFIG.waves) {
+          console.log(`Waiting ${STRESS_TEST_CONFIG.timeBetweenWaves}ms before next wave...`);
+          await new Promise(resolve => setTimeout(resolve, STRESS_TEST_CONFIG.timeBetweenWaves));
+        }
       }
     }
     
@@ -151,7 +157,8 @@ test.describe('Load Testing', () => {
         p90: percentile(metrics.responseTimes, 90),
         p95: percentile(metrics.responseTimes, 95),
         p99: percentile(metrics.responseTimes, 99)
-      }
+      },
+      byUserCount: groupResultsByUserCount(metrics.waves)
     };
     
     // Save report
@@ -182,8 +189,42 @@ test.describe('Load Testing', () => {
       STRESS_TEST_CONFIG.thresholds.maxErrorRate,
       `Error rate (${(metrics.errorRate * 100).toFixed(2)}%) exceeds threshold (${(STRESS_TEST_CONFIG.thresholds.maxErrorRate * 100).toFixed(2)}%)`
     );
-  });
+  }, { timeout: 180000 }); // 3 minutes timeout
 });
+
+// Helper function to group results by user count for better analysis
+function groupResultsByUserCount(waves) {
+  const groupedResults = {};
+  
+  for (const wave of waves) {
+    const userCount = wave.userCount;
+    
+    if (!groupedResults[userCount]) {
+      groupedResults[userCount] = {
+        totalRequests: 0,
+        successfulRequests: 0,
+        failedRequests: 0,
+        totalDuration: 0,
+        responseTimes: [],
+        avgResponseTime: 0
+      };
+    }
+    
+    groupedResults[userCount].totalRequests += wave.totalRequests;
+    groupedResults[userCount].successfulRequests += wave.successfulRequests;
+    groupedResults[userCount].failedRequests += wave.failedRequests;
+    groupedResults[userCount].totalDuration += wave.duration;
+    groupedResults[userCount].responseTimes.push(wave.avgResponseTime);
+  }
+  
+  // Calculate averages
+  for (const [userCount, data] of Object.entries(groupedResults)) {
+    data.avgResponseTime = data.responseTimes.reduce((a, b) => a + b, 0) / data.responseTimes.length;
+    data.errorRate = data.failedRequests / data.totalRequests;
+  }
+  
+  return groupedResults;
+}
 
 // Helper function to calculate percentiles
 function percentile(array, p) {
