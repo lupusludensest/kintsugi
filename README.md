@@ -1,35 +1,67 @@
-# Kintsugi Test Automation Suite
+# Kintsugi Test Framework
 
-This repository contains test automation for the Kintsugi website, including UI, API, performance, and stress tests.
-
-## Project Structure
+## Framework Structure
 ```
 kintsugi/
-├── api_tests/         # API tests
-├── performance_tests/ # Performance tests using Lighthouse
-├── stress_tests/      # Stress and load tests
-├── ui_tests/          # UI/End-to-End tests using Playwright
+├── api_tests/
+│   ├── tests/
+│   ├── helpers/
+│   └── README.md
+├── performance_tests/
+│   ├── tests/
+│   ├── lighthouse_test_results/
+│   └── README.md
+├── playwright-report/
+│   ├── index.html
+│   └── data/
+├── ui_tests/
+│   ├── tests/
+│   ├── pages/
+│   ├── fixtures/
+│   └── README.md
 ├── playwright.config.js
 ├── package.json
 └── README.md
 ```
 
 ## Test Types
+- API Tests (`api_tests/`)
+- Performance Tests (`performance_tests/`)
+- UI Tests (`ui_tests/`)
 
-### UI Tests
-Located in `ui_tests/` directory, these tests verify the user interface functionality using Playwright.
-
-### API Tests
-Located in `api_tests/` directory, these tests verify the backend API endpoints.
-
-### Performance Tests
-Located in `performance_tests/` directory, these tests use Lighthouse to measure website performance metrics.
-
-### Stress Tests
-Located in `stress_tests/` directory, these tests verify the system's behavior under load.
+## Configuration
+```bash
+npm install
+npx playwright install
+```
 
 ## Running Tests
-
-To run all tests:
 ```bash
+# Run all tests
 npx playwright test
+
+# Run specific test type
+npx playwright test api_tests
+npx playwright test performance_tests
+npx playwright test ui_tests
+```
+
+## Viewing Reports
+```bash
+# API and UI Tests
+npx playwright show-report
+
+# Performance Tests
+start performance_tests/lighthouse_test_results/report.html
+```
+
+## Common Issues & Troubleshooting
+1. Timeout errors
+   ```bash
+   # Increase timeout in playwright.config.js
+   timeout: 60000  // 60 seconds
+   ```
+2. Browser launch failures
+   ```bash
+   npx playwright install chromium
+   ```
