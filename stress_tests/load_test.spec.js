@@ -3,9 +3,10 @@ import fs from 'fs';
 import path from 'path';
 import { promisify } from 'util';
 import { fileURLToPath } from 'url';
+import { getAuthToken } from '../utils/auth.helper';
 
 // playwright.stress.config.js
-import baseConfig from '../playwright.stress.config';  // <-- This is the problem line
+// import baseConfig from '../playwright.stress.config';  // <-- This is the problem line
 
 // Get directory name equivalent in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -20,17 +21,20 @@ test.setTimeout(600000); // 10 minutes for all tests
 // Configuration for stress test
 const STRESS_TEST_CONFIG = {
   // User quantities
-  concurrentUsers: [20, 25, 30], // Moderate load levels
+  concurrentUsers: [100, 250, 500], // Moderate load levels
   
   // Time between waves
   timeBetweenWaves: 2000,
   
   // Multiple endpoints to test
   endpoints: [
-    { url: 'https://kintsugi.su/', name: 'Home' },
-    { url: 'https://kintsugi.su/about', name: 'About' },
-    { url: 'https://kintsugi.su/contacts', name: 'Contacts' },
-    { url: 'https://kintsugi.su/legislation', name: 'Legislation' }
+    { url: 'https://kintsugi.su/', name: 'Home', auth: false },
+    { url: 'https://kintsugi.su/about', name: 'About', auth: false },
+    { url: 'https://kintsugi.su/contacts', name: 'Contacts', auth: false },
+    { url: 'https://kintsugi.su/legislation', name: 'Legislation', auth: false },
+    { url: 'https://kintsugi.su/app', name: 'App', auth: true },
+    { url: 'https://kintsugi.su/dashboard', name: 'Dashboard', auth: true },
+    { url: 'https://kintsugi.su/profile', name: 'Profile', auth: true }
   ],
   
   // Number of waves to run
@@ -155,7 +159,11 @@ test.describe('Load Testing', () => {
                 const requestStartTime = Date.now();
                 
                 try {
-                  const response = await request.get(endpoint.url);
+                  const response = await request.get(endpoint.url, {
+                    headers: endpoint.auth ? {
+                      'Authorization': `Bearer ${authToken}`
+                    } : {}
+                  });
                   const responseTime = Date.now() - requestStartTime;
                   
                   waveResults.push({

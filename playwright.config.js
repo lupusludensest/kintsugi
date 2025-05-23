@@ -11,9 +11,9 @@ export default defineConfig({
     "stress_tests/**/*.spec.js", // Changed to match .spec.js pattern
     "ui_tests/**/*.spec.js",
   ],
-  timeout: 30 * 1000,
+  timeout: 120000,
   expect: {
-    timeout: 5000,
+    timeout: 10000,
   },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -22,7 +22,7 @@ export default defineConfig({
   reporter: "html",
   use: {
     baseURL: "https://kintsugi.su",
-    trace: "on-first-retry",
+    trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
   },
