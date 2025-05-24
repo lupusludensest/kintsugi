@@ -55,6 +55,9 @@ npx playwright show-report
 start performance_tests/lighthouse_test_results/report.html
 ```
 
+## Integration Manual
+For detailed API integration instructions, please refer to our [Integration Documentation](https://kintsugi.su/docs/api.html).
+
 ## Common Issues & Troubleshooting
 1. Timeout errors
    ```bash

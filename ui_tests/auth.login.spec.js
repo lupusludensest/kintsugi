@@ -8,7 +8,7 @@ test.describe("Authentication - Login Tests", () => {
     // Set viewport wider than 1440px requirement
     await page.setViewportSize({ width: 1920, height: 1080 });
     
-    await page.goto(process.env.KINTSUGI_LOGIN_URL || 'https://kintsugi.su/login');
+    await page.goto(process.env.KINTSUGI_LOGIN_URL);
     // Wait for page to be fully loaded
     await page.waitForLoadState("networkidle");
   });
@@ -34,12 +34,12 @@ test.describe("Authentication - Login Tests", () => {
     await expect(submitButton).toBeDisabled();
 
     // Fill the form fields
-    await emailInput.fill(process.env.KINTSUGI_LOGIN || 'petushin@kpd-cargo.com');
-    await passwordInput.fill(process.env.KINTSUGI_PASSWORD || 'nkLora123$');
+    await emailInput.fill(process.env.KINTSUGI_LOGIN);
+    await passwordInput.fill(process.env.KINTSUGI_PASSWORD);
 
     // Verify fields are filled correctly
-    await expect(emailInput).toHaveValue(process.env.KINTSUGI_LOGIN || 'petushin@kpd-cargo.com');
-    await expect(passwordInput).toHaveValue(process.env.KINTSUGI_PASSWORD || 'nkLora123$');
+    await expect(emailInput).toHaveValue(process.env.KINTSUGI_LOGIN);
+    await expect(passwordInput).toHaveValue(process.env.KINTSUGI_PASSWORD);
 
     // Wait for button to become enabled after filling both fields
     await expect(submitButton).toBeEnabled({ timeout: 5000 });
