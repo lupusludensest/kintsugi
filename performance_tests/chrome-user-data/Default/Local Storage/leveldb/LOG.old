@@ -1,3 +1,3 @@
-2025/05/23-18:51:06.903 7488 Reusing MANIFEST E:\Gurov_SSD_256\IT\Testing\Automation_08_09_2019\kintsugi\performance_tests\chrome-user-data\Default\Local Storage\leveldb/MANIFEST-000001
-2025/05/23-18:51:06.911 7488 Recovering log #3
-2025/05/23-18:51:06.913 7488 Reusing old log E:\Gurov_SSD_256\IT\Testing\Automation_08_09_2019\kintsugi\performance_tests\chrome-user-data\Default\Local Storage\leveldb/000003.log 
+2025/05/24-15:57:53.007 37f4 Reusing MANIFEST E:\Gurov_SSD_256\IT\Testing\Automation_08_09_2019\kintsugi\performance_tests\chrome-user-data\Default\Local Storage\leveldb/MANIFEST-000001
+2025/05/24-15:57:53.017 37f4 Recovering log #3
+2025/05/24-15:57:53.020 37f4 Reusing old log E:\Gurov_SSD_256\IT\Testing\Automation_08_09_2019\kintsugi\performance_tests\chrome-user-data\Default\Local Storage\leveldb/000003.log 

@@ -50,7 +50,7 @@ test.describe("Authentication - Login Tests", () => {
     // Click submit and wait for navigation
     await Promise.all([
       // Wait for URL to change away from login page
-      page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 15000 }),
+      page.waitForURL(url => !url.pathname.includes('/login'), { timeout: parseInt(process.env.TIMEOUT) }),
       submitButton.click()
     ]);
 
@@ -108,8 +108,8 @@ test.describe("Authentication - Login Tests", () => {
     const submitButton = page.locator('button:has-text("Войти")');
 
     // Fill with invalid credentials
-    await emailInput.fill('invalid@example.com');
-    await passwordInput.fill('wrongpassword');
+    await emailInput.fill(process.env.KINTSUGI_WRONG_LOGIN);
+    await passwordInput.fill(process.env.KINTSUGI_WRONG_PASSWORD);
 
     // Wait for button to be enabled
     await expect(submitButton).toBeEnabled();

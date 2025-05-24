@@ -19,5 +19,5 @@ export async function getAuthToken(request) {
         }
     });
     const data = await response.json();
-    return data.token; // Adjust according to actual API response
+    return data.token; 
 }

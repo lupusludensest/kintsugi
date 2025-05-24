@@ -41,9 +41,13 @@ npx playwright install
 npx playwright test
 
 # Run specific test type
-npx playwright test api_tests
+npx playwright test api_tests/
 npx playwright test performance_tests
-npx playwright test ui_tests
+npx playwright test stress_tests
+npx playwright test ui_tests/
+
+# Run all test suites one after another
+npx playwright test api_tests/ && npx playwright test ui_tests/ && npm run performance-test && npm run stress-test
 ```
 
 ## Viewing Reports
