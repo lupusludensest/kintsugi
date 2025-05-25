@@ -1,29 +1,13 @@
 import dotenv from "dotenv";
 import { test, expect } from "@playwright/test";
+import { loginUser } from '../utils/auth.helper.js';
 
 // Load environment variables from .env file
 dotenv.config();
 
 test.describe("Dashboard Attributes Verification", () => {
   test.beforeEach(async ({ page }) => {
-    // Set viewport wider than 1440px requirement
-    await page.setViewportSize({ width: 1920, height: 1080 });
-
-    // Login using correct Kintsugi selectors
-    await page.goto(process.env.KINTSUGI_LOGIN_URL);
-    await page.waitForLoadState("networkidle");
-
-    await page.fill('input[name="email"]', process.env.KINTSUGI_LOGIN);
-    await page.fill('input[name="password"]', process.env.KINTSUGI_PASSWORD);
-
-    const submitButton = page.locator('button:has-text("Войти")');
-
-    await Promise.all([
-      page.waitForURL("**/dashboard", { timeout: parseInt(process.env.TIMEOUT)}),
-      submitButton.click(),
-    ]);
-
-    await page.waitForLoadState("networkidle");
+    await loginUser(page);
   });
 
   test("Clickable Dashboard Menu Item is present", async ({ page }) => {
@@ -218,7 +202,9 @@ test.describe("Dashboard Attributes Verification", () => {
     await logoutButton.click();
 
     // Verify redirect to login page
-    await page.waitForURL("**/login", { timeout: parseInt(process.env.TIMEOUT) });
+    await page.waitForURL("**/login", {
+      timeout: parseInt(process.env.TIMEOUT),
+    });
     await expect(page).toHaveURL(process.env.KINTSUGI_LOGIN_URL);
   });
 });
