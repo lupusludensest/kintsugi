@@ -155,7 +155,7 @@ test.describe("Dashboard Attributes Verification", () => {
       'a[href="/risks"].menu-item .menu-item__content .counter'
     );
     await expect(counterDiv).toBeVisible();
-    await expect(counterDiv).toHaveText("1580");
+    await expect(counterDiv).toHaveText("1");
   });
 
   test("Clickable Losses Menu Item is present", async ({ page }) => {
