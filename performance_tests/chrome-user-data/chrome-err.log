@@ -18,3 +18,18 @@ DevTools listening on ws://127.0.0.1:60981/devtools/browser/2590f9b0-65de-4a5a-8
 [9392:8272:0526/131655.896:ERROR:services\device\usb\usb_descriptors.cc:146] Failed to read length for configuration 1.
 [9392:8272:0526/131655.897:ERROR:services\device\usb\usb_descriptors.cc:105] Failed to read all configuration descriptors. Expected 2, got 1.
 [9392:8272:0526/131655.897:ERROR:components\device_event_log\device_event_log_impl.cc:202] [13:16:55.897] USB: usb_device_win.cc:95 Failed to read descriptors from \\?\usb#vid_0bda&pid_8153#321000001#{a5dcbf10-6530-11d2-901f-00c04fb951ed}.
+
+DevTools listening on ws://127.0.0.1:64392/devtools/browser/6f947d55-c900-42ef-b0dc-7b06e38ca2a4
+[6708:10108:0526/152646.683:ERROR:services\device\usb\usb_descriptors.cc:146] Failed to read length for configuration 1.
+[6708:10108:0526/152646.683:ERROR:services\device\usb\usb_descriptors.cc:105] Failed to read all configuration descriptors. Expected 2, got 1.
+[6708:10108:0526/152646.683:ERROR:components\device_event_log\device_event_log_impl.cc:202] [15:26:46.684] USB: usb_device_win.cc:95 Failed to read descriptors from \\?\usb#vid_0bda&pid_8153#321000001#{a5dcbf10-6530-11d2-901f-00c04fb951ed}.
+
+DevTools listening on ws://127.0.0.1:64431/devtools/browser/85c8aa2f-a48d-41af-8381-0c85b0cdfacf
+[25040:24496:0526/152840.416:ERROR:services\device\usb\usb_descriptors.cc:146] Failed to read length for configuration 1.
+[25040:24496:0526/152840.416:ERROR:services\device\usb\usb_descriptors.cc:105] Failed to read all configuration descriptors. Expected 2, got 1.
+[25040:24496:0526/152840.417:ERROR:components\device_event_log\device_event_log_impl.cc:202] [15:28:40.417] USB: usb_device_win.cc:95 Failed to read descriptors from \\?\usb#vid_0bda&pid_8153#321000001#{a5dcbf10-6530-11d2-901f-00c04fb951ed}.
+
+DevTools listening on ws://127.0.0.1:64486/devtools/browser/b05f4fb4-24af-469a-aac5-fa402910da1f
+[9476:20748:0526/153103.676:ERROR:services\device\usb\usb_descriptors.cc:146] Failed to read length for configuration 1.
+[9476:20748:0526/153103.677:ERROR:services\device\usb\usb_descriptors.cc:105] Failed to read all configuration descriptors. Expected 2, got 1.
+[9476:20748:0526/153103.677:ERROR:components\device_event_log\device_event_log_impl.cc:202] [15:31:03.677] USB: usb_device_win.cc:95 Failed to read descriptors from \\?\usb#vid_0bda&pid_8153#321000001#{a5dcbf10-6530-11d2-901f-00c04fb951ed}.

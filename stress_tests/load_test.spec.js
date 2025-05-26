@@ -1,9 +1,11 @@
-import { test, expect } from '@playwright/test';
-import fs from 'fs';
-import path from 'path';
-import { promisify } from 'util';
-import { fileURLToPath } from 'url';
-import { getAuthToken } from '../utils/auth.helper';
+import { test, expect } from "@playwright/test";
+import fs from "fs";
+import path from "path";
+import { promisify } from "util";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+dotenv.config();
+const staticAuthToken = process.env.KINTSUGI_AUTH_TOKEN;
 
 // playwright.stress.config.js
 // import baseConfig from '../playwright.stress.config';  // <-- This is the problem line
@@ -16,38 +18,47 @@ const writeFileAsync = promisify(fs.writeFile);
 const mkdirAsync = promisify(fs.mkdir);
 
 // Set global timeout
-test.setTimeout(600000); // 10 minutes for all tests
+const baseTimeout = parseInt(process.env.TIMEOUT, 10);
+const globalTimeout = Number.isFinite(baseTimeout) ? baseTimeout * 10 : 600000;
+test.setTimeout(globalTimeout);
 
 // Configuration for stress test
 const STRESS_TEST_CONFIG = {
   // User quantities
   concurrentUsers: [10, 25, 50], // Moderate load levels
-  
+
   // Time between waves
   timeBetweenWaves: 2000,
-  
+
   // Multiple endpoints to test
   endpoints: [
-    { url: 'https://kintsugi.su/', name: 'Home', auth: false },
-    { url: 'https://kintsugi.su/about', name: 'About', auth: false },
-    { url: 'https://kintsugi.su/contacts', name: 'Contacts', auth: false },
-    { url: 'https://kintsugi.su/legislation', name: 'Legislation', auth: false },
-    { url: 'https://kintsugi.su/app', name: 'App', auth: true },
-    { url: 'https://kintsugi.su/dashboard', name: 'Dashboard', auth: true },
-    { url: 'https://kintsugi.su/profile', name: 'Profile', auth: true }
+    // Public endpoints
+    { name: "Home", auth: false, url: `${process.env.KINTSUGI_BASE_URL}/` },
+    { name: "About", auth: false, url: `${process.env.KINTSUGI_BASE_URL}/about` },
+    { name: "Contacts", auth: false, url: `${process.env.KINTSUGI_BASE_URL}/contacts` },
+    { name: "Legislation", auth: false, url: `${process.env.KINTSUGI_BASE_URL}/legislation` },
+    { name: "App", auth: false, url: `${process.env.KINTSUGI_BASE_URL}/app` },
+    // Authenticated endpoints
+    { name: "Dashboard", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/dashboard` },
+    { name: "Partners", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/partners` },
+    { name: "Users", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/users` },
+    { name: "Analytics", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/analytics` },
+    { name: "Contracts", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/contracts` },
+    { name: "Risks", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/risks` },
+    { name: "Losses", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/losses` },
   ],
-  
+
   // Number of waves to run
   waves: 3,
-  
+
   // Testing mode: 'sequential' or 'concurrent'
-  endpointTestMode: 'sequential',
-  
+  endpointTestMode: "sequential",
+
   // Thresholds
   thresholds: {
     maxAvgResponseTime: 4000,
-    maxErrorRate: 0.05
-  }
+    maxErrorRate: 0.05,
+  },
 };
 
 // Global variables to track test state
@@ -60,17 +71,20 @@ test.afterEach(async () => {
   if (metrics && !reportGenerated) {
     try {
       // Generate emergency report
-      const date = new Date().toISOString().replace(/:/g, '_');
-      const resultsDir = path.join(__dirname, 'results');
+      const date = new Date().toISOString().replace(/:/g, "_");
+      const resultsDir = path.join(__dirname, "results");
       await mkdirAsync(resultsDir, { recursive: true });
-      
+
       const reportPath = path.join(resultsDir, `emergency_report_${date}.json`);
-      const htmlReportPath = path.join(resultsDir, `emergency_report_${date}.html`);
-      
+      const htmlReportPath = path.join(
+        resultsDir,
+        `emergency_report_${date}.html`
+      );
+
       // Complete metrics
       metrics.endTime = Date.now();
       metrics.totalDuration = metrics.endTime - metrics.startTime;
-      
+
       const reportData = {
         timestamp: date,
         config: STRESS_TEST_CONFIG,
@@ -78,24 +92,30 @@ test.afterEach(async () => {
           totalRequests: metrics.totalRequests,
           successfulRequests: metrics.successfulRequests,
           failedRequests: metrics.failedRequests,
-          errorRate: metrics.totalRequests ? metrics.failedRequests / metrics.totalRequests : 0,
+          errorRate: metrics.totalRequests
+            ? metrics.failedRequests / metrics.totalRequests
+            : 0,
           totalDuration: metrics.totalDuration,
-          avgResponseTime: metrics.responseTimes.length ? 
-            metrics.responseTimes.reduce((a, b) => a + b, 0) / metrics.responseTimes.length : 0,
+          avgResponseTime: metrics.responseTimes.length
+            ? metrics.responseTimes.reduce((a, b) => a + b, 0) /
+              metrics.responseTimes.length
+            : 0,
           completedSuccessfully: false,
-          interruptedReason: "Test timeout"
+          interruptedReason: "Test timeout",
         },
         waves: metrics.waves,
-        endpointMetrics: allEndpointMetrics
+        endpointMetrics: allEndpointMetrics,
       };
-      
+
       await writeFileAsync(reportPath, JSON.stringify(reportData, null, 2));
       await writeFileAsync(htmlReportPath, generateHtmlReport(reportData));
-      
-      console.log("\n--- EMERGENCY REPORT GENERATED (test was interrupted) ---");
+
+      console.log(
+        "\n--- EMERGENCY REPORT GENERATED (test was interrupted) ---"
+      );
       console.log(`Report saved to: ${reportPath}`);
       console.log(`HTML Report saved to: ${htmlReportPath}`);
-      
+
       reportGenerated = true;
     } catch (error) {
       console.error(`Failed to generate emergency report: ${error.message}`);
@@ -103,11 +123,11 @@ test.afterEach(async () => {
   }
 });
 
-test.describe('Load Testing', () => {
+test.describe("Load Testing", () => {
   // Configure tests to run serially
-  test.describe.configure({ mode: 'serial' });
+  test.describe.configure({ mode: "serial" });
 
-  test('advanced load test with multiple waves', async ({ request }) => {
+  test("advanced load test with multiple waves", async ({ request }) => {
     // Initialize metrics
     metrics = {
       startTime: Date.now(),
@@ -116,20 +136,22 @@ test.describe('Load Testing', () => {
       successfulRequests: 0,
       failedRequests: 0,
       responseTimes: [],
-      waves: []
+      waves: [],
     };
-    
+
     allEndpointMetrics = [];
     reportGenerated = false;
-    
-    const resultsDir = path.join(__dirname, 'results');
+
+    const resultsDir = path.join(__dirname, "results");
     await mkdirAsync(resultsDir, { recursive: true });
-    
+
     try {
       // For sequential endpoint testing
       for (const endpoint of STRESS_TEST_CONFIG.endpoints) {
-        console.log(`\n===== Testing endpoint: ${endpoint.name} (${endpoint.url}) =====`);
-        
+        console.log(
+          `\n===== Testing endpoint: ${endpoint.name} (${endpoint.url}) =====`
+        );
+
         const endpointMetrics = {
           name: endpoint.name,
           url: endpoint.url,
@@ -139,82 +161,99 @@ test.describe('Load Testing', () => {
           successfulRequests: 0,
           failedRequests: 0,
           responseTimes: [],
-          waves: []
+          waves: [],
         };
-        
+
         // Loop through each concurrency level
         for (const userCount of STRESS_TEST_CONFIG.concurrentUsers) {
-          console.log(`\nTesting ${endpoint.name} with ${userCount} concurrent users`);
-          
+          console.log(
+            `\nTesting ${endpoint.name} with ${userCount} concurrent users`
+          );
+
           // Run multiple waves of requests for this concurrency level
           for (let wave = 1; wave <= STRESS_TEST_CONFIG.waves; wave++) {
-            console.log(`Starting wave ${wave} of ${STRESS_TEST_CONFIG.waves} with ${userCount} concurrent users`);
-            
+            console.log(
+              `Starting wave ${wave} of ${STRESS_TEST_CONFIG.waves} with ${userCount} concurrent users`
+            );
+
             const waveStartTime = Date.now();
             const waveResults = [];
-            
+
             try {
               // Run concurrent requests
-              await Promise.all(Array(userCount).fill().map(async (_, i) => {
-                const requestStartTime = Date.now();
-                
-                try {
-                  const response = await request.get(endpoint.url, {
-                    headers: endpoint.auth ? {
-                      'Authorization': `Bearer ${authToken}`
-                    } : {}
-                  });
-                  const responseTime = Date.now() - requestStartTime;
-                  
-                  waveResults.push({
-                    id: `${endpoint.name}-${userCount}users-wave${wave}-user${i}`,
-                    status: response.status(),
-                    success: response.ok(),
-                    responseTime: responseTime,
-                    timestamp: new Date().toISOString()
-                  });
-                  
-                  // Update metrics
-                  metrics.responseTimes.push(responseTime);
-                  metrics.totalRequests++;
-                  endpointMetrics.responseTimes.push(responseTime);
-                  endpointMetrics.totalRequests++;
-                  
-                  if (response.ok()) {
-                    metrics.successfulRequests++;
-                    endpointMetrics.successfulRequests++;
-                  } else {
-                    metrics.failedRequests++;
-                    endpointMetrics.failedRequests++;
-                  }
-                } catch (error) {
-                  waveResults.push({
-                    id: `${endpoint.name}-${userCount}users-wave${wave}-user${i}`,
-                    error: error.message,
-                    success: false,
-                    responseTime: Date.now() - requestStartTime,
-                    timestamp: new Date().toISOString()
-                  });
-                  
-                  // Update metrics
-                  metrics.totalRequests++;
-                  metrics.failedRequests++;
-                  endpointMetrics.totalRequests++;
-                  endpointMetrics.failedRequests++;
-                }
-              }));
+              await Promise.all(
+                Array(userCount)
+                  .fill()
+                  .map(async (_, i) => {
+                    const requestStartTime = Date.now();
+
+                    try {
+                      const response = await request.get(endpoint.url, {
+                        headers: endpoint.auth
+                          ? {
+                              Authorization: `Bearer ${staticAuthToken}`,
+                            }
+                          : {},
+                      });
+                      const responseTime = Date.now() - requestStartTime;
+
+                      waveResults.push({
+                        id: `${endpoint.name}-${userCount}users-wave${wave}-user${i}`,
+                        status: response.status(),
+                        success: response.ok(),
+                        responseTime: responseTime,
+                        timestamp: new Date().toISOString(),
+                      });
+
+                      // Update metrics
+                      metrics.responseTimes.push(responseTime);
+                      metrics.totalRequests++;
+                      endpointMetrics.responseTimes.push(responseTime);
+                      endpointMetrics.totalRequests++;
+
+                      if (response.ok()) {
+                        metrics.successfulRequests++;
+                        endpointMetrics.successfulRequests++;
+                      } else {
+                        metrics.failedRequests++;
+                        endpointMetrics.failedRequests++;
+                      }
+                    } catch (error) {
+                      waveResults.push({
+                        id: `${endpoint.name}-${userCount}users-wave${wave}-user${i}`,
+                        error: error.message,
+                        success: false,
+                        responseTime: Date.now() - requestStartTime,
+                        timestamp: new Date().toISOString(),
+                      });
+
+                      // Update metrics
+                      metrics.totalRequests++;
+                      metrics.failedRequests++;
+                      endpointMetrics.totalRequests++;
+                      endpointMetrics.failedRequests++;
+                    }
+                  })
+              );
             } catch (error) {
-              console.error(`Error during wave ${wave} with ${userCount} users: ${error.message}`);
+              console.error(
+                `Error during wave ${wave} with ${userCount} users: ${error.message}`
+              );
             }
-            
+
             const waveTime = Date.now() - waveStartTime;
-            console.log(`Wave ${wave} with ${userCount} users completed in ${waveTime}ms`);
-            
+            console.log(
+              `Wave ${wave} with ${userCount} users completed in ${waveTime}ms`
+            );
+
             // Calculate wave metrics
-            const waveSuccessful = waveResults.filter(r => r.success).length;
-            const waveErrorRate = (waveResults.length - waveSuccessful) / waveResults.length;
-            const waveAvgResponseTime = waveResults.reduce((sum, r) => sum + (r.responseTime || 0), 0) / waveResults.length;
-            
+            const waveSuccessful = waveResults.filter((r) => r.success).length;
+            const waveErrorRate =
+              (waveResults.length - waveSuccessful) / waveResults.length;
+            const waveAvgResponseTime =
+              waveResults.reduce((sum, r) => sum + (r.responseTime || 0), 0) /
+              waveResults.length;
+
             // Store wave data
             const waveData = {
               endpoint: endpoint.name,
@@ -225,38 +264,50 @@ test.describe('Load Testing', () => {
               failedRequests: waveResults.length - waveSuccessful,
               errorRate: waveErrorRate,
               avgResponseTime: waveAvgResponseTime,
-              duration: waveTime
+              duration: waveTime,
             };
-            
+
             metrics.waves.push(waveData);
             endpointMetrics.waves.push(waveData);
-            
+
             // Wait between waves
             if (wave < STRESS_TEST_CONFIG.waves) {
-              console.log(`Waiting ${STRESS_TEST_CONFIG.timeBetweenWaves}ms before next wave...`);
-              await new Promise(resolve => setTimeout(resolve, STRESS_TEST_CONFIG.timeBetweenWaves));
+              console.log(
+                `Waiting ${STRESS_TEST_CONFIG.timeBetweenWaves}ms before next wave...`
+              );
+              await new Promise((resolve) =>
+                setTimeout(resolve, STRESS_TEST_CONFIG.timeBetweenWaves)
+              );
             }
           }
         }
-        
+
         // Complete endpoint metrics
         endpointMetrics.endTime = Date.now();
-        endpointMetrics.totalDuration = endpointMetrics.endTime - endpointMetrics.startTime;
-        endpointMetrics.avgResponseTime = endpointMetrics.responseTimes.length ? 
-          endpointMetrics.responseTimes.reduce((a, b) => a + b, 0) / endpointMetrics.responseTimes.length : 0;
-        endpointMetrics.errorRate = endpointMetrics.totalRequests ? 
-          endpointMetrics.failedRequests / endpointMetrics.totalRequests : 0;
-        
+        endpointMetrics.totalDuration =
+          endpointMetrics.endTime - endpointMetrics.startTime;
+        endpointMetrics.avgResponseTime = endpointMetrics.responseTimes.length
+          ? endpointMetrics.responseTimes.reduce((a, b) => a + b, 0) /
+            endpointMetrics.responseTimes.length
+          : 0;
+        endpointMetrics.errorRate = endpointMetrics.totalRequests
+          ? endpointMetrics.failedRequests / endpointMetrics.totalRequests
+          : 0;
+
         allEndpointMetrics.push(endpointMetrics);
       }
-      
+
       // Complete overall metrics
       metrics.endTime = Date.now();
       metrics.totalDuration = metrics.endTime - metrics.startTime;
-      metrics.avgResponseTime = metrics.responseTimes.length ? 
-        metrics.responseTimes.reduce((a, b) => a + b, 0) / metrics.responseTimes.length : 0;
-      metrics.errorRate = metrics.totalRequests ? metrics.failedRequests / metrics.totalRequests : 0;
-      
+      metrics.avgResponseTime = metrics.responseTimes.length
+        ? metrics.responseTimes.reduce((a, b) => a + b, 0) /
+          metrics.responseTimes.length
+        : 0;
+      metrics.errorRate = metrics.totalRequests
+        ? metrics.failedRequests / metrics.totalRequests
+        : 0;
+
       // Generate full report
       const reportData = {
         timestamp: new Date().toISOString(),
@@ -268,45 +319,61 @@ test.describe('Load Testing', () => {
           errorRate: metrics.errorRate,
           totalDuration: metrics.totalDuration,
           avgResponseTime: metrics.avgResponseTime,
-          completedSuccessfully: true
+          completedSuccessfully: true,
         },
         endpoints: allEndpointMetrics,
         waves: metrics.waves,
         responseTimes: {
-          min: metrics.responseTimes.length ? Math.min(...metrics.responseTimes) : 0,
-          max: metrics.responseTimes.length ? Math.max(...metrics.responseTimes) : 0,
+          min: metrics.responseTimes.length
+            ? Math.min(...metrics.responseTimes)
+            : 0,
+          max: metrics.responseTimes.length
+            ? Math.max(...metrics.responseTimes)
+            : 0,
           avg: metrics.avgResponseTime,
           p50: percentile(metrics.responseTimes, 50),
           p90: percentile(metrics.responseTimes, 90),
           p95: percentile(metrics.responseTimes, 95),
-          p99: percentile(metrics.responseTimes, 99)
-        }
+          p99: percentile(metrics.responseTimes, 99),
+        },
       };
-      
+
       // Save report
-      const date = new Date().toISOString().replace(/:/g, '_');
-      const reportPath = path.join(resultsDir, `multi_endpoint_stress_test_${date}.json`);
-      const htmlReportPath = path.join(resultsDir, `multi_endpoint_stress_test_${date}.html`);
-      
+      const date = new Date().toISOString().replace(/:/g, "_");
+      const reportPath = path.join(
+        resultsDir,
+        `multi_endpoint_stress_test_${date}.json`
+      );
+      const htmlReportPath = path.join(
+        resultsDir,
+        `multi_endpoint_stress_test_${date}.html`
+      );
+
       await writeFileAsync(reportPath, JSON.stringify(reportData, null, 2));
       await writeFileAsync(htmlReportPath, generateHtmlReport(reportData));
-      
+
       reportGenerated = true;
-      
+
       console.log(`\n--- Stress Test Summary ---`);
       console.log(`Total Requests: ${metrics.totalRequests}`);
       console.log(`Successful Requests: ${metrics.successfulRequests}`);
       console.log(`Failed Requests: ${metrics.failedRequests}`);
       console.log(`Error Rate: ${(metrics.errorRate * 100).toFixed(2)}%`);
-      console.log(`Average Response Time: ${metrics.avgResponseTime.toFixed(2)}ms`);
+      console.log(
+        `Average Response Time: ${metrics.avgResponseTime.toFixed(2)}ms`
+      );
       console.log(`Total Duration: ${metrics.totalDuration}ms`);
       console.log(`Report saved to: ${reportPath}`);
       console.log(`HTML Report saved to: ${htmlReportPath}`);
-      
+
       // Assertions
       expect(metrics.errorRate).toBeLessThan(
         STRESS_TEST_CONFIG.thresholds.maxErrorRate,
-        `Error rate (${(metrics.errorRate * 100).toFixed(2)}%) exceeds threshold (${(STRESS_TEST_CONFIG.thresholds.maxErrorRate * 100).toFixed(2)}%)`
+        `Error rate (${(metrics.errorRate * 100).toFixed(
+          2
+        )}%) exceeds threshold (${(
+          STRESS_TEST_CONFIG.thresholds.maxErrorRate * 100
+        ).toFixed(2)}%)`
       );
     } catch (error) {
       console.error(`Test error: ${error.message}`);
@@ -319,7 +386,7 @@ test.describe('Load Testing', () => {
 function percentile(array, p) {
   if (array.length === 0) return 0;
   const sorted = [...array].sort((a, b) => a - b);
-  const pos = (sorted.length - 1) * p / 100;
+  const pos = ((sorted.length - 1) * p) / 100;
   const base = Math.floor(pos);
   const rest = pos - base;
   if (sorted[base + 1] !== undefined) {
@@ -373,7 +440,7 @@ function generateHtmlReport(data) {
       <div class="summary-grid">
         <div class="metric">
           <h3>Concurrent Users</h3>
-          <p>${data.config.concurrentUsers.join(', ')}</p>
+          <p>${data.config.concurrentUsers.join(", ")}</p>
         </div>
         <div class="metric">
           <h3>Waves per User Level</h3>
@@ -403,11 +470,17 @@ function generateHtmlReport(data) {
         </div>
         <div class="metric">
           <h3>Failed</h3>
-          <p class="${data.summary.failedRequests > 0 ? 'bad' : 'good'}">${data.summary.failedRequests}</p>
+          <p class="${data.summary.failedRequests > 0 ? "bad" : "good"}">${
+    data.summary.failedRequests
+  }</p>
         </div>
         <div class="metric">
           <h3>Error Rate</h3>
-          <p class="${data.summary.errorRate > data.config.thresholds.maxErrorRate ? 'bad' : 'good'}">
+          <p class="${
+            data.summary.errorRate > data.config.thresholds.maxErrorRate
+              ? "bad"
+              : "good"
+          }">
             ${(data.summary.errorRate * 100).toFixed(2)}%
           </p>
         </div>
@@ -417,7 +490,12 @@ function generateHtmlReport(data) {
         </div>
         <div class="metric">
           <h3>Avg Response Time</h3>
-          <p class="${data.summary.avgResponseTime > data.config.thresholds.maxAvgResponseTime ? 'bad' : 'good'}">
+          <p class="${
+            data.summary.avgResponseTime >
+            data.config.thresholds.maxAvgResponseTime
+              ? "bad"
+              : "good"
+          }">
             ${data.summary.avgResponseTime.toFixed(2)}ms
           </p>
         </div>
@@ -460,7 +538,10 @@ function generateHtmlReport(data) {
     </div>
     
     <h2>Endpoint Details</h2>
-    ${data.endpoints?.map(endpoint => `
+    ${
+      data.endpoints
+        ?.map(
+          (endpoint) => `
       <div class="endpoint-section">
         <h3>${endpoint.name} (${endpoint.url})</h3>
         <div class="summary">
@@ -475,11 +556,17 @@ function generateHtmlReport(data) {
             </div>
             <div class="metric">
               <h3>Failed</h3>
-              <p class="${endpoint.failedRequests > 0 ? 'bad' : 'good'}">${endpoint.failedRequests}</p>
+              <p class="${endpoint.failedRequests > 0 ? "bad" : "good"}">${
+            endpoint.failedRequests
+          }</p>
             </div>
             <div class="metric">
               <h3>Error Rate</h3>
-              <p class="${endpoint.errorRate > data.config.thresholds.maxErrorRate ? 'bad' : 'good'}">
+              <p class="${
+                endpoint.errorRate > data.config.thresholds.maxErrorRate
+                  ? "bad"
+                  : "good"
+              }">
                 ${(endpoint.errorRate * 100).toFixed(2)}%
               </p>
             </div>
@@ -489,7 +576,12 @@ function generateHtmlReport(data) {
             </div>
             <div class="metric">
               <h3>Avg Response</h3>
-              <p class="${endpoint.avgResponseTime > data.config.thresholds.maxAvgResponseTime ? 'bad' : 'good'}">
+              <p class="${
+                endpoint.avgResponseTime >
+                data.config.thresholds.maxAvgResponseTime
+                  ? "bad"
+                  : "good"
+              }">
                 ${endpoint.avgResponseTime.toFixed(2)}ms
               </p>
             </div>
@@ -515,7 +607,9 @@ function generateHtmlReport(data) {
             </tr>
           </thead>
           <tbody>
-            ${endpoint.waves.map(wave => `
+            ${endpoint.waves
+              .map(
+                (wave) => `
             <tr>
               <td>${wave.waveNumber}</td>
               <td>${wave.userCount}</td>
@@ -526,11 +620,16 @@ function generateHtmlReport(data) {
               <td>${wave.avgResponseTime.toFixed(2)}ms</td>
               <td>${wave.duration}ms</td>
             </tr>
-            `).join('')}
+            `
+              )
+              .join("")}
           </tbody>
         </table>
       </div>
-    `).join('') || ''}
+    `
+        )
+        .join("") || ""
+    }
     
     <h2>All Wave Details</h2>
     <table>
@@ -548,7 +647,10 @@ function generateHtmlReport(data) {
         </tr>
       </thead>
       <tbody>
-        ${data.waves?.map(wave => `
+        ${
+          data.waves
+            ?.map(
+              (wave) => `
         <tr>
           <td>${wave.endpoint}</td>
           <td>${wave.userCount}</td>
@@ -560,7 +662,10 @@ function generateHtmlReport(data) {
           <td>${wave.avgResponseTime.toFixed(2)}ms</td>
           <td>${wave.duration}ms</td>
         </tr>
-        `).join('') || ''}
+        `
+            )
+            .join("") || ""
+        }
       </tbody>
     </table>
   </div>
@@ -570,9 +675,15 @@ function generateHtmlReport(data) {
     const createEndpointComparisonChart = () => {
       const ctx = document.getElementById('endpointComparisonChart').getContext('2d');
       
-      const endpoints = ${JSON.stringify(data.endpoints?.map(e => e.name) || [])};
-      const responseTimesData = ${JSON.stringify(data.endpoints?.map(e => e.avgResponseTime) || [])};
-      const errorRateData = ${JSON.stringify(data.endpoints?.map(e => e.errorRate * 100) || [])};
+      const endpoints = ${JSON.stringify(
+        data.endpoints?.map((e) => e.name) || []
+      )};
+      const responseTimesData = ${JSON.stringify(
+        data.endpoints?.map((e) => e.avgResponseTime) || []
+      )};
+      const errorRateData = ${JSON.stringify(
+        data.endpoints?.map((e) => e.errorRate * 100) || []
+      )};
       
       new Chart(ctx, {
         type: 'bar',
@@ -622,21 +733,36 @@ function generateHtmlReport(data) {
     };
     
     // Create individual endpoint charts
-    ${data.endpoints?.map(endpoint => `
+    ${
+      data.endpoints
+        ?.map(
+          (endpoint) => `
     const createEndpointChart${endpoint.name} = () => {
-      const ctx = document.getElementById('endpointChart-${endpoint.name}').getContext('2d');
+      const ctx = document.getElementById('endpointChart-${
+        endpoint.name
+      }').getContext('2d');
       
-      const userCounts = ${JSON.stringify([...new Set(endpoint.waves.map(w => w.userCount))])};
-      const waveNumbers = ${JSON.stringify([...new Set(endpoint.waves.map(w => w.waveNumber))])};
+      const userCounts = ${JSON.stringify([
+        ...new Set(endpoint.waves.map((w) => w.userCount)),
+      ])};
+      const waveNumbers = ${JSON.stringify([
+        ...new Set(endpoint.waves.map((w) => w.waveNumber)),
+      ])};
       
       // Group response times by user count and wave
       const responseTimesByUserCount = {};
-      ${endpoint.waves.map(wave => `
+      ${endpoint.waves
+        .map(
+          (wave) => `
         if (!responseTimesByUserCount[${wave.userCount}]) {
           responseTimesByUserCount[${wave.userCount}] = [];
         }
-        responseTimesByUserCount[${wave.userCount}][${wave.waveNumber - 1}] = ${wave.avgResponseTime};
-      `).join('')}
+        responseTimesByUserCount[${wave.userCount}][${wave.waveNumber - 1}] = ${
+            wave.avgResponseTime
+          };
+      `
+        )
+        .join("")}
       
       const datasets = userCounts.map(userCount => ({
         label: userCount + ' Users',
@@ -673,7 +799,10 @@ function generateHtmlReport(data) {
         }
       });
     };
-    `).join('\n') || ''}
+    `
+        )
+        .join("\n") || ""
+    }
     
     // Helper function for random colors
     function getRandomColor() {
@@ -688,7 +817,11 @@ function generateHtmlReport(data) {
     // Initialize charts when page loads
     window.onload = () => {
       createEndpointComparisonChart();
-      ${data.endpoints?.map(endpoint => `createEndpointChart${endpoint.name}();`).join('\n') || ''}
+      ${
+        data.endpoints
+          ?.map((endpoint) => `createEndpointChart${endpoint.name}();`)
+          .join("\n") || ""
+      }
     };
   </script>
 </body>
