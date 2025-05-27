@@ -1,0 +1,4535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Endpoint Stress Test Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; }
+    h1, h2, h3 { color: #0066cc; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .summary { background: #f7f7f7; border-radius: 5px; padding: 15px; margin-bottom: 20px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+    .metric { border: 1px solid #ddd; padding: 10px; border-radius: 4px; background: white; }
+    .metric h3 { margin-top: 0; font-size: 14px; color: #666; }
+    .metric p { margin-bottom: 0; font-size: 24px; font-weight: bold; color: #0066cc; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th { background: #0066cc; color: white; text-align: left; padding: 10px; }
+    td { padding: 10px; border-bottom: 1px solid #ddd; }
+    tr:nth-child(even) { background: #f2f2f2; }
+    .good { color: green; }
+    .bad { color: red; }
+    .chart-container { height: 300px; margin: 20px 0; }
+    .endpoint-section { margin-bottom: 40px; border: 1px solid #ddd; padding: 20px; border-radius: 5px; }
+    .tab-container { margin: 20px 0; }
+    .tab-buttons { display: flex; border-bottom: 1px solid #ddd; }
+    .tab-button { padding: 10px 20px; background: #f1f1f1; border: none; cursor: pointer; }
+    .tab-button.active { background: #0066cc; color: white; }
+    .tab-content { display: none; padding: 20px; border: 1px solid #ddd; border-top: none; }
+    .tab-content.active { display: block; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Multi-Endpoint Stress Test Report</h1>
+    <p>Generated on 5/27/2025, 3:48:19 PM</p>
+    
+    <h2>Test Configuration</h2>
+    <div class="summary">
+      <div class="summary-grid">
+        <div class="metric">
+          <h3>Concurrent Users</h3>
+          <p>10, 25, 30</p>
+        </div>
+        <div class="metric">
+          <h3>Waves per User Level</h3>
+          <p>3</p>
+        </div>
+        <div class="metric">
+          <h3>Time Between Waves</h3>
+          <p>2000ms</p>
+        </div>
+        <div class="metric">
+          <h3>Endpoints Tested</h3>
+          <p>12</p>
+        </div>
+      </div>
+    </div>
+    
+    <h2>Overall Summary</h2>
+    <div class="summary">
+      <div class="summary-grid">
+        <div class="metric">
+          <h3>Total Requests</h3>
+          <p>2340</p>
+        </div>
+        <div class="metric">
+          <h3>Successful</h3>
+          <p class="good">2340</p>
+        </div>
+        <div class="metric">
+          <h3>Failed</h3>
+          <p class="good">0</p>
+        </div>
+        <div class="metric">
+          <h3>Error Rate</h3>
+          <p class="good">
+            0.00%
+          </p>
+        </div>
+        <div class="metric">
+          <h3>Total Duration</h3>
+          <p>193906ms</p>
+        </div>
+        <div class="metric">
+          <h3>Avg Response Time</h3>
+          <p class="good">
+            341.09ms
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <h2>Response Time Percentiles</h2>
+    <div class="summary">
+      <div class="summary-grid">
+        <div class="metric">
+          <h3>Minimum</h3>
+          <p>275ms</p>
+        </div>
+        <div class="metric">
+          <h3>Maximum</h3>
+          <p>1635ms</p>
+        </div>
+        <div class="metric">
+          <h3>P50 (Median)</h3>
+          <p>326.00ms</p>
+        </div>
+        <div class="metric">
+          <h3>P90</h3>
+          <p>358.00ms</p>
+        </div>
+        <div class="metric">
+          <h3>P95</h3>
+          <p>386.10ms</p>
+        </div>
+        <div class="metric">
+          <h3>P99</h3>
+          <p>840.61ms</p>
+        </div>
+      </div>
+    </div>
+    
+    <h2>Endpoint Comparison</h2>
+    <div class="chart-container">
+      <canvas id="endpointComparisonChart"></canvas>
+    </div>
+    
+    <h2>Endpoint Details</h2>
+    
+      <div class="endpoint-section">
+        <h3>Home (https://kintsugi.su/)</h3>
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="metric">
+              <h3>Total Requests</h3>
+              <p>195</p>
+            </div>
+            <div class="metric">
+              <h3>Successful</h3>
+              <p class="good">195</p>
+            </div>
+            <div class="metric">
+              <h3>Failed</h3>
+              <p class="good">0</p>
+            </div>
+            <div class="metric">
+              <h3>Error Rate</h3>
+              <p class="good">
+                0.00%
+              </p>
+            </div>
+            <div class="metric">
+              <h3>Duration</h3>
+              <p>16817ms</p>
+            </div>
+            <div class="metric">
+              <h3>Avg Response</h3>
+              <p class="good">
+                404.38ms
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="endpointChart-Home"></canvas>
+        </div>
+        
+        <h4>Wave Details</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>Users</th>
+              <th>Requests</th>
+              <th>Successful</th>
+              <th>Failed</th>
+              <th>Error Rate</th>
+              <th>Avg Response</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td>1</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>860.40ms</td>
+              <td>889ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>288.60ms</td>
+              <td>297ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>293.20ms</td>
+              <td>315ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>635.16ms</td>
+              <td>898ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>325.48ms</td>
+              <td>369ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>325.88ms</td>
+              <td>374ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>419.40ms</td>
+              <td>896ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>325.03ms</td>
+              <td>373ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>331.20ms</td>
+              <td>396ms</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="endpoint-section">
+        <h3>About (https://kintsugi.su/about)</h3>
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="metric">
+              <h3>Total Requests</h3>
+              <p>195</p>
+            </div>
+            <div class="metric">
+              <h3>Successful</h3>
+              <p class="good">195</p>
+            </div>
+            <div class="metric">
+              <h3>Failed</h3>
+              <p class="good">0</p>
+            </div>
+            <div class="metric">
+              <h3>Error Rate</h3>
+              <p class="good">
+                0.00%
+              </p>
+            </div>
+            <div class="metric">
+              <h3>Duration</h3>
+              <p>15164ms</p>
+            </div>
+            <div class="metric">
+              <h3>Avg Response</h3>
+              <p class="good">
+                319.19ms
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="endpointChart-About"></canvas>
+        </div>
+        
+        <h4>Wave Details</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>Users</th>
+              <th>Requests</th>
+              <th>Successful</th>
+              <th>Failed</th>
+              <th>Error Rate</th>
+              <th>Avg Response</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td>1</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>292.50ms</td>
+              <td>309ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>291.40ms</td>
+              <td>307ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>288.90ms</td>
+              <td>311ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>320.12ms</td>
+              <td>366ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>311.00ms</td>
+              <td>358ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>327.00ms</td>
+              <td>368ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>329.30ms</td>
+              <td>387ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>333.13ms</td>
+              <td>377ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>322.97ms</td>
+              <td>379ms</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="endpoint-section">
+        <h3>Contacts (https://kintsugi.su/contacts)</h3>
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="metric">
+              <h3>Total Requests</h3>
+              <p>195</p>
+            </div>
+            <div class="metric">
+              <h3>Successful</h3>
+              <p class="good">195</p>
+            </div>
+            <div class="metric">
+              <h3>Failed</h3>
+              <p class="good">0</p>
+            </div>
+            <div class="metric">
+              <h3>Error Rate</h3>
+              <p class="good">
+                0.00%
+              </p>
+            </div>
+            <div class="metric">
+              <h3>Duration</h3>
+              <p>15244ms</p>
+            </div>
+            <div class="metric">
+              <h3>Avg Response</h3>
+              <p class="good">
+                331.17ms
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="endpointChart-Contacts"></canvas>
+        </div>
+        
+        <h4>Wave Details</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>Users</th>
+              <th>Requests</th>
+              <th>Successful</th>
+              <th>Failed</th>
+              <th>Error Rate</th>
+              <th>Avg Response</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td>1</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>304.80ms</td>
+              <td>321ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>299.30ms</td>
+              <td>310ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>302.50ms</td>
+              <td>319ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>331.28ms</td>
+              <td>371ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>316.16ms</td>
+              <td>360ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>313.64ms</td>
+              <td>349ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>326.13ms</td>
+              <td>375ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>336.47ms</td>
+              <td>390ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>386.90ms</td>
+              <td>444ms</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="endpoint-section">
+        <h3>Legislation (https://kintsugi.su/legislation)</h3>
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="metric">
+              <h3>Total Requests</h3>
+              <p>195</p>
+            </div>
+            <div class="metric">
+              <h3>Successful</h3>
+              <p class="good">195</p>
+            </div>
+            <div class="metric">
+              <h3>Failed</h3>
+              <p class="good">0</p>
+            </div>
+            <div class="metric">
+              <h3>Error Rate</h3>
+              <p class="good">
+                0.00%
+              </p>
+            </div>
+            <div class="metric">
+              <h3>Duration</h3>
+              <p>15227ms</p>
+            </div>
+            <div class="metric">
+              <h3>Avg Response</h3>
+              <p class="good">
+                323.95ms
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="endpointChart-Legislation"></canvas>
+        </div>
+        
+        <h4>Wave Details</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>Users</th>
+              <th>Requests</th>
+              <th>Successful</th>
+              <th>Failed</th>
+              <th>Error Rate</th>
+              <th>Avg Response</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td>1</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>339.10ms</td>
+              <td>356ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>296.70ms</td>
+              <td>313ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>349.60ms</td>
+              <td>355ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>316.76ms</td>
+              <td>361ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>321.92ms</td>
+              <td>358ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>316.08ms</td>
+              <td>355ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>328.80ms</td>
+              <td>379ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>330.20ms</td>
+              <td>373ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>322.57ms</td>
+              <td>369ms</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="endpoint-section">
+        <h3>App (https://kintsugi.su/app)</h3>
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="metric">
+              <h3>Total Requests</h3>
+              <p>195</p>
+            </div>
+            <div class="metric">
+              <h3>Successful</h3>
+              <p class="good">195</p>
+            </div>
+            <div class="metric">
+              <h3>Failed</h3>
+              <p class="good">0</p>
+            </div>
+            <div class="metric">
+              <h3>Error Rate</h3>
+              <p class="good">
+                0.00%
+              </p>
+            </div>
+            <div class="metric">
+              <h3>Duration</h3>
+              <p>15141ms</p>
+            </div>
+            <div class="metric">
+              <h3>Avg Response</h3>
+              <p class="good">
+                315.30ms
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="endpointChart-App"></canvas>
+        </div>
+        
+        <h4>Wave Details</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>Users</th>
+              <th>Requests</th>
+              <th>Successful</th>
+              <th>Failed</th>
+              <th>Error Rate</th>
+              <th>Avg Response</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td>1</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>294.50ms</td>
+              <td>326ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>286.70ms</td>
+              <td>298ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>290.70ms</td>
+              <td>314ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>312.32ms</td>
+              <td>357ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>307.92ms</td>
+              <td>343ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>320.04ms</td>
+              <td>363ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>325.53ms</td>
+              <td>384ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>327.20ms</td>
+              <td>379ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>322.50ms</td>
+              <td>372ms</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="endpoint-section">
+        <h3>Dashboard (https://kintsugi.su/dashboard)</h3>
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="metric">
+              <h3>Total Requests</h3>
+              <p>195</p>
+            </div>
+            <div class="metric">
+              <h3>Successful</h3>
+              <p class="good">195</p>
+            </div>
+            <div class="metric">
+              <h3>Failed</h3>
+              <p class="good">0</p>
+            </div>
+            <div class="metric">
+              <h3>Error Rate</h3>
+              <p class="good">
+                0.00%
+              </p>
+            </div>
+            <div class="metric">
+              <h3>Duration</h3>
+              <p>15204ms</p>
+            </div>
+            <div class="metric">
+              <h3>Avg Response</h3>
+              <p class="good">
+                322.78ms
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="endpointChart-Dashboard"></canvas>
+        </div>
+        
+        <h4>Wave Details</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>Users</th>
+              <th>Requests</th>
+              <th>Successful</th>
+              <th>Failed</th>
+              <th>Error Rate</th>
+              <th>Avg Response</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td>1</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>293.50ms</td>
+              <td>314ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>290.20ms</td>
+              <td>308ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>291.70ms</td>
+              <td>307ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>318.24ms</td>
+              <td>372ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>332.28ms</td>
+              <td>380ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>319.08ms</td>
+              <td>365ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>334.47ms</td>
+              <td>388ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>333.43ms</td>
+              <td>380ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>330.40ms</td>
+              <td>385ms</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="endpoint-section">
+        <h3>Partners (https://kintsugi.su/partners)</h3>
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="metric">
+              <h3>Total Requests</h3>
+              <p>195</p>
+            </div>
+            <div class="metric">
+              <h3>Successful</h3>
+              <p class="good">195</p>
+            </div>
+            <div class="metric">
+              <h3>Failed</h3>
+              <p class="good">0</p>
+            </div>
+            <div class="metric">
+              <h3>Error Rate</h3>
+              <p class="good">
+                0.00%
+              </p>
+            </div>
+            <div class="metric">
+              <h3>Duration</h3>
+              <p>15250ms</p>
+            </div>
+            <div class="metric">
+              <h3>Avg Response</h3>
+              <p class="good">
+                326.63ms
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="endpointChart-Partners"></canvas>
+        </div>
+        
+        <h4>Wave Details</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>Users</th>
+              <th>Requests</th>
+              <th>Successful</th>
+              <th>Failed</th>
+              <th>Error Rate</th>
+              <th>Avg Response</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td>1</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>294.30ms</td>
+              <td>317ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>294.20ms</td>
+              <td>320ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>296.40ms</td>
+              <td>312ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>325.44ms</td>
+              <td>373ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>331.56ms</td>
+              <td>369ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>344.12ms</td>
+              <td>409ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>332.80ms</td>
+              <td>381ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>329.33ms</td>
+              <td>376ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>331.73ms</td>
+              <td>386ms</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="endpoint-section">
+        <h3>Users (https://kintsugi.su/users)</h3>
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="metric">
+              <h3>Total Requests</h3>
+              <p>195</p>
+            </div>
+            <div class="metric">
+              <h3>Successful</h3>
+              <p class="good">195</p>
+            </div>
+            <div class="metric">
+              <h3>Failed</h3>
+              <p class="good">0</p>
+            </div>
+            <div class="metric">
+              <h3>Error Rate</h3>
+              <p class="good">
+                0.00%
+              </p>
+            </div>
+            <div class="metric">
+              <h3>Duration</h3>
+              <p>18813ms</p>
+            </div>
+            <div class="metric">
+              <h3>Avg Response</h3>
+              <p class="good">
+                369.51ms
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="endpointChart-Users"></canvas>
+        </div>
+        
+        <h4>Wave Details</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>Users</th>
+              <th>Requests</th>
+              <th>Successful</th>
+              <th>Failed</th>
+              <th>Error Rate</th>
+              <th>Avg Response</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td>1</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>437.00ms</td>
+              <td>766ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>333.20ms</td>
+              <td>354ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>328.40ms</td>
+              <td>351ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>417.04ms</td>
+              <td>1649ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>346.64ms</td>
+              <td>837ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>338.60ms</td>
+              <td>757ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>366.23ms</td>
+              <td>437ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>368.60ms</td>
+              <td>841ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>382.23ms</td>
+              <td>815ms</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="endpoint-section">
+        <h3>Analytics (https://kintsugi.su/analytics)</h3>
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="metric">
+              <h3>Total Requests</h3>
+              <p>195</p>
+            </div>
+            <div class="metric">
+              <h3>Successful</h3>
+              <p class="good">195</p>
+            </div>
+            <div class="metric">
+              <h3>Failed</h3>
+              <p class="good">0</p>
+            </div>
+            <div class="metric">
+              <h3>Error Rate</h3>
+              <p class="good">
+                0.00%
+              </p>
+            </div>
+            <div class="metric">
+              <h3>Duration</h3>
+              <p>18303ms</p>
+            </div>
+            <div class="metric">
+              <h3>Avg Response</h3>
+              <p class="good">
+                363.64ms
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="endpointChart-Analytics"></canvas>
+        </div>
+        
+        <h4>Wave Details</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>Users</th>
+              <th>Requests</th>
+              <th>Successful</th>
+              <th>Failed</th>
+              <th>Error Rate</th>
+              <th>Avg Response</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td>1</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>374.60ms</td>
+              <td>805ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>336.80ms</td>
+              <td>363ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>327.20ms</td>
+              <td>351ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>351.56ms</td>
+              <td>805ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>359.68ms</td>
+              <td>803ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>362.04ms</td>
+              <td>794ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>376.90ms</td>
+              <td>780ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>370.07ms</td>
+              <td>795ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>376.10ms</td>
+              <td>798ms</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="endpoint-section">
+        <h3>Contracts (https://kintsugi.su/contracts)</h3>
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="metric">
+              <h3>Total Requests</h3>
+              <p>195</p>
+            </div>
+            <div class="metric">
+              <h3>Successful</h3>
+              <p class="good">195</p>
+            </div>
+            <div class="metric">
+              <h3>Failed</h3>
+              <p class="good">0</p>
+            </div>
+            <div class="metric">
+              <h3>Error Rate</h3>
+              <p class="good">
+                0.00%
+              </p>
+            </div>
+            <div class="metric">
+              <h3>Duration</h3>
+              <p>17880ms</p>
+            </div>
+            <div class="metric">
+              <h3>Avg Response</h3>
+              <p class="good">
+                363.04ms
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="endpointChart-Contracts"></canvas>
+        </div>
+        
+        <h4>Wave Details</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>Users</th>
+              <th>Requests</th>
+              <th>Successful</th>
+              <th>Failed</th>
+              <th>Error Rate</th>
+              <th>Avg Response</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td>1</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>330.70ms</td>
+              <td>354ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>349.40ms</td>
+              <td>371ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>445.50ms</td>
+              <td>742ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>377.20ms</td>
+              <td>771ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>337.92ms</td>
+              <td>646ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>361.68ms</td>
+              <td>753ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>347.10ms</td>
+              <td>730ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>366.30ms</td>
+              <td>753ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>373.83ms</td>
+              <td>755ms</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="endpoint-section">
+        <h3>Risks (https://kintsugi.su/risks)</h3>
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="metric">
+              <h3>Total Requests</h3>
+              <p>195</p>
+            </div>
+            <div class="metric">
+              <h3>Successful</h3>
+              <p class="good">195</p>
+            </div>
+            <div class="metric">
+              <h3>Failed</h3>
+              <p class="good">0</p>
+            </div>
+            <div class="metric">
+              <h3>Error Rate</h3>
+              <p class="good">
+                0.00%
+              </p>
+            </div>
+            <div class="metric">
+              <h3>Duration</h3>
+              <p>15612ms</p>
+            </div>
+            <div class="metric">
+              <h3>Avg Response</h3>
+              <p class="good">
+                329.41ms
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="endpointChart-Risks"></canvas>
+        </div>
+        
+        <h4>Wave Details</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>Users</th>
+              <th>Requests</th>
+              <th>Successful</th>
+              <th>Failed</th>
+              <th>Error Rate</th>
+              <th>Avg Response</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td>1</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>448.60ms</td>
+              <td>742ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>295.20ms</td>
+              <td>313ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>291.60ms</td>
+              <td>307ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>317.60ms</td>
+              <td>361ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>330.72ms</td>
+              <td>379ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>327.56ms</td>
+              <td>366ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>322.50ms</td>
+              <td>372ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>329.27ms</td>
+              <td>385ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>331.03ms</td>
+              <td>384ms</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="endpoint-section">
+        <h3>Losses (https://kintsugi.su/losses)</h3>
+        <div class="summary">
+          <div class="summary-grid">
+            <div class="metric">
+              <h3>Total Requests</h3>
+              <p>195</p>
+            </div>
+            <div class="metric">
+              <h3>Successful</h3>
+              <p class="good">195</p>
+            </div>
+            <div class="metric">
+              <h3>Failed</h3>
+              <p class="good">0</p>
+            </div>
+            <div class="metric">
+              <h3>Error Rate</h3>
+              <p class="good">
+                0.00%
+              </p>
+            </div>
+            <div class="metric">
+              <h3>Duration</h3>
+              <p>15249ms</p>
+            </div>
+            <div class="metric">
+              <h3>Avg Response</h3>
+              <p class="good">
+                324.03ms
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="endpointChart-Losses"></canvas>
+        </div>
+        
+        <h4>Wave Details</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>Users</th>
+              <th>Requests</th>
+              <th>Successful</th>
+              <th>Failed</th>
+              <th>Error Rate</th>
+              <th>Avg Response</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td>1</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>295.50ms</td>
+              <td>319ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>294.00ms</td>
+              <td>309ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>10</td>
+              <td>10</td>
+              <td>10</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>291.80ms</td>
+              <td>309ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>324.28ms</td>
+              <td>371ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>320.44ms</td>
+              <td>371ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>25</td>
+              <td>25</td>
+              <td>25</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>333.96ms</td>
+              <td>383ms</td>
+            </tr>
+            
+            <tr>
+              <td>1</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>328.53ms</td>
+              <td>394ms</td>
+            </tr>
+            
+            <tr>
+              <td>2</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>331.37ms</td>
+              <td>380ms</td>
+            </tr>
+            
+            <tr>
+              <td>3</td>
+              <td>30</td>
+              <td>30</td>
+              <td>30</td>
+              <td>0</td>
+              <td>0.00%</td>
+              <td>336.93ms</td>
+              <td>406ms</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    
+    
+    <h2>All Wave Details</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Endpoint</th>
+          <th>Users</th>
+          <th>Wave</th>
+          <th>Requests</th>
+          <th>Successful</th>
+          <th>Failed</th>
+          <th>Error Rate</th>
+          <th>Avg Response</th>
+          <th>Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td>Home</td>
+          <td>10</td>
+          <td>1</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>860.40ms</td>
+          <td>889ms</td>
+        </tr>
+        
+        <tr>
+          <td>Home</td>
+          <td>10</td>
+          <td>2</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>288.60ms</td>
+          <td>297ms</td>
+        </tr>
+        
+        <tr>
+          <td>Home</td>
+          <td>10</td>
+          <td>3</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>293.20ms</td>
+          <td>315ms</td>
+        </tr>
+        
+        <tr>
+          <td>Home</td>
+          <td>25</td>
+          <td>1</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>635.16ms</td>
+          <td>898ms</td>
+        </tr>
+        
+        <tr>
+          <td>Home</td>
+          <td>25</td>
+          <td>2</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>325.48ms</td>
+          <td>369ms</td>
+        </tr>
+        
+        <tr>
+          <td>Home</td>
+          <td>25</td>
+          <td>3</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>325.88ms</td>
+          <td>374ms</td>
+        </tr>
+        
+        <tr>
+          <td>Home</td>
+          <td>30</td>
+          <td>1</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>419.40ms</td>
+          <td>896ms</td>
+        </tr>
+        
+        <tr>
+          <td>Home</td>
+          <td>30</td>
+          <td>2</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>325.03ms</td>
+          <td>373ms</td>
+        </tr>
+        
+        <tr>
+          <td>Home</td>
+          <td>30</td>
+          <td>3</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>331.20ms</td>
+          <td>396ms</td>
+        </tr>
+        
+        <tr>
+          <td>About</td>
+          <td>10</td>
+          <td>1</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>292.50ms</td>
+          <td>309ms</td>
+        </tr>
+        
+        <tr>
+          <td>About</td>
+          <td>10</td>
+          <td>2</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>291.40ms</td>
+          <td>307ms</td>
+        </tr>
+        
+        <tr>
+          <td>About</td>
+          <td>10</td>
+          <td>3</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>288.90ms</td>
+          <td>311ms</td>
+        </tr>
+        
+        <tr>
+          <td>About</td>
+          <td>25</td>
+          <td>1</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>320.12ms</td>
+          <td>366ms</td>
+        </tr>
+        
+        <tr>
+          <td>About</td>
+          <td>25</td>
+          <td>2</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>311.00ms</td>
+          <td>358ms</td>
+        </tr>
+        
+        <tr>
+          <td>About</td>
+          <td>25</td>
+          <td>3</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>327.00ms</td>
+          <td>368ms</td>
+        </tr>
+        
+        <tr>
+          <td>About</td>
+          <td>30</td>
+          <td>1</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>329.30ms</td>
+          <td>387ms</td>
+        </tr>
+        
+        <tr>
+          <td>About</td>
+          <td>30</td>
+          <td>2</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>333.13ms</td>
+          <td>377ms</td>
+        </tr>
+        
+        <tr>
+          <td>About</td>
+          <td>30</td>
+          <td>3</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>322.97ms</td>
+          <td>379ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contacts</td>
+          <td>10</td>
+          <td>1</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>304.80ms</td>
+          <td>321ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contacts</td>
+          <td>10</td>
+          <td>2</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>299.30ms</td>
+          <td>310ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contacts</td>
+          <td>10</td>
+          <td>3</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>302.50ms</td>
+          <td>319ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contacts</td>
+          <td>25</td>
+          <td>1</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>331.28ms</td>
+          <td>371ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contacts</td>
+          <td>25</td>
+          <td>2</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>316.16ms</td>
+          <td>360ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contacts</td>
+          <td>25</td>
+          <td>3</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>313.64ms</td>
+          <td>349ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contacts</td>
+          <td>30</td>
+          <td>1</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>326.13ms</td>
+          <td>375ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contacts</td>
+          <td>30</td>
+          <td>2</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>336.47ms</td>
+          <td>390ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contacts</td>
+          <td>30</td>
+          <td>3</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>386.90ms</td>
+          <td>444ms</td>
+        </tr>
+        
+        <tr>
+          <td>Legislation</td>
+          <td>10</td>
+          <td>1</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>339.10ms</td>
+          <td>356ms</td>
+        </tr>
+        
+        <tr>
+          <td>Legislation</td>
+          <td>10</td>
+          <td>2</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>296.70ms</td>
+          <td>313ms</td>
+        </tr>
+        
+        <tr>
+          <td>Legislation</td>
+          <td>10</td>
+          <td>3</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>349.60ms</td>
+          <td>355ms</td>
+        </tr>
+        
+        <tr>
+          <td>Legislation</td>
+          <td>25</td>
+          <td>1</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>316.76ms</td>
+          <td>361ms</td>
+        </tr>
+        
+        <tr>
+          <td>Legislation</td>
+          <td>25</td>
+          <td>2</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>321.92ms</td>
+          <td>358ms</td>
+        </tr>
+        
+        <tr>
+          <td>Legislation</td>
+          <td>25</td>
+          <td>3</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>316.08ms</td>
+          <td>355ms</td>
+        </tr>
+        
+        <tr>
+          <td>Legislation</td>
+          <td>30</td>
+          <td>1</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>328.80ms</td>
+          <td>379ms</td>
+        </tr>
+        
+        <tr>
+          <td>Legislation</td>
+          <td>30</td>
+          <td>2</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>330.20ms</td>
+          <td>373ms</td>
+        </tr>
+        
+        <tr>
+          <td>Legislation</td>
+          <td>30</td>
+          <td>3</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>322.57ms</td>
+          <td>369ms</td>
+        </tr>
+        
+        <tr>
+          <td>App</td>
+          <td>10</td>
+          <td>1</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>294.50ms</td>
+          <td>326ms</td>
+        </tr>
+        
+        <tr>
+          <td>App</td>
+          <td>10</td>
+          <td>2</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>286.70ms</td>
+          <td>298ms</td>
+        </tr>
+        
+        <tr>
+          <td>App</td>
+          <td>10</td>
+          <td>3</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>290.70ms</td>
+          <td>314ms</td>
+        </tr>
+        
+        <tr>
+          <td>App</td>
+          <td>25</td>
+          <td>1</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>312.32ms</td>
+          <td>357ms</td>
+        </tr>
+        
+        <tr>
+          <td>App</td>
+          <td>25</td>
+          <td>2</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>307.92ms</td>
+          <td>343ms</td>
+        </tr>
+        
+        <tr>
+          <td>App</td>
+          <td>25</td>
+          <td>3</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>320.04ms</td>
+          <td>363ms</td>
+        </tr>
+        
+        <tr>
+          <td>App</td>
+          <td>30</td>
+          <td>1</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>325.53ms</td>
+          <td>384ms</td>
+        </tr>
+        
+        <tr>
+          <td>App</td>
+          <td>30</td>
+          <td>2</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>327.20ms</td>
+          <td>379ms</td>
+        </tr>
+        
+        <tr>
+          <td>App</td>
+          <td>30</td>
+          <td>3</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>322.50ms</td>
+          <td>372ms</td>
+        </tr>
+        
+        <tr>
+          <td>Dashboard</td>
+          <td>10</td>
+          <td>1</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>293.50ms</td>
+          <td>314ms</td>
+        </tr>
+        
+        <tr>
+          <td>Dashboard</td>
+          <td>10</td>
+          <td>2</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>290.20ms</td>
+          <td>308ms</td>
+        </tr>
+        
+        <tr>
+          <td>Dashboard</td>
+          <td>10</td>
+          <td>3</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>291.70ms</td>
+          <td>307ms</td>
+        </tr>
+        
+        <tr>
+          <td>Dashboard</td>
+          <td>25</td>
+          <td>1</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>318.24ms</td>
+          <td>372ms</td>
+        </tr>
+        
+        <tr>
+          <td>Dashboard</td>
+          <td>25</td>
+          <td>2</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>332.28ms</td>
+          <td>380ms</td>
+        </tr>
+        
+        <tr>
+          <td>Dashboard</td>
+          <td>25</td>
+          <td>3</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>319.08ms</td>
+          <td>365ms</td>
+        </tr>
+        
+        <tr>
+          <td>Dashboard</td>
+          <td>30</td>
+          <td>1</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>334.47ms</td>
+          <td>388ms</td>
+        </tr>
+        
+        <tr>
+          <td>Dashboard</td>
+          <td>30</td>
+          <td>2</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>333.43ms</td>
+          <td>380ms</td>
+        </tr>
+        
+        <tr>
+          <td>Dashboard</td>
+          <td>30</td>
+          <td>3</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>330.40ms</td>
+          <td>385ms</td>
+        </tr>
+        
+        <tr>
+          <td>Partners</td>
+          <td>10</td>
+          <td>1</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>294.30ms</td>
+          <td>317ms</td>
+        </tr>
+        
+        <tr>
+          <td>Partners</td>
+          <td>10</td>
+          <td>2</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>294.20ms</td>
+          <td>320ms</td>
+        </tr>
+        
+        <tr>
+          <td>Partners</td>
+          <td>10</td>
+          <td>3</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>296.40ms</td>
+          <td>312ms</td>
+        </tr>
+        
+        <tr>
+          <td>Partners</td>
+          <td>25</td>
+          <td>1</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>325.44ms</td>
+          <td>373ms</td>
+        </tr>
+        
+        <tr>
+          <td>Partners</td>
+          <td>25</td>
+          <td>2</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>331.56ms</td>
+          <td>369ms</td>
+        </tr>
+        
+        <tr>
+          <td>Partners</td>
+          <td>25</td>
+          <td>3</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>344.12ms</td>
+          <td>409ms</td>
+        </tr>
+        
+        <tr>
+          <td>Partners</td>
+          <td>30</td>
+          <td>1</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>332.80ms</td>
+          <td>381ms</td>
+        </tr>
+        
+        <tr>
+          <td>Partners</td>
+          <td>30</td>
+          <td>2</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>329.33ms</td>
+          <td>376ms</td>
+        </tr>
+        
+        <tr>
+          <td>Partners</td>
+          <td>30</td>
+          <td>3</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>331.73ms</td>
+          <td>386ms</td>
+        </tr>
+        
+        <tr>
+          <td>Users</td>
+          <td>10</td>
+          <td>1</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>437.00ms</td>
+          <td>766ms</td>
+        </tr>
+        
+        <tr>
+          <td>Users</td>
+          <td>10</td>
+          <td>2</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>333.20ms</td>
+          <td>354ms</td>
+        </tr>
+        
+        <tr>
+          <td>Users</td>
+          <td>10</td>
+          <td>3</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>328.40ms</td>
+          <td>351ms</td>
+        </tr>
+        
+        <tr>
+          <td>Users</td>
+          <td>25</td>
+          <td>1</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>417.04ms</td>
+          <td>1649ms</td>
+        </tr>
+        
+        <tr>
+          <td>Users</td>
+          <td>25</td>
+          <td>2</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>346.64ms</td>
+          <td>837ms</td>
+        </tr>
+        
+        <tr>
+          <td>Users</td>
+          <td>25</td>
+          <td>3</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>338.60ms</td>
+          <td>757ms</td>
+        </tr>
+        
+        <tr>
+          <td>Users</td>
+          <td>30</td>
+          <td>1</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>366.23ms</td>
+          <td>437ms</td>
+        </tr>
+        
+        <tr>
+          <td>Users</td>
+          <td>30</td>
+          <td>2</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>368.60ms</td>
+          <td>841ms</td>
+        </tr>
+        
+        <tr>
+          <td>Users</td>
+          <td>30</td>
+          <td>3</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>382.23ms</td>
+          <td>815ms</td>
+        </tr>
+        
+        <tr>
+          <td>Analytics</td>
+          <td>10</td>
+          <td>1</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>374.60ms</td>
+          <td>805ms</td>
+        </tr>
+        
+        <tr>
+          <td>Analytics</td>
+          <td>10</td>
+          <td>2</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>336.80ms</td>
+          <td>363ms</td>
+        </tr>
+        
+        <tr>
+          <td>Analytics</td>
+          <td>10</td>
+          <td>3</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>327.20ms</td>
+          <td>351ms</td>
+        </tr>
+        
+        <tr>
+          <td>Analytics</td>
+          <td>25</td>
+          <td>1</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>351.56ms</td>
+          <td>805ms</td>
+        </tr>
+        
+        <tr>
+          <td>Analytics</td>
+          <td>25</td>
+          <td>2</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>359.68ms</td>
+          <td>803ms</td>
+        </tr>
+        
+        <tr>
+          <td>Analytics</td>
+          <td>25</td>
+          <td>3</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>362.04ms</td>
+          <td>794ms</td>
+        </tr>
+        
+        <tr>
+          <td>Analytics</td>
+          <td>30</td>
+          <td>1</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>376.90ms</td>
+          <td>780ms</td>
+        </tr>
+        
+        <tr>
+          <td>Analytics</td>
+          <td>30</td>
+          <td>2</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>370.07ms</td>
+          <td>795ms</td>
+        </tr>
+        
+        <tr>
+          <td>Analytics</td>
+          <td>30</td>
+          <td>3</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>376.10ms</td>
+          <td>798ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contracts</td>
+          <td>10</td>
+          <td>1</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>330.70ms</td>
+          <td>354ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contracts</td>
+          <td>10</td>
+          <td>2</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>349.40ms</td>
+          <td>371ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contracts</td>
+          <td>10</td>
+          <td>3</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>445.50ms</td>
+          <td>742ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contracts</td>
+          <td>25</td>
+          <td>1</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>377.20ms</td>
+          <td>771ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contracts</td>
+          <td>25</td>
+          <td>2</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>337.92ms</td>
+          <td>646ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contracts</td>
+          <td>25</td>
+          <td>3</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>361.68ms</td>
+          <td>753ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contracts</td>
+          <td>30</td>
+          <td>1</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>347.10ms</td>
+          <td>730ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contracts</td>
+          <td>30</td>
+          <td>2</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>366.30ms</td>
+          <td>753ms</td>
+        </tr>
+        
+        <tr>
+          <td>Contracts</td>
+          <td>30</td>
+          <td>3</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>373.83ms</td>
+          <td>755ms</td>
+        </tr>
+        
+        <tr>
+          <td>Risks</td>
+          <td>10</td>
+          <td>1</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>448.60ms</td>
+          <td>742ms</td>
+        </tr>
+        
+        <tr>
+          <td>Risks</td>
+          <td>10</td>
+          <td>2</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>295.20ms</td>
+          <td>313ms</td>
+        </tr>
+        
+        <tr>
+          <td>Risks</td>
+          <td>10</td>
+          <td>3</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>291.60ms</td>
+          <td>307ms</td>
+        </tr>
+        
+        <tr>
+          <td>Risks</td>
+          <td>25</td>
+          <td>1</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>317.60ms</td>
+          <td>361ms</td>
+        </tr>
+        
+        <tr>
+          <td>Risks</td>
+          <td>25</td>
+          <td>2</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>330.72ms</td>
+          <td>379ms</td>
+        </tr>
+        
+        <tr>
+          <td>Risks</td>
+          <td>25</td>
+          <td>3</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>327.56ms</td>
+          <td>366ms</td>
+        </tr>
+        
+        <tr>
+          <td>Risks</td>
+          <td>30</td>
+          <td>1</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>322.50ms</td>
+          <td>372ms</td>
+        </tr>
+        
+        <tr>
+          <td>Risks</td>
+          <td>30</td>
+          <td>2</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>329.27ms</td>
+          <td>385ms</td>
+        </tr>
+        
+        <tr>
+          <td>Risks</td>
+          <td>30</td>
+          <td>3</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>331.03ms</td>
+          <td>384ms</td>
+        </tr>
+        
+        <tr>
+          <td>Losses</td>
+          <td>10</td>
+          <td>1</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>295.50ms</td>
+          <td>319ms</td>
+        </tr>
+        
+        <tr>
+          <td>Losses</td>
+          <td>10</td>
+          <td>2</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>294.00ms</td>
+          <td>309ms</td>
+        </tr>
+        
+        <tr>
+          <td>Losses</td>
+          <td>10</td>
+          <td>3</td>
+          <td>10</td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>291.80ms</td>
+          <td>309ms</td>
+        </tr>
+        
+        <tr>
+          <td>Losses</td>
+          <td>25</td>
+          <td>1</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>324.28ms</td>
+          <td>371ms</td>
+        </tr>
+        
+        <tr>
+          <td>Losses</td>
+          <td>25</td>
+          <td>2</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>320.44ms</td>
+          <td>371ms</td>
+        </tr>
+        
+        <tr>
+          <td>Losses</td>
+          <td>25</td>
+          <td>3</td>
+          <td>25</td>
+          <td>25</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>333.96ms</td>
+          <td>383ms</td>
+        </tr>
+        
+        <tr>
+          <td>Losses</td>
+          <td>30</td>
+          <td>1</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>328.53ms</td>
+          <td>394ms</td>
+        </tr>
+        
+        <tr>
+          <td>Losses</td>
+          <td>30</td>
+          <td>2</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>331.37ms</td>
+          <td>380ms</td>
+        </tr>
+        
+        <tr>
+          <td>Losses</td>
+          <td>30</td>
+          <td>3</td>
+          <td>30</td>
+          <td>30</td>
+          <td>0</td>
+          <td>0.00%</td>
+          <td>336.93ms</td>
+          <td>406ms</td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+  
+  <script>
+    // Create endpoint comparison chart
+    const createEndpointComparisonChart = () => {
+      const ctx = document.getElementById('endpointComparisonChart').getContext('2d');
+      
+      const endpoints = ["Home","About","Contacts","Legislation","App","Dashboard","Partners","Users","Analytics","Contracts","Risks","Losses"];
+      const responseTimesData = [404.37948717948717,319.1948717948718,331.16923076923075,323.94871794871796,315.2974358974359,322.7846153846154,326.6307692307692,369.5128205128205,363.64102564102564,363.04102564102567,329.4102564102564,324.02564102564105];
+      const errorRateData = [0,0,0,0,0,0,0,0,0,0,0,0];
+      
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: endpoints,
+          datasets: [
+            {
+              label: 'Average Response Time (ms)',
+              data: responseTimesData,
+              backgroundColor: 'rgba(54, 162, 235, 0.7)',
+              borderColor: 'rgb(54, 162, 235)',
+              borderWidth: 1
+            },
+            {
+              label: 'Error Rate (%)',
+              data: errorRateData,
+              backgroundColor: 'rgba(255, 99, 132, 0.7)',
+              borderColor: 'rgb(255, 99, 132)',
+              borderWidth: 1,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            },
+            y1: {
+              beginAtZero: true,
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              title: {
+                display: true,
+                text: 'Error Rate (%)'
+              }
+            }
+          }
+        }
+      });
+    };
+    
+    // Create individual endpoint charts
+    
+    const createEndpointChartHome = () => {
+      const ctx = document.getElementById('endpointChart-Home').getContext('2d');
+      
+      const userCounts = [10,25,30];
+      const waveNumbers = [1,2,3];
+      
+      // Group response times by user count and wave
+      const responseTimesByUserCount = {};
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][0] = 860.4;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][1] = 288.6;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][2] = 293.2;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][0] = 635.16;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][1] = 325.48;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][2] = 325.88;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][0] = 419.4;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][1] = 325.03333333333336;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][2] = 331.2;
+      
+      
+      const datasets = userCounts.map(userCount => ({
+        label: userCount + ' Users',
+        data: responseTimesByUserCount[userCount] || [],
+        borderColor: getRandomColor(),
+        tension: 0.1,
+        fill: false
+      }));
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: waveNumbers.map(n => 'Wave ' + n),
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Response Times by Wave and User Count'
+            }
+          }
+        }
+      });
+    };
+    
+
+    const createEndpointChartAbout = () => {
+      const ctx = document.getElementById('endpointChart-About').getContext('2d');
+      
+      const userCounts = [10,25,30];
+      const waveNumbers = [1,2,3];
+      
+      // Group response times by user count and wave
+      const responseTimesByUserCount = {};
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][0] = 292.5;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][1] = 291.4;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][2] = 288.9;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][0] = 320.12;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][1] = 311;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][2] = 327;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][0] = 329.3;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][1] = 333.1333333333333;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][2] = 322.96666666666664;
+      
+      
+      const datasets = userCounts.map(userCount => ({
+        label: userCount + ' Users',
+        data: responseTimesByUserCount[userCount] || [],
+        borderColor: getRandomColor(),
+        tension: 0.1,
+        fill: false
+      }));
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: waveNumbers.map(n => 'Wave ' + n),
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Response Times by Wave and User Count'
+            }
+          }
+        }
+      });
+    };
+    
+
+    const createEndpointChartContacts = () => {
+      const ctx = document.getElementById('endpointChart-Contacts').getContext('2d');
+      
+      const userCounts = [10,25,30];
+      const waveNumbers = [1,2,3];
+      
+      // Group response times by user count and wave
+      const responseTimesByUserCount = {};
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][0] = 304.8;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][1] = 299.3;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][2] = 302.5;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][0] = 331.28;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][1] = 316.16;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][2] = 313.64;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][0] = 326.1333333333333;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][1] = 336.46666666666664;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][2] = 386.9;
+      
+      
+      const datasets = userCounts.map(userCount => ({
+        label: userCount + ' Users',
+        data: responseTimesByUserCount[userCount] || [],
+        borderColor: getRandomColor(),
+        tension: 0.1,
+        fill: false
+      }));
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: waveNumbers.map(n => 'Wave ' + n),
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Response Times by Wave and User Count'
+            }
+          }
+        }
+      });
+    };
+    
+
+    const createEndpointChartLegislation = () => {
+      const ctx = document.getElementById('endpointChart-Legislation').getContext('2d');
+      
+      const userCounts = [10,25,30];
+      const waveNumbers = [1,2,3];
+      
+      // Group response times by user count and wave
+      const responseTimesByUserCount = {};
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][0] = 339.1;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][1] = 296.7;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][2] = 349.6;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][0] = 316.76;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][1] = 321.92;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][2] = 316.08;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][0] = 328.8;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][1] = 330.2;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][2] = 322.56666666666666;
+      
+      
+      const datasets = userCounts.map(userCount => ({
+        label: userCount + ' Users',
+        data: responseTimesByUserCount[userCount] || [],
+        borderColor: getRandomColor(),
+        tension: 0.1,
+        fill: false
+      }));
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: waveNumbers.map(n => 'Wave ' + n),
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Response Times by Wave and User Count'
+            }
+          }
+        }
+      });
+    };
+    
+
+    const createEndpointChartApp = () => {
+      const ctx = document.getElementById('endpointChart-App').getContext('2d');
+      
+      const userCounts = [10,25,30];
+      const waveNumbers = [1,2,3];
+      
+      // Group response times by user count and wave
+      const responseTimesByUserCount = {};
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][0] = 294.5;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][1] = 286.7;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][2] = 290.7;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][0] = 312.32;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][1] = 307.92;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][2] = 320.04;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][0] = 325.53333333333336;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][1] = 327.2;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][2] = 322.5;
+      
+      
+      const datasets = userCounts.map(userCount => ({
+        label: userCount + ' Users',
+        data: responseTimesByUserCount[userCount] || [],
+        borderColor: getRandomColor(),
+        tension: 0.1,
+        fill: false
+      }));
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: waveNumbers.map(n => 'Wave ' + n),
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Response Times by Wave and User Count'
+            }
+          }
+        }
+      });
+    };
+    
+
+    const createEndpointChartDashboard = () => {
+      const ctx = document.getElementById('endpointChart-Dashboard').getContext('2d');
+      
+      const userCounts = [10,25,30];
+      const waveNumbers = [1,2,3];
+      
+      // Group response times by user count and wave
+      const responseTimesByUserCount = {};
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][0] = 293.5;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][1] = 290.2;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][2] = 291.7;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][0] = 318.24;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][1] = 332.28;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][2] = 319.08;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][0] = 334.46666666666664;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][1] = 333.43333333333334;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][2] = 330.4;
+      
+      
+      const datasets = userCounts.map(userCount => ({
+        label: userCount + ' Users',
+        data: responseTimesByUserCount[userCount] || [],
+        borderColor: getRandomColor(),
+        tension: 0.1,
+        fill: false
+      }));
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: waveNumbers.map(n => 'Wave ' + n),
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Response Times by Wave and User Count'
+            }
+          }
+        }
+      });
+    };
+    
+
+    const createEndpointChartPartners = () => {
+      const ctx = document.getElementById('endpointChart-Partners').getContext('2d');
+      
+      const userCounts = [10,25,30];
+      const waveNumbers = [1,2,3];
+      
+      // Group response times by user count and wave
+      const responseTimesByUserCount = {};
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][0] = 294.3;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][1] = 294.2;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][2] = 296.4;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][0] = 325.44;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][1] = 331.56;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][2] = 344.12;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][0] = 332.8;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][1] = 329.3333333333333;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][2] = 331.73333333333335;
+      
+      
+      const datasets = userCounts.map(userCount => ({
+        label: userCount + ' Users',
+        data: responseTimesByUserCount[userCount] || [],
+        borderColor: getRandomColor(),
+        tension: 0.1,
+        fill: false
+      }));
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: waveNumbers.map(n => 'Wave ' + n),
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Response Times by Wave and User Count'
+            }
+          }
+        }
+      });
+    };
+    
+
+    const createEndpointChartUsers = () => {
+      const ctx = document.getElementById('endpointChart-Users').getContext('2d');
+      
+      const userCounts = [10,25,30];
+      const waveNumbers = [1,2,3];
+      
+      // Group response times by user count and wave
+      const responseTimesByUserCount = {};
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][0] = 437;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][1] = 333.2;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][2] = 328.4;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][0] = 417.04;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][1] = 346.64;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][2] = 338.6;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][0] = 366.23333333333335;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][1] = 368.6;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][2] = 382.23333333333335;
+      
+      
+      const datasets = userCounts.map(userCount => ({
+        label: userCount + ' Users',
+        data: responseTimesByUserCount[userCount] || [],
+        borderColor: getRandomColor(),
+        tension: 0.1,
+        fill: false
+      }));
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: waveNumbers.map(n => 'Wave ' + n),
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Response Times by Wave and User Count'
+            }
+          }
+        }
+      });
+    };
+    
+
+    const createEndpointChartAnalytics = () => {
+      const ctx = document.getElementById('endpointChart-Analytics').getContext('2d');
+      
+      const userCounts = [10,25,30];
+      const waveNumbers = [1,2,3];
+      
+      // Group response times by user count and wave
+      const responseTimesByUserCount = {};
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][0] = 374.6;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][1] = 336.8;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][2] = 327.2;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][0] = 351.56;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][1] = 359.68;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][2] = 362.04;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][0] = 376.9;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][1] = 370.06666666666666;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][2] = 376.1;
+      
+      
+      const datasets = userCounts.map(userCount => ({
+        label: userCount + ' Users',
+        data: responseTimesByUserCount[userCount] || [],
+        borderColor: getRandomColor(),
+        tension: 0.1,
+        fill: false
+      }));
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: waveNumbers.map(n => 'Wave ' + n),
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Response Times by Wave and User Count'
+            }
+          }
+        }
+      });
+    };
+    
+
+    const createEndpointChartContracts = () => {
+      const ctx = document.getElementById('endpointChart-Contracts').getContext('2d');
+      
+      const userCounts = [10,25,30];
+      const waveNumbers = [1,2,3];
+      
+      // Group response times by user count and wave
+      const responseTimesByUserCount = {};
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][0] = 330.7;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][1] = 349.4;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][2] = 445.5;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][0] = 377.2;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][1] = 337.92;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][2] = 361.68;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][0] = 347.1;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][1] = 366.3;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][2] = 373.8333333333333;
+      
+      
+      const datasets = userCounts.map(userCount => ({
+        label: userCount + ' Users',
+        data: responseTimesByUserCount[userCount] || [],
+        borderColor: getRandomColor(),
+        tension: 0.1,
+        fill: false
+      }));
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: waveNumbers.map(n => 'Wave ' + n),
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Response Times by Wave and User Count'
+            }
+          }
+        }
+      });
+    };
+    
+
+    const createEndpointChartRisks = () => {
+      const ctx = document.getElementById('endpointChart-Risks').getContext('2d');
+      
+      const userCounts = [10,25,30];
+      const waveNumbers = [1,2,3];
+      
+      // Group response times by user count and wave
+      const responseTimesByUserCount = {};
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][0] = 448.6;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][1] = 295.2;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][2] = 291.6;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][0] = 317.6;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][1] = 330.72;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][2] = 327.56;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][0] = 322.5;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][1] = 329.26666666666665;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][2] = 331.03333333333336;
+      
+      
+      const datasets = userCounts.map(userCount => ({
+        label: userCount + ' Users',
+        data: responseTimesByUserCount[userCount] || [],
+        borderColor: getRandomColor(),
+        tension: 0.1,
+        fill: false
+      }));
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: waveNumbers.map(n => 'Wave ' + n),
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Response Times by Wave and User Count'
+            }
+          }
+        }
+      });
+    };
+    
+
+    const createEndpointChartLosses = () => {
+      const ctx = document.getElementById('endpointChart-Losses').getContext('2d');
+      
+      const userCounts = [10,25,30];
+      const waveNumbers = [1,2,3];
+      
+      // Group response times by user count and wave
+      const responseTimesByUserCount = {};
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][0] = 295.5;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][1] = 294;
+      
+        if (!responseTimesByUserCount[10]) {
+          responseTimesByUserCount[10] = [];
+        }
+        responseTimesByUserCount[10][2] = 291.8;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][0] = 324.28;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][1] = 320.44;
+      
+        if (!responseTimesByUserCount[25]) {
+          responseTimesByUserCount[25] = [];
+        }
+        responseTimesByUserCount[25][2] = 333.96;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][0] = 328.53333333333336;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][1] = 331.3666666666667;
+      
+        if (!responseTimesByUserCount[30]) {
+          responseTimesByUserCount[30] = [];
+        }
+        responseTimesByUserCount[30][2] = 336.93333333333334;
+      
+      
+      const datasets = userCounts.map(userCount => ({
+        label: userCount + ' Users',
+        data: responseTimesByUserCount[userCount] || [],
+        borderColor: getRandomColor(),
+        tension: 0.1,
+        fill: false
+      }));
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: waveNumbers.map(n => 'Wave ' + n),
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Response Time (ms)'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Response Times by Wave and User Count'
+            }
+          }
+        }
+      });
+    };
+    
+    
+    // Helper function for random colors
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+    
+    // Initialize charts when page loads
+    window.onload = () => {
+      createEndpointComparisonChart();
+      createEndpointChartHome();
+createEndpointChartAbout();
+createEndpointChartContacts();
+createEndpointChartLegislation();
+createEndpointChartApp();
+createEndpointChartDashboard();
+createEndpointChartPartners();
+createEndpointChartUsers();
+createEndpointChartAnalytics();
+createEndpointChartContracts();
+createEndpointChartRisks();
+createEndpointChartLosses();
+    };
+  </script>
+</body>
+</html>

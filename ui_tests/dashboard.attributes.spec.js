@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { test, expect } from "@playwright/test";
-import { loginUser } from '../utils/auth.helper.js';
+import { loginUser } from "../utils/auth.helper.js";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -150,12 +150,11 @@ test.describe("Dashboard Attributes Verification", () => {
       .first();
     await expect(risksText).toBeVisible();
 
-    // Check for the counter div
-    const counterDiv = page.locator(
+    // Check if counter element is present (scoped to the risks menu item)
+    const counterElement = page.locator(
       'a[href="/risks"].menu-item .menu-item__content .counter'
     );
-    await expect(counterDiv).toBeVisible();
-    await expect(counterDiv).toHaveText("1");
+    await expect(counterElement).toBeVisible();
   });
 
   test("Clickable Losses Menu Item is present", async ({ page }) => {

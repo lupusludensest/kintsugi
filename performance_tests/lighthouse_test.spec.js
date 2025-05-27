@@ -17,7 +17,7 @@ async function runLighthouse(url, options, config = null) {
     // Ensure directories exist
     if (!fs.existsSync(userDataDir)) {
         fs.mkdirSync(userDataDir, { recursive: true });
-    }F
+    }
 
     try {
         chrome = await chromeLauncher.launch({ 

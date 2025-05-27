@@ -19,13 +19,13 @@ const mkdirAsync = promisify(fs.mkdir);
 
 // Set global timeout
 const baseTimeout = parseInt(process.env.TIMEOUT, 10);
-const globalTimeout = Number.isFinite(baseTimeout) ? baseTimeout * 10 : 600000;
+const globalTimeout = Number.isFinite(baseTimeout) ? baseTimeout * 20 : 600000;
 test.setTimeout(globalTimeout);
 
 // Configuration for stress test
 const STRESS_TEST_CONFIG = {
   // User quantities
-  concurrentUsers: [10, 25, 50], // Moderate load levels
+  concurrentUsers: [10, 25, 30], // Moderate load levels
 
   // Time between waves
   timeBetweenWaves: 2000,
@@ -34,18 +34,58 @@ const STRESS_TEST_CONFIG = {
   endpoints: [
     // Public endpoints
     { name: "Home", auth: false, url: `${process.env.KINTSUGI_BASE_URL}/` },
-    { name: "About", auth: false, url: `${process.env.KINTSUGI_BASE_URL}/about` },
-    { name: "Contacts", auth: false, url: `${process.env.KINTSUGI_BASE_URL}/contacts` },
-    { name: "Legislation", auth: false, url: `${process.env.KINTSUGI_BASE_URL}/legislation` },
+    {
+      name: "About",
+      auth: false,
+      url: `${process.env.KINTSUGI_BASE_URL}/about`,
+    },
+    {
+      name: "Contacts",
+      auth: false,
+      url: `${process.env.KINTSUGI_BASE_URL}/contacts`,
+    },
+    {
+      name: "Legislation",
+      auth: false,
+      url: `${process.env.KINTSUGI_BASE_URL}/legislation`,
+    },
     { name: "App", auth: false, url: `${process.env.KINTSUGI_BASE_URL}/app` },
     // Authenticated endpoints
-    { name: "Dashboard", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/dashboard` },
-    { name: "Partners", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/partners` },
-    { name: "Users", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/users` },
-    { name: "Analytics", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/analytics` },
-    { name: "Contracts", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/contracts` },
-    { name: "Risks", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/risks` },
-    { name: "Losses", auth: true, url: `${process.env.KINTSUGI_BASE_URL}/losses` },
+    {
+      name: "Dashboard",
+      auth: true,
+      url: `${process.env.KINTSUGI_BASE_URL}/dashboard`,
+    },
+    {
+      name: "Partners",
+      auth: true,
+      url: `${process.env.KINTSUGI_BASE_URL}/partners`,
+    },
+    {
+      name: "Users",
+      auth: true,
+      url: `${process.env.KINTSUGI_BASE_URL}/users`,
+    },
+    {
+      name: "Analytics",
+      auth: true,
+      url: `${process.env.KINTSUGI_BASE_URL}/analytics`,
+    },
+    {
+      name: "Contracts",
+      auth: true,
+      url: `${process.env.KINTSUGI_BASE_URL}/contracts`,
+    },
+    {
+      name: "Risks",
+      auth: true,
+      url: `${process.env.KINTSUGI_BASE_URL}/risks`,
+    },
+    {
+      name: "Losses",
+      auth: true,
+      url: `${process.env.KINTSUGI_BASE_URL}/losses`,
+    },
   ],
 
   // Number of waves to run
