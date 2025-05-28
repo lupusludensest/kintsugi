@@ -1,7 +1,7 @@
 {
   "name": "kintsugi",
   "version": "1.0.0",
-  "description": "UI, API, STRESS, PERFORMANCE testing. kintsugi.su,  Comprehensive digital solution to improve the efficiency and reliability of insurance business for the benefit of insurers and policyholders.",
+  "description": "API, PERFORMANCE, STRESS, UI testing of kintsugi.su,  Comprehensive digital solution to improve the efficiency and reliability of insurance business for the benefit of insurers and policyholders.",
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
