@@ -89,7 +89,7 @@ const STRESS_TEST_CONFIG = {
   ],
 
   // Number of waves to run
-  waves: 3,
+  waves: 5, // 3,
 
   // Testing mode: 'sequential' or 'concurrent'
   endpointTestMode: "sequential",
