@@ -1,6 +1,20 @@
 # Kintsugi Stress Tests
 
-This directory contains stress tests for the Kintsugi website to evaluate performance under load.
+This directory contains stress tests for evaluating the Kintsugi website's performance under load.
+
+## Structure
+```
+stress_tests/
+├── load_test.spec.js    # Main stress test implementation
+├── results/             # Test result reports
+└── README.md           # This file
+```
+
+## Prerequisites
+- Node.js installed
+- Project dependencies installed (`npm install`)
+- Environment variables configured in `.env`
+- Adequate system resources for load testing
 
 ## Running Tests
 
@@ -18,10 +32,27 @@ npx playwright test stress_tests/load_test.spec.js --headed --config=playwright.
 npx playwright test stress_tests/load_test.spec.js --debug --config=playwright.stress.config.js
 ```
 
+## Configuration
+- Load test parameters in `playwright.stress.config.js`
+- Environment variables in `.env`
+- Default timeouts can be adjusted per run
+
+## Test Scenarios
+- Multi-endpoint stress testing
+- Emergency response testing
+- Concurrent user simulation
+- Resource usage monitoring
+
 ## Viewing Reports
-```
-# To see a stress test report, go to:
-E:\Gurov_SSD_256\IT\Testing\Automation_08_09_2019\kintsugi\stress_tests\results
-and click on the latest HTML file to open it in your browser.
-```
+Reports are generated in the `results/` directory:
+- HTML reports for visual analysis
+- JSON reports for programmatic processing
+- Each run creates a timestamped report file
+
+## Performance Metrics
+The tests measure:
+- Response times
+- Error rates
+- Concurrent user limits
+- Resource utilization
 

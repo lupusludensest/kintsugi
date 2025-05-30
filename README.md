@@ -3,23 +3,26 @@
 ## Framework Structure
 ```
 kintsugi/
-├── api_tests/
+├── api_tests/                    # API endpoint tests
+│   ├── config
 │   ├── tests/
-│   ├── helpers/
 │   └── README.md
-├── performance_tests/
+├── performance_tests/            # Lighthouse performance tests
 │   ├── tests/
 │   ├── lighthouse_test_results/
 │   └── README.md
-├── playwright-report/
-│   ├── index.html
-│   └── data/
-├── ui_tests/
+├── stress_tests/                 # Load and stress testing
+│   ├── tests/
+│   ├── results/
+│   └── README.md
+├── ui_tests/                     # Browser-based UI tests
 │   ├── tests/
 │   ├── pages/
 │   ├── fixtures/
 │   └── README.md
-├── playwright.config.js
+├── utils/                        # Shared utilities
+├── playwright.config.js          # Main configuration
+├── playwright.stress.config.js   # Stress test configuration
 ├── package.json
 └── README.md
 ```
