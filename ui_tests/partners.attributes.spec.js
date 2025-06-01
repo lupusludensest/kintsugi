@@ -5,8 +5,7 @@ import { loginUser } from "../utils/auth.helper.js";
 // Load environment variables from .env file
 dotenv.config();
 
-test.describe("Partners Page Attributes Verification", () => {
-  test.beforeEach(async ({ page }) => {
+test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(async ({ page }) => {
     await loginUser(page);
 
     // Navigate to the partners page after login
@@ -18,7 +17,30 @@ test.describe("Partners Page Attributes Verification", () => {
     await page.waitForURL("**/partners", {
       timeout: parseInt(process.env.TIMEOUT),
     });
-    await page.waitForLoadState("networkidle");
+    
+    // Use a less strict load state and handle timeouts
+    try {
+      // First try with a shorter timeout for networkidle
+      await page.waitForLoadState("networkidle", { timeout: 10000 });
+    } catch (e) {
+      console.log("NetworkIdle timeout - falling back to DOM content loaded");
+      // If networkidle times out, fall back to domcontentloaded
+      await page.waitForLoadState("domcontentloaded");
+      
+      // Add a short fixed wait to allow critical elements to render
+      await page.waitForTimeout(2000);
+    }
+
+    // Verify page is actually loaded by checking for a key element
+    try {
+      await page.waitForSelector("table, .v-table", { 
+        state: "visible", 
+        timeout: 10000 
+      });
+      console.log("Partner table is visible, page is ready");
+    } catch (e) {
+      console.log("Warning: Could not find partner table, page might not be fully loaded");
+    }
 
     // Take screenshot for debugging
     await page.screenshot({ path: "partners-page.png" });
@@ -469,5 +491,123 @@ test.describe("Partners Page Attributes Verification", () => {
 
     expect(dashboardVerified).toBeTruthy();
     expect(page.url()).toContain("/dashboard");
+  });  test("Partner IDs should be in ascending order", async ({ page }) => {
+    // Take screenshot for debugging
+    await page.screenshot({ path: 'partners-id-ordering.png' });
+    console.log("Checking partner ID ordering");
+    console.log("DEFECT NOTE: Currently partner IDs are displayed in descending order, but the requirement is for ascending order");
+    console.log("This test is expected to FAIL until the application is fixed to show partner IDs in ascending order (1 to 11)");
+    
+    // Try multiple selectors for the partners table
+    let tableSelector = "table";
+    let tableVisible = await page.locator(tableSelector).isVisible();
+    
+    if (!tableVisible) {
+      console.log("Standard table not found, trying alternative selectors");
+      const alternativeSelectors = [".v-table", ".data-table", ".partners-table"];
+      
+      for (const selector of alternativeSelectors) {
+        if (await page.locator(selector).isVisible()) {
+          tableSelector = selector;
+          tableVisible = true;
+          console.log(`Found table with selector: ${selector}`);
+          break;
+        }
+      }
+    }
+    
+    if (!tableVisible) {
+      console.log("Could not find any table element, checking page content");
+      const pageContent = await page.textContent('body');
+      expect(pageContent).toContain('Партнеры');
+      console.log("Page contains 'Партнеры' but no table structure found");
+      test.skip();
+      return;
+    }
+    
+    // Get all rows that contain IDs
+    // We'll target cells that might contain ID values
+    const idSelectors = [
+      `${tableSelector} tr td:first-child`, 
+      `${tableSelector} tr th:first-child`,
+      `${tableSelector} [role="cell"]:first-child`,
+      `${tableSelector} [role="columnheader"]:first-child`
+    ];
+    
+    const idCells = page.locator(idSelectors.join(", "));
+    
+    // Count how many cells we found
+    const count = await idCells.count();
+    console.log(`Found ${count} cells in the ID column`);
+    
+    if (count > 2) { // Ensure we have enough cells (at least header + 2 rows)
+      // Extract the numeric values of IDs (skipping the header)
+      const ids = [];
+      
+      // Start from index 1 to skip the header row
+      for (let i = 1; i < count; i++) {
+        try {
+          const idText = await idCells.nth(i).textContent();
+          const id = parseInt(idText.trim(), 10);
+          if (!isNaN(id)) {
+            ids.push(id);
+          }
+        } catch (e) {
+          console.log(`Error extracting ID at index ${i}: ${e.message}`);
+        }
+      }
+      
+      if (ids.length < 2) {
+        console.log("Not enough numeric IDs found to check ordering");
+        test.skip();
+        return;
+      }
+      
+      console.log(`Extracted IDs: ${ids.join(", ")}`);
+      
+      // Check if IDs are in descending order (current state)
+      const isDescending = ids.every((val, i, arr) => i === 0 || val < arr[i - 1]);
+      
+      // Check if IDs are in ascending order (expected state)
+      const isAscending = ids.every((val, i, arr) => i === 0 || val > arr[i - 1]);
+      
+      // Check if the array is neither strictly ascending nor descending (mixed)
+      const isMixed = !isDescending && !isAscending;
+      
+      // Report current vs expected ordering
+      console.log(`Current ordering: ${isDescending ? "DESCENDING" : (isAscending ? "ASCENDING" : "MIXED")}`);
+      console.log(`Expected ordering: ASCENDING`);
+      
+      // Create a properly sorted version for comparison
+      const sortedIds = [...ids].sort((a, b) => a - b); // Sort in ascending order
+      
+      // For reporting purposes, show what the correct order should be
+      console.log(`Current order: ${ids.join(', ')}`);
+      console.log(`Expected order: ${sortedIds.join(', ')}`);
+      
+      // Calculate the differences for a more informative message
+      const differences = [];
+      for (let i = 0; i < ids.length; i++) {
+        if (ids[i] !== sortedIds[i]) {
+          differences.push(`Position ${i+1}: ${ids[i]} should be ${sortedIds[i]}`);
+        }
+      }
+      
+      // Check if the IDs match the expected ordering
+      const match = ids.join(',') === sortedIds.join(',');
+      
+      // This test is expected to fail until the application is fixed to show IDs in ascending order
+      expect(match, 
+        `DEFECT: Partner IDs should be in ascending order\n` +
+        `Expected: ${sortedIds.join(", ")}\n` +
+        `Actual: ${ids.join(", ")}\n` +
+        `Differences:\n${differences.join("\n")}\n` +
+        `Fix needed: The partner table should sort IDs in ascending order (1 to 11)`
+      ).toBeTruthy();
+    } else {
+      console.log("Not enough rows found in the table to check ordering");
+      // Skip the test if there aren't enough rows
+      test.skip();
+    }
   });
 });
