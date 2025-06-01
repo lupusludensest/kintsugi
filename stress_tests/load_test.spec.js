@@ -25,7 +25,7 @@ test.setTimeout(globalTimeout);
 // Configuration for stress test
 const STRESS_TEST_CONFIG = {
   // User quantities
-  concurrentUsers: [10, 25, 50], // Moderate load levels
+  concurrentUsers: [10, 50, 100], // Moderate load levels
 
   // Time between waves
   timeBetweenWaves: 2000,
