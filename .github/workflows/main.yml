@@ -89,7 +89,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: Kintsugi Test Results - ${{ needs.test.result }}
-          to: gurovvic@gmail.com,rodionigor@gmail.com
+          to: gurovvic@gmail.com,rodionigor@gmail.com, svetlanalegkaya15@gmail.com
           from: GitHub Actions
           html_body: |
             <h2>Kintsugi Test Suite Results</h2>
