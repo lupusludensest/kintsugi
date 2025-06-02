@@ -2,12 +2,12 @@ name: Kintsugi Test Suite
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
   schedule:
-    - cron: '0 7 * * *'  # Runs at 7:00 AM UTC (2:00 AM EST)
-  workflow_dispatch:  # Allows manual triggering
+    - cron: "0 7 * * *" # Runs at 7:00 AM UTC (2:00 AM EST)
+  workflow_dispatch: # Allows manual triggering
 
 jobs:
   test:
@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         test-group: [ui, api, performance, stress]
-      fail-fast: false  # Continue with other tests even if one group fails
+      fail-fast: false # Continue with other tests even if one group fails
 
     steps:
       - uses: actions/checkout@v4
@@ -25,8 +25,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -73,12 +73,40 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     steps:
-      - name: Check test results
-        run: |
-          if [[ "${{ needs.test.result }}" == "success" ]]; then
-            echo "All tests passed successfully!"
-            exit 0
-          else
-            echo "Some tests failed. Check the test reports for details."
-            exit 1
-          fi
+      - uses: actions/checkout@v4
+      
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: Kintsugi Test Results - ${{ needs.test.result }}
+          to: gurovvic@gmail.com,rodionigor@gmail.com
+          from: GitHub Actions
+          html_body: |
+            <h2>Kintsugi Test Suite Results</h2>
+            <p>Status: <strong>${{ needs.test.result }}</strong></p>
+            <p>Workflow: <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">${{ github.workflow }}</a></p>
+            
+            <h3>Test Groups Results:</h3>
+            <ul>
+              <li>UI Tests</li>
+              <li>API Tests</li>
+              <li>Performance Tests</li>
+              <li>Stress Tests</li>
+            </ul>
+            
+            <p>For detailed results, please check the workflow artifacts in GitHub Actions.</p>
+            
+            <hr>
+            <p><small>This is an automated message from GitHub Actions</small></p>
+          attachments: |
+            artifacts/**/*.html
