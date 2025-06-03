@@ -67,18 +67,122 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 30
-
+          
   notify:
     needs: test
     runs-on: ubuntu-latest
     if: always()
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+          
+      - name: Parse test results
+        id: test-summary
+        run: |
+          # Initialize outputs with zeros
+          echo "ui_passed=0" >> $GITHUB_OUTPUT
+          echo "ui_flaky=0" >> $GITHUB_OUTPUT
+          echo "ui_failed=0" >> $GITHUB_OUTPUT
+          echo "api_passed=0" >> $GITHUB_OUTPUT
+          echo "api_flaky=0" >> $GITHUB_OUTPUT
+          echo "api_failed=0" >> $GITHUB_OUTPUT
+          echo "performance_passed=0" >> $GITHUB_OUTPUT
+          echo "performance_flaky=0" >> $GITHUB_OUTPUT
+          echo "performance_failed=0" >> $GITHUB_OUTPUT
+          echo "stress_passed=0" >> $GITHUB_OUTPUT
+          echo "stress_flaky=0" >> $GITHUB_OUTPUT
+          echo "stress_failed=0" >> $GITHUB_OUTPUT
+          
+          # Parse UI tests results if they exist
+          if [ -d "artifacts/playwright-report-ui" ]; then
+            if [ -f "artifacts/playwright-report-ui/report.json" ]; then
+              UI_PASSED=$(grep -o '"passed":[0-9]*' artifacts/playwright-report-ui/report.json | head -1 | cut -d':' -f2)
+              UI_FAILED=$(grep -o '"failed":[0-9]*' artifacts/playwright-report-ui/report.json | head -1 | cut -d':' -f2)
+              UI_FLAKY=$(grep -o '"flaky":[0-9]*' artifacts/playwright-report-ui/report.json | head -1 | cut -d':' -f2)
+              
+              [ ! -z "$UI_PASSED" ] && echo "ui_passed=$UI_PASSED" >> $GITHUB_OUTPUT
+              [ ! -z "$UI_FAILED" ] && echo "ui_failed=$UI_FAILED" >> $GITHUB_OUTPUT
+              [ ! -z "$UI_FLAKY" ] && echo "ui_flaky=$UI_FLAKY" >> $GITHUB_OUTPUT
+            fi
+          fi
+          
+          # Parse API tests results if they exist
+          if [ -d "artifacts/playwright-report-api" ]; then
+            if [ -f "artifacts/playwright-report-api/report.json" ]; then
+              API_PASSED=$(grep -o '"passed":[0-9]*' artifacts/playwright-report-api/report.json | head -1 | cut -d':' -f2)
+              API_FAILED=$(grep -o '"failed":[0-9]*' artifacts/playwright-report-api/report.json | head -1 | cut -d':' -f2)
+              API_FLAKY=$(grep -o '"flaky":[0-9]*' artifacts/playwright-report-api/report.json | head -1 | cut -d':' -f2)
+              
+              [ ! -z "$API_PASSED" ] && echo "api_passed=$API_PASSED" >> $GITHUB_OUTPUT
+              [ ! -z "$API_FAILED" ] && echo "api_failed=$API_FAILED" >> $GITHUB_OUTPUT
+              [ ! -z "$API_FLAKY" ] && echo "api_flaky=$API_FLAKY" >> $GITHUB_OUTPUT
+            fi
+          fi
+          
+          # Parse Performance tests results if they exist
+          if [ -d "artifacts/playwright-report-performance" ]; then
+            if [ -f "artifacts/playwright-report-performance/report.json" ]; then
+              PERF_PASSED=$(grep -o '"passed":[0-9]*' artifacts/playwright-report-performance/report.json | head -1 | cut -d':' -f2)
+              PERF_FAILED=$(grep -o '"failed":[0-9]*' artifacts/playwright-report-performance/report.json | head -1 | cut -d':' -f2)
+              PERF_FLAKY=$(grep -o '"flaky":[0-9]*' artifacts/playwright-report-performance/report.json | head -1 | cut -d':' -f2)
+              
+              [ ! -z "$PERF_PASSED" ] && echo "performance_passed=$PERF_PASSED" >> $GITHUB_OUTPUT
+              [ ! -z "$PERF_FAILED" ] && echo "performance_failed=$PERF_FAILED" >> $GITHUB_OUTPUT
+              [ ! -z "$PERF_FLAKY" ] && echo "performance_flaky=$PERF_FLAKY" >> $GITHUB_OUTPUT
+            fi
+          fi
+          
+          # Parse Stress tests results if they exist
+          if [ -d "artifacts/playwright-report-stress" ]; then
+            if [ -f "artifacts/playwright-report-stress/report.json" ]; then
+              STRESS_PASSED=$(grep -o '"passed":[0-9]*' artifacts/playwright-report-stress/report.json | head -1 | cut -d':' -f2)
+              STRESS_FAILED=$(grep -o '"failed":[0-9]*' artifacts/playwright-report-stress/report.json | head -1 | cut -d':' -f2)
+              STRESS_FLAKY=$(grep -o '"flaky":[0-9]*' artifacts/playwright-report-stress/report.json | head -1 | cut -d':' -f2)
+              
+              [ ! -z "$STRESS_PASSED" ] && echo "stress_passed=$STRESS_PASSED" >> $GITHUB_OUTPUT
+              [ ! -z "$STRESS_FAILED" ] && echo "stress_failed=$STRESS_FAILED" >> $GITHUB_OUTPUT
+              [ ! -z "$STRESS_FLAKY" ] && echo "stress_flaky=$STRESS_FLAKY" >> $GITHUB_OUTPUT
+            fi
+          fi
+      
+      - name: Calculate total summary
+        id: total-summary
+        run: |
+          # Initialize total counters
+          TOTAL_PASSED=0
+          TOTAL_FLAKY=0
+          TOTAL_FAILED=0
+          
+          # Add up all test results
+          UI_PASSED=${{ steps.test-summary.outputs.ui_passed }}
+          UI_FLAKY=${{ steps.test-summary.outputs.ui_flaky }}
+          UI_FAILED=${{ steps.test-summary.outputs.ui_failed }}
+          
+          API_PASSED=${{ steps.test-summary.outputs.api_passed }}
+          API_FLAKY=${{ steps.test-summary.outputs.api_flaky }}
+          API_FAILED=${{ steps.test-summary.outputs.api_failed }}
+          
+          PERF_PASSED=${{ steps.test-summary.outputs.performance_passed }}
+          PERF_FLAKY=${{ steps.test-summary.outputs.performance_flaky }}
+          PERF_FAILED=${{ steps.test-summary.outputs.performance_failed }}
+          
+          STRESS_PASSED=${{ steps.test-summary.outputs.stress_passed }}
+          STRESS_FLAKY=${{ steps.test-summary.outputs.stress_flaky }}
+          STRESS_FAILED=${{ steps.test-summary.outputs.stress_failed }}
+          
+          # Calculate totals
+          TOTAL_PASSED=$((UI_PASSED + API_PASSED + PERF_PASSED + STRESS_PASSED))
+          TOTAL_FLAKY=$((UI_FLAKY + API_FLAKY + PERF_FLAKY + STRESS_FLAKY))
+          TOTAL_FAILED=$((UI_FAILED + API_FAILED + PERF_FAILED + STRESS_FAILED))
+          
+          # Output the totals
+          echo "total_passed=$TOTAL_PASSED" >> $GITHUB_OUTPUT
+          echo "total_flaky=$TOTAL_FLAKY" >> $GITHUB_OUTPUT
+          echo "total_failed=$TOTAL_FAILED" >> $GITHUB_OUTPUT
           
       - name: Send email notification
         uses: dawidd6/action-send-mail@v3
@@ -96,12 +200,19 @@ jobs:
             <p>Status: <strong>${{ needs.test.result }}</strong></p>
             <p>Workflow: <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">${{ github.workflow }}</a></p>
             
+            <p>
+              <strong>Overall Summary:</strong>
+              <span style="color:green; font-weight:bold;">${{ steps.total-summary.outputs.total_passed }} Passed</span>,
+              <span style="color:orange; font-weight:bold;">${{ steps.total-summary.outputs.total_flaky }} Flaky</span>,
+              <span style="color:red; font-weight:bold;">${{ steps.total-summary.outputs.total_failed }} Failed</span>
+            </p>
+            
             <h3>Test Groups Results:</h3>
             <ul>
-              <li>UI Tests</li>
-              <li>API Tests</li>
-              <li>Performance Tests</li>
-              <li>Stress Tests</li>
+              <li>UI Tests: <span style="color:green;">${{ steps.test-summary.outputs.ui_passed }} passed</span>, <span style="color:orange;">${{ steps.test-summary.outputs.ui_flaky }} flaky</span>, <span style="color:red;">${{ steps.test-summary.outputs.ui_failed }} failed</span></li>
+              <li>API Tests: <span style="color:green;">${{ steps.test-summary.outputs.api_passed }} passed</span>, <span style="color:orange;">${{ steps.test-summary.outputs.api_flaky }} flaky</span>, <span style="color:red;">${{ steps.test-summary.outputs.api_failed }} failed</span></li>
+              <li>Performance Tests: <span style="color:green;">${{ steps.test-summary.outputs.performance_passed }} passed</span>, <span style="color:orange;">${{ steps.test-summary.outputs.performance_flaky }} flaky</span>, <span style="color:red;">${{ steps.test-summary.outputs.performance_failed }} failed</span></li>
+              <li>Stress Tests: <span style="color:green;">${{ steps.test-summary.outputs.stress_passed }} passed</span>, <span style="color:orange;">${{ steps.test-summary.outputs.stress_flaky }} flaky</span>, <span style="color:red;">${{ steps.test-summary.outputs.stress_failed }} failed</span></li>
             </ul>
             
             <p>For detailed results, please check the workflow artifacts in GitHub Actions.</p>
