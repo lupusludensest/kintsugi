@@ -276,20 +276,8 @@ jobs:
           html_body: |
             <h2>Kintsugi Test Suite Results</h2>
             <p>Overall Status: <strong>${{ needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success' && 'SUCCESS' || 'FAILURE' }}</strong></p>
-            <p>Workflow: <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">${{ github.workflow }}</a></p>              <h3>Test Groups Results:</h3>
-            <ul>
-              <li>UI Tests: ${{ needs.ui-tests.outputs.passed }}✅ and ${{ needs.ui-tests.outputs.failed }}❌</li>
-              <li>API Tests: ${{ needs.api-tests.outputs.passed }}✅ and ${{ needs.api-tests.outputs.failed }}❌</li>
-              <li>Performance Tests: ${{ needs.performance-tests.outputs.passed }}✅ and ${{ needs.performance-tests.outputs.failed }}❌</li>
-              <li>Stress Tests: ${{ needs.stress-tests.outputs.passed }}✅ and ${{ needs.stress-tests.outputs.failed }}❌</li>            </ul>
-              <h3>Test Summary:</h3>
-            <p>
-              UI Tests: ${{ needs.ui-tests.outputs.passed }}✅ and ${{ needs.ui-tests.outputs.failed }}❌<br>
-              API Tests: ${{ needs.api-tests.outputs.passed }}✅ and ${{ needs.api-tests.outputs.failed }}❌<br>
-              Performance Tests: ${{ needs.performance-tests.outputs.passed }}✅ and ${{ needs.performance-tests.outputs.failed }}❌<br>
-              Stress Tests: ${{ needs.stress-tests.outputs.passed }}✅ and ${{ needs.stress-tests.outputs.failed }}❌
-            </p>
-            
+            <p>Workflow: <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">${{ github.workflow }}</a></p>             
+                          
             <h3>Test Results Breakdown:</h3>
             <ul>
               <li>UI Tests: ${{ needs.ui-tests.outputs.passed }} ✅, ${{ needs.ui-tests.outputs.failed }} ❌ (Total: ${{ steps.calculate.outputs.ui_total }})</li>
@@ -303,8 +291,7 @@ jobs:
               <strong>Total Passed Tests:</strong> ${{ needs.ui-tests.outputs.passed }} + ${{ needs.api-tests.outputs.passed }} + ${{ needs.performance-tests.outputs.passed }} + ${{ needs.stress-tests.outputs.passed }} = ${{ steps.calculate.outputs.total_passed }}<br>
               <strong>Total Tests:</strong> ${{ steps.calculate.outputs.ui_total }} + ${{ steps.calculate.outputs.api_total }} + ${{ steps.calculate.outputs.perf_total }} + ${{ steps.calculate.outputs.stress_total }} = ${{ steps.calculate.outputs.total_tests }}
             </p>
-            
-            <h3>Pass Rate:</h3>
+
             <p>
               <strong>Pass Rate = ${{ steps.calculate.outputs.total_passed }} / ${{ steps.calculate.outputs.total_tests }} × 100 = ${{ steps.calculate.outputs.pass_rate }}%</strong>
             </p>
