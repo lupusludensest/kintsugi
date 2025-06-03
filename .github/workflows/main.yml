@@ -13,6 +13,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    outputs:
+      ui_status: ${{ steps.set_ui_status.outputs.status }}
+      api_status: ${{ steps.set_api_status.outputs.status }}
+      performance_status: ${{ steps.set_performance_status.outputs.status }}
+      stress_status: ${{ steps.set_stress_status.outputs.status }}
 
     strategy:
       matrix:
@@ -35,28 +40,113 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run API tests
+        id: api_tests
         if: matrix.test-group == 'api'
+        continue-on-error: true
         run: npx playwright test api_tests/
         env:
           CI: true
 
+      - name: Set API Tests Status
+        if: matrix.test-group == 'api'
+        id: set_api_status
+        run: |
+          if [ ${{ steps.api_tests.outcome }} == 'success' ]; then
+            echo "status=passed" >> $GITHUB_OUTPUT
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+          fi
+
       - name: Run UI tests
+        id: ui_tests
         if: matrix.test-group == 'ui'
+        continue-on-error: true
         run: npx playwright test ui_tests/
         env:
           CI: true
 
+      - name: Set UI Tests Status
+        if: matrix.test-group == 'ui'
+        id: set_ui_status
+        run: |
+          if [ ${{ steps.ui_tests.outcome }} == 'success' ]; then
+            echo "status=passed" >> $GITHUB_OUTPUT
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+          fi
+
       - name: Run Performance tests
+        id: performance_tests
         if: matrix.test-group == 'performance'
+        continue-on-error: true
         run: npx playwright test performance_tests/
         env:
           CI: true
 
+      - name: Set Performance Tests Status
+        if: matrix.test-group == 'performance'
+        id: set_performance_status
+        run: |
+          if [ ${{ steps.performance_tests.outcome }} == 'success' ]; then
+            echo "status=passed" >> $GITHUB_OUTPUT
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+          fi
+
       - name: Run Stress tests
+        id: stress_tests
         if: matrix.test-group == 'stress'
+        continue-on-error: true
         run: npx playwright test stress_tests/
         env:
           CI: true
+
+      - name: Set Stress Tests Status
+        if: matrix.test-group == 'stress'
+        id: set_stress_status
+        run: |
+          if [ ${{ steps.stress_tests.outcome }} == 'success' ]; then
+            echo "status=passed" >> $GITHUB_OUTPUT
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Count test result lines
+        if: always() && matrix.test-group != ''
+        id: test-count
+        run: |
+          # Get the total number of tests
+          if [ -d "test-results" ]; then
+            TOTAL_COUNT=$(find test-results -name "*.txt" -o -name "*.webm" -o -name "*.png" -o -name "*.zip" | wc -l)
+            FAILED_COUNT=$(find test-results -name "*failed*" | wc -l)
+            echo "total=$TOTAL_COUNT" >> $GITHUB_OUTPUT
+            echo "failed=$FAILED_COUNT" >> $GITHUB_OUTPUT
+            echo "Found $FAILED_COUNT failures out of $TOTAL_COUNT total tests"
+          else
+            echo "total=0" >> $GITHUB_OUTPUT
+            echo "failed=0" >> $GITHUB_OUTPUT
+            echo "No test-results directory found"
+          fi
+
+      - name: Extract Test Results
+        if: always() && matrix.test-group != ''
+        run: |
+          # Let's see what results we have
+          echo "Test Group: ${{ matrix.test-group }}"
+          echo "Test outcome: ${{ steps[format('{0}_tests', matrix.test-group)].outcome }}"
+          
+          if [ -e playwright-report/results.json ]; then
+            cat playwright-report/results.json | grep -E "passed|failed|flaky" || echo "No matching patterns found"
+          fi
+          
+          # Capture test results from various sources
+          FAILED_TESTS=$(grep -l "failed" playwright-report/*.html 2>/dev/null | wc -l || echo 0)
+          FAILED_SCREENSHOTS=$(find test-results -name "*failed*.png" 2>/dev/null | wc -l || echo 0)
+          TOTAL_TESTS=$(ls playwright-report/*.html 2>/dev/null | wc -l || echo 0)
+          
+          echo "Failed tests (from HTML): $FAILED_TESTS"
+          echo "Failed screenshots: $FAILED_SCREENSHOTS" 
+          echo "Total tests (approx): $TOTAL_TESTS"
 
       - name: Upload test results
         if: always()
@@ -79,217 +169,83 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
-
-      - name: Parse test results
-        id: test-summary
-        run: |
-          # Initialize outputs with zeros
-          echo "ui_passed=0" >> $GITHUB_OUTPUT
-          echo "ui_flaky=0" >> $GITHUB_OUTPUT
-          echo "ui_failed=0" >> $GITHUB_OUTPUT
-          echo "api_passed=0" >> $GITHUB_OUTPUT
-          echo "api_flaky=0" >> $GITHUB_OUTPUT
-          echo "api_failed=0" >> $GITHUB_OUTPUT
-          echo "performance_passed=0" >> $GITHUB_OUTPUT
-          echo "performance_flaky=0" >> $GITHUB_OUTPUT
-          echo "performance_failed=0" >> $GITHUB_OUTPUT
-          echo "stress_passed=0" >> $GITHUB_OUTPUT
-          echo "stress_flaky=0" >> $GITHUB_OUTPUT
-          echo "stress_failed=0" >> $GITHUB_OUTPUT
-          
-          # Print directory structure for debugging
-          echo "=== Directory Structure ==="
-          find artifacts -type f -name "*.json" | sort
-          
-          # More robust parsing for UI tests 
-          if [ -d "artifacts/playwright-report-ui" ]; then
-            echo "Checking UI test results..."
-            # Try multiple potential JSON result formats
-            for result_file in $(find artifacts/playwright-report-ui -name "*.json"); do
-              echo "Analyzing $result_file"
-              # Count tests in HTML report
-              UI_HTML_COUNT=$(find artifacts/playwright-report-ui -name "*.html" | wc -l)
-              UI_FAILED_HTML=$(grep -l "Failed" artifacts/playwright-report-ui/*.html 2>/dev/null | wc -l)
-              
-              # Try to extract from JSON
-              UI_PASSED=$(grep -o '"passed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
-              UI_FAILED=$(grep -o '"failed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
-              UI_FLAKY=$(grep -o '"flaky":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
-              
-              # If values found, use them
-              [ ! -z "$UI_PASSED" ] && echo "ui_passed=$UI_PASSED" >> $GITHUB_OUTPUT
-              [ ! -z "$UI_FAILED" ] && echo "ui_failed=$UI_FAILED" >> $GITHUB_OUTPUT
-              [ ! -z "$UI_FLAKY" ] && echo "ui_flaky=$UI_FLAKY" >> $GITHUB_OUTPUT
-              
-              # If no values found but HTML failures detected
-              if [ -z "$UI_FAILED" ] && [ "$UI_FAILED_HTML" -gt 0 ]; then
-                echo "ui_failed=$UI_FAILED_HTML" >> $GITHUB_OUTPUT
-              fi
-              
-              # Check test-results directory for failures
-              TEST_FAILURES=$(find artifacts/playwright-report-ui -name "test-failed-*.png" 2>/dev/null | wc -l)
-              if [ "$TEST_FAILURES" -gt 0 ]; then
-                echo "Found $TEST_FAILURES UI test failures based on screenshots"
-                echo "ui_failed=$TEST_FAILURES" >> $GITHUB_OUTPUT
-              fi
-            done
-          fi
-          
-          # More robust parsing for API tests
-          if [ -d "artifacts/playwright-report-api" ]; then
-            echo "Checking API test results..."
-            # Try multiple potential JSON result formats
-            for result_file in $(find artifacts/playwright-report-api -name "*.json"); do
-              echo "Analyzing $result_file"
-              # Count tests in HTML report
-              API_HTML_COUNT=$(find artifacts/playwright-report-api -name "*.html" | wc -l)
-              API_FAILED_HTML=$(grep -l "Failed" artifacts/playwright-report-api/*.html 2>/dev/null | wc -l)
-              
-              # Try to extract from JSON
-              API_PASSED=$(grep -o '"passed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
-              API_FAILED=$(grep -o '"failed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
-              API_FLAKY=$(grep -o '"flaky":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
-              
-              # If values found, use them
-              [ ! -z "$API_PASSED" ] && echo "api_passed=$API_PASSED" >> $GITHUB_OUTPUT
-              [ ! -z "$API_FAILED" ] && echo "api_failed=$API_FAILED" >> $GITHUB_OUTPUT
-              [ ! -z "$API_FLAKY" ] && echo "api_flaky=$API_FLAKY" >> $GITHUB_OUTPUT
-              
-              # If no values found but HTML failures detected
-              if [ -z "$API_FAILED" ] && [ "$API_FAILED_HTML" -gt 0 ]; then
-                echo "api_failed=$API_FAILED_HTML" >> $GITHUB_OUTPUT
-              fi
-              
-              # Check test-results directory for failures
-              TEST_FAILURES=$(find artifacts/playwright-report-api -name "test-failed-*.png" 2>/dev/null | wc -l)
-              if [ "$TEST_FAILURES" -gt 0 ]; then
-                echo "Found $TEST_FAILURES API test failures based on screenshots"
-                echo "api_failed=$TEST_FAILURES" >> $GITHUB_OUTPUT
-              fi
-            done
-          fi
-          
-          # More robust parsing for Performance tests
-          if [ -d "artifacts/playwright-report-performance" ]; then
-            echo "Checking Performance test results..."
-            # Try multiple potential JSON result formats
-            for result_file in $(find artifacts/playwright-report-performance -name "*.json"); do
-              echo "Analyzing $result_file"
-              # Count tests in HTML report
-              PERF_HTML_COUNT=$(find artifacts/playwright-report-performance -name "*.html" | wc -l)
-              PERF_FAILED_HTML=$(grep -l "Failed" artifacts/playwright-report-performance/*.html 2>/dev/null | wc -l)
-              
-              # Try to extract from JSON
-              PERF_PASSED=$(grep -o '"passed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
-              PERF_FAILED=$(grep -o '"failed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
-              PERF_FLAKY=$(grep -o '"flaky":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
-              
-              # If values found, use them
-              [ ! -z "$PERF_PASSED" ] && echo "performance_passed=$PERF_PASSED" >> $GITHUB_OUTPUT
-              [ ! -z "$PERF_FAILED" ] && echo "performance_failed=$PERF_FAILED" >> $GITHUB_OUTPUT
-              [ ! -z "$PERF_FLAKY" ] && echo "performance_flaky=$PERF_FLAKY" >> $GITHUB_OUTPUT
-              
-              # If no values found but HTML failures detected
-              if [ -z "$PERF_FAILED" ] && [ "$PERF_FAILED_HTML" -gt 0 ]; then
-                echo "performance_failed=$PERF_FAILED_HTML" >> $GITHUB_OUTPUT
-              fi
-              
-              # Check test-results directory for failures
-              TEST_FAILURES=$(find artifacts/playwright-report-performance -name "test-failed-*.png" 2>/dev/null | wc -l)
-              if [ "$TEST_FAILURES" -gt 0 ]; then
-                echo "Found $TEST_FAILURES Performance test failures based on screenshots"
-                echo "performance_failed=$TEST_FAILURES" >> $GITHUB_OUTPUT
-              fi
-            done
-          fi
-          
-          # More robust parsing for Stress tests
-          if [ -d "artifacts/playwright-report-stress" ]; then
-            echo "Checking Stress test results..."
-            # Try multiple potential JSON result formats
-            for result_file in $(find artifacts/playwright-report-stress -name "*.json"); do
-              echo "Analyzing $result_file"
-              # Count tests in HTML report
-              STRESS_HTML_COUNT=$(find artifacts/playwright-report-stress -name "*.html" | wc -l)
-              STRESS_FAILED_HTML=$(grep -l "Failed" artifacts/playwright-report-stress/*.html 2>/dev/null | wc -l)
-              
-              # Try to extract from JSON
-              STRESS_PASSED=$(grep -o '"passed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
-              STRESS_FAILED=$(grep -o '"failed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
-              STRESS_FLAKY=$(grep -o '"flaky":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
-              
-              # If values found, use them
-              [ ! -z "$STRESS_PASSED" ] && echo "stress_passed=$STRESS_PASSED" >> $GITHUB_OUTPUT
-              [ ! -z "$STRESS_FAILED" ] && echo "stress_failed=$STRESS_FAILED" >> $GITHUB_OUTPUT
-              [ ! -z "$STRESS_FLAKY" ] && echo "stress_flaky=$STRESS_FLAKY" >> $GITHUB_OUTPUT
-              
-              # If no values found but HTML failures detected
-              if [ -z "$STRESS_FAILED" ] && [ "$STRESS_FAILED_HTML" -gt 0 ]; then
-                echo "stress_failed=$STRESS_FAILED_HTML" >> $GITHUB_OUTPUT
-              fi
-              
-              # Check test-results directory for failures
-              TEST_FAILURES=$(find artifacts/playwright-report-stress -name "test-failed-*.png" 2>/dev/null | wc -l)
-              if [ "$TEST_FAILURES" -gt 0 ]; then
-                echo "Found $TEST_FAILURES Stress test failures based on screenshots"
-                echo "stress_failed=$TEST_FAILURES" >> $GITHUB_OUTPUT
-              fi
-            done
-          fi
-          
-          # Analyze test-results directory directly for failures if no other method found failures
-          echo "Checking test-results directory for failure evidence..."
-          for test_group in ui api performance stress; do
-            # Check for test-failed images, traces of failed tests, etc.
-            FAILED_IMGS=$(find artifacts/test-results -name "test-failed-*.png" -path "*$test_group*" 2>/dev/null | wc -l)
-            if [ "$FAILED_IMGS" -gt 0 ]; then
-              echo "Found $FAILED_IMGS failed tests for $test_group based on test-results screenshots"
-              if [ "$test_group" = "ui" ]; then
-                echo "ui_failed=$FAILED_IMGS" >> $GITHUB_OUTPUT
-              elif [ "$test_group" = "api" ]; then
-                echo "api_failed=$FAILED_IMGS" >> $GITHUB_OUTPUT
-              elif [ "$test_group" = "performance" ]; then
-                echo "performance_failed=$FAILED_IMGS" >> $GITHUB_OUTPUT
-              elif [ "$test_group" = "stress" ]; then
-                echo "stress_failed=$FAILED_IMGS" >> $GITHUB_OUTPUT
-              fi
-            fi
-          done
       
-      - name: Calculate total summary
-        id: total-summary
+      - name: Set aggregate test status
+        id: test-status
         run: |
-          # Initialize total counters
-          TOTAL_PASSED=0
-          TOTAL_FLAKY=0
-          TOTAL_FAILED=0
+          # UI Tests
+          UI_STATUS="${{ needs.test.outputs.ui_status }}"
+          [ "$UI_STATUS" == "" ] && UI_STATUS="unknown"
+          echo "ui_status=$UI_STATUS" >> $GITHUB_OUTPUT
+          echo "UI tests status: $UI_STATUS"
           
-          # Add up all test results
-          UI_PASSED=${{ steps.test-summary.outputs.ui_passed }}
-          UI_FLAKY=${{ steps.test-summary.outputs.ui_flaky }}
-          UI_FAILED=${{ steps.test-summary.outputs.ui_failed }}
+          # API Tests
+          API_STATUS="${{ needs.test.outputs.api_status }}"
+          [ "$API_STATUS" == "" ] && API_STATUS="unknown" 
+          echo "api_status=$API_STATUS" >> $GITHUB_OUTPUT
+          echo "API tests status: $API_STATUS"
           
-          API_PASSED=${{ steps.test-summary.outputs.api_passed }}
-          API_FLAKY=${{ steps.test-summary.outputs.api_flaky }}
-          API_FAILED=${{ steps.test-summary.outputs.api_failed }}
+          # Performance Tests
+          PERF_STATUS="${{ needs.test.outputs.performance_status }}"
+          [ "$PERF_STATUS" == "" ] && PERF_STATUS="unknown"
+          echo "performance_status=$PERF_STATUS" >> $GITHUB_OUTPUT
+          echo "Performance tests status: $PERF_STATUS"
           
-          PERF_PASSED=${{ steps.test-summary.outputs.performance_passed }}
-          PERF_FLAKY=${{ steps.test-summary.outputs.performance_flaky }}
-          PERF_FAILED=${{ steps.test-summary.outputs.performance_failed }}
+          # Stress Tests
+          STRESS_STATUS="${{ needs.test.outputs.stress_status }}"
+          [ "$STRESS_STATUS" == "" ] && STRESS_STATUS="unknown"
+          echo "stress_status=$STRESS_STATUS" >> $GITHUB_OUTPUT
+          echo "Stress tests status: $STRESS_STATUS"
           
-          STRESS_PASSED=${{ steps.test-summary.outputs.stress_passed }}
-          STRESS_FLAKY=${{ steps.test-summary.outputs.stress_flaky }}
-          STRESS_FAILED=${{ steps.test-summary.outputs.stress_failed }}
+          # Count total passes and failures
+          PASSED=0
+          FAILED=0
+          UNKNOWN=0
           
-          # Calculate totals
-          TOTAL_PASSED=$((UI_PASSED + API_PASSED + PERF_PASSED + STRESS_PASSED))
-          TOTAL_FLAKY=$((UI_FLAKY + API_FLAKY + PERF_FLAKY + STRESS_FLAKY))
-          TOTAL_FAILED=$((UI_FAILED + API_FAILED + PERF_FAILED + STRESS_FAILED))
+          # Count UI Test
+          if [ "$UI_STATUS" == "passed" ]; then
+            PASSED=$((PASSED+1))
+          elif [ "$UI_STATUS" == "failed" ]; then
+            FAILED=$((FAILED+1))
+          else
+            UNKNOWN=$((UNKNOWN+1))
+          fi
+          
+          # Count API Test
+          if [ "$API_STATUS" == "passed" ]; then
+            PASSED=$((PASSED+1))
+          elif [ "$API_STATUS" == "failed" ]; then
+            FAILED=$((FAILED+1))
+          else
+            UNKNOWN=$((UNKNOWN+1))
+          fi
+          
+          # Count Performance Test
+          if [ "$PERF_STATUS" == "passed" ]; then
+            PASSED=$((PASSED+1))
+          elif [ "$PERF_STATUS" == "failed" ]; then
+            FAILED=$((FAILED+1))
+          else
+            UNKNOWN=$((UNKNOWN+1))
+          fi
+          
+          # Count Stress Test
+          if [ "$STRESS_STATUS" == "passed" ]; then
+            PASSED=$((PASSED+1))
+          elif [ "$STRESS_STATUS" == "failed" ]; then
+            FAILED=$((FAILED+1))
+          else
+            UNKNOWN=$((UNKNOWN+1))
+          fi
           
           # Output the totals
-          echo "total_passed=$TOTAL_PASSED" >> $GITHUB_OUTPUT
-          echo "total_flaky=$TOTAL_FLAKY" >> $GITHUB_OUTPUT
-          echo "total_failed=$TOTAL_FAILED" >> $GITHUB_OUTPUT
+          echo "total_passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "total_failed=$FAILED" >> $GITHUB_OUTPUT
+          echo "total_unknown=$UNKNOWN" >> $GITHUB_OUTPUT
+          
+          echo "Total passed: $PASSED"
+          echo "Total failed: $FAILED"
+          echo "Total unknown: $UNKNOWN"
           
       - name: Send email notification
         uses: dawidd6/action-send-mail@v3
@@ -309,17 +265,32 @@ jobs:
             
             <p>
               <strong>Overall Summary:</strong>
-              <span style="color:green; font-weight:bold;">${{ steps.total-summary.outputs.total_passed }} Passed</span>,
-              <span style="color:orange; font-weight:bold;">${{ steps.total-summary.outputs.total_flaky }} Flaky</span>,
-              <span style="color:red; font-weight:bold;">${{ steps.total-summary.outputs.total_failed }} Failed</span>
+              <span style="color:green; font-weight:bold;">${{ steps.test-status.outputs.total_passed }} Passed</span>,
+              <span style="color:red; font-weight:bold;">${{ steps.test-status.outputs.total_failed }} Failed</span>
             </p>
             
             <h3>Test Groups Results:</h3>
             <ul>
-              <li>UI Tests: <span style="color:green;">${{ steps.test-summary.outputs.ui_passed }} passed</span>, <span style="color:orange;">${{ steps.test-summary.outputs.ui_flaky }} flaky</span>, <span style="color:red;">${{ steps.test-summary.outputs.ui_failed }} failed</span></li>
-              <li>API Tests: <span style="color:green;">${{ steps.test-summary.outputs.api_passed }} passed</span>, <span style="color:orange;">${{ steps.test-summary.outputs.api_flaky }} flaky</span>, <span style="color:red;">${{ steps.test-summary.outputs.api_failed }} failed</span></li>
-              <li>Performance Tests: <span style="color:green;">${{ steps.test-summary.outputs.performance_passed }} passed</span>, <span style="color:orange;">${{ steps.test-summary.outputs.performance_flaky }} flaky</span>, <span style="color:red;">${{ steps.test-summary.outputs.performance_failed }} failed</span></li>
-              <li>Stress Tests: <span style="color:green;">${{ steps.test-summary.outputs.stress_passed }} passed</span>, <span style="color:orange;">${{ steps.test-summary.outputs.stress_flaky }} flaky</span>, <span style="color:red;">${{ steps.test-summary.outputs.stress_failed }} failed</span></li>
+              <li>UI Tests: 
+                <span style="color:${{ steps.test-status.outputs.ui_status == 'passed' && 'green' || 'red' }}; font-weight:bold;">
+                  ${{ steps.test-status.outputs.ui_status }}
+                </span>
+              </li>
+              <li>API Tests: 
+                <span style="color:${{ steps.test-status.outputs.api_status == 'passed' && 'green' || 'red' }}; font-weight:bold;">
+                  ${{ steps.test-status.outputs.api_status }}
+                </span>
+              </li>
+              <li>Performance Tests: 
+                <span style="color:${{ steps.test-status.outputs.performance_status == 'passed' && 'green' || 'red' }}; font-weight:bold;">
+                  ${{ steps.test-status.outputs.performance_status }}
+                </span>
+              </li>
+              <li>Stress Tests: 
+                <span style="color:${{ steps.test-status.outputs.stress_status == 'passed' && 'green' || 'red' }}; font-weight:bold;">
+                  ${{ steps.test-status.outputs.stress_status }}
+                </span>
+              </li>
             </ul>
             
             <p>For detailed results, please check the workflow artifacts in GitHub Actions.</p>
