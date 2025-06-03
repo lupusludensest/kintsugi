@@ -10,66 +10,140 @@ on:
   workflow_dispatch: # Allows manual triggering
 
 jobs:
-  test:
+  ui-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-
-    strategy:
-      matrix:
-        test-group: [ui, api, performance, stress]
-      fail-fast: false # Continue with other tests even if one group fails
-
+    timeout-minutes: 20
+    outputs:
+      status: ${{ steps.test.outcome }}
+      
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
-
       - name: Install dependencies
         run: npm ci
-
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-
-      - name: Run API tests
-        if: matrix.test-group == 'api'
-        run: npx playwright test api_tests/
-        env:
-          CI: true
-
       - name: Run UI tests
-        if: matrix.test-group == 'ui'
+        id: test
         run: npx playwright test ui_tests/
+        continue-on-error: true
         env:
           CI: true
-
-      - name: Run Performance tests
-        if: matrix.test-group == 'performance'
-        run: npx playwright test performance_tests/
-        env:
-          CI: true
-
-      - name: Run Stress tests
-        if: matrix.test-group == 'stress'
-        run: npx playwright test stress_tests/
-        env:
-          CI: true
-
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ matrix.test-group }}
+          name: playwright-report-ui
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
+
+  api-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      status: ${{ steps.test.outcome }}
+      
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Run API tests
+        id: test
+        run: npx playwright test api_tests/
+        continue-on-error: true
+        env:
+          CI: true
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-api
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
+
+  performance-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      status: ${{ steps.test.outcome }}
+      
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Run Performance tests
+        id: test
+        run: npx playwright test performance_tests/
+        continue-on-error: true
+        env:
+          CI: true
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-performance
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
+
+  stress-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      status: ${{ steps.test.outcome }}
+      
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Run Stress tests
+        id: test
+        run: npx playwright test stress_tests/
+        continue-on-error: true
+        env:
+          CI: true
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-stress
           path: |
             playwright-report/
             test-results/
           retention-days: 30
 
   notify:
-    needs: test
+    needs: [ui-tests, api-tests, performance-tests, stress-tests]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -88,25 +162,29 @@ jobs:
           secure: true
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Kintsugi Test Results - ${{ needs.test.result }}
+          subject: Kintsugi Test Results - ${{ (needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success') && 'SUCCESS' || 'FAILURE' }}
           to: gurovvic@gmail.com,rodionigor@gmail.com, svetlanalegkaya15@gmail.com, petushin@kpd-cargo.com
           from: GitHub Actions
           html_body: |
             <h2>Kintsugi Test Suite Results</h2>
-            <p>Status: <strong>${{ needs.test.result }}</strong></p>
+            <p>Overall Status: <strong>${{ (needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success') && 'SUCCESS' || 'FAILURE' }}</strong></p>
             <p>Workflow: <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">${{ github.workflow }}</a></p>
             
             <h3>Test Groups Results:</h3>
             <ul>
-              <li>UI Tests</li>
-              <li>API Tests</li>
-              <li>Performance Tests</li>
-              <li>Stress Tests</li>
+              <li>UI Tests: <span style="color: ${{ needs.ui-tests.outputs.status == 'success' && 'green' || 'red' }}"><strong>${{ needs.ui-tests.outputs.status == 'success' && 'PASSED' || 'FAILED' }}</strong></span></li>
+              <li>API Tests: <span style="color: ${{ needs.api-tests.outputs.status == 'success' && 'green' || 'red' }}"><strong>${{ needs.api-tests.outputs.status == 'success' && 'PASSED' || 'FAILED' }}</strong></span></li>
+              <li>Performance Tests: <span style="color: ${{ needs.performance-tests.outputs.status == 'success' && 'green' || 'red' }}"><strong>${{ needs.performance-tests.outputs.status == 'success' && 'PASSED' || 'FAILED' }}</strong></span></li>
+              <li>Stress Tests: <span style="color: ${{ needs.stress-tests.outputs.status == 'success' && 'green' || 'red' }}"><strong>${{ needs.stress-tests.outputs.status == 'success' && 'PASSED' || 'FAILED' }}</strong></span></li>
             </ul>
+            
+            <h3>Test Summary:</h3>
+            <p>
+              ✅ Passed: ${{ (needs.ui-tests.outputs.status == 'success' && 1 || 0) + (needs.api-tests.outputs.status == 'success' && 1 || 0) + (needs.performance-tests.outputs.status == 'success' && 1 || 0) + (needs.stress-tests.outputs.status == 'success' && 1 || 0) }} groups<br>
+              ❌ Failed: ${{ (needs.ui-tests.outputs.status == 'failure' && 1 || 0) + (needs.api-tests.outputs.status == 'failure' && 1 || 0) + (needs.performance-tests.outputs.status == 'failure' && 1 || 0) + (needs.stress-tests.outputs.status == 'failure' && 1 || 0) }} groups
+            </p>
             
             <p>For detailed results, please check the workflow artifacts in GitHub Actions.</p>
             
             <hr>
             <p><small>This is an automated message from GitHub Actions</small></p>
-          attachments: |
-            artifacts/**/*.html
