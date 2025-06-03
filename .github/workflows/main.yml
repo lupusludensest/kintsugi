@@ -162,26 +162,26 @@ jobs:
           secure: true
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Kintsugi Test Results - ${{ (needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success') && 'SUCCESS' || 'FAILURE' }}
+          subject: Kintsugi Test Results - ${{ needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success' && 'SUCCESS' || 'FAILURE' }}
           to: gurovvic@gmail.com,rodionigor@gmail.com, svetlanalegkaya15@gmail.com, petushin@kpd-cargo.com
           from: GitHub Actions
           html_body: |
             <h2>Kintsugi Test Suite Results</h2>
-            <p>Overall Status: <strong>${{ (needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success') && 'SUCCESS' || 'FAILURE' }}</strong></p>
+            <p>Overall Status: <strong>${{ needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success' && 'SUCCESS' || 'FAILURE' }}</strong></p>
             <p>Workflow: <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">${{ github.workflow }}</a></p>
-            
-            <h3>Test Groups Results:</h3>
+              <h3>Test Groups Results:</h3>
             <ul>
-              <li>UI Tests: <span style="color: ${{ needs.ui-tests.outputs.status == 'success' && 'green' || 'red' }}"><strong>${{ needs.ui-tests.outputs.status == 'success' && 'PASSED' || 'FAILED' }}</strong></span></li>
-              <li>API Tests: <span style="color: ${{ needs.api-tests.outputs.status == 'success' && 'green' || 'red' }}"><strong>${{ needs.api-tests.outputs.status == 'success' && 'PASSED' || 'FAILED' }}</strong></span></li>
-              <li>Performance Tests: <span style="color: ${{ needs.performance-tests.outputs.status == 'success' && 'green' || 'red' }}"><strong>${{ needs.performance-tests.outputs.status == 'success' && 'PASSED' || 'FAILED' }}</strong></span></li>
-              <li>Stress Tests: <span style="color: ${{ needs.stress-tests.outputs.status == 'success' && 'green' || 'red' }}"><strong>${{ needs.stress-tests.outputs.status == 'success' && 'PASSED' || 'FAILED' }}</strong></span></li>
-            </ul>
+              <li>UI Tests: <strong>${{ needs.ui-tests.outputs.status == 'success' && '✅ PASSED' || '❌ FAILED' }}</strong></li>
+              <li>API Tests: <strong>${{ needs.api-tests.outputs.status == 'success' && '✅ PASSED' || '❌ FAILED' }}</strong></li>
+              <li>Performance Tests: <strong>${{ needs.performance-tests.outputs.status == 'success' && '✅ PASSED' || '❌ FAILED' }}</strong></li>
+              <li>Stress Tests: <strong>${{ needs.stress-tests.outputs.status == 'success' && '✅ PASSED' || '❌ FAILED' }}</strong></li>            </ul>
             
             <h3>Test Summary:</h3>
             <p>
-              ✅ Passed: ${{ (needs.ui-tests.outputs.status == 'success' && 1 || 0) + (needs.api-tests.outputs.status == 'success' && 1 || 0) + (needs.performance-tests.outputs.status == 'success' && 1 || 0) + (needs.stress-tests.outputs.status == 'success' && 1 || 0) }} groups<br>
-              ❌ Failed: ${{ (needs.ui-tests.outputs.status == 'failure' && 1 || 0) + (needs.api-tests.outputs.status == 'failure' && 1 || 0) + (needs.performance-tests.outputs.status == 'failure' && 1 || 0) + (needs.stress-tests.outputs.status == 'failure' && 1 || 0) }} groups
+              UI Tests: ${{ needs.ui-tests.outputs.status == 'success' && '✅' || '❌' }}<br>
+              API Tests: ${{ needs.api-tests.outputs.status == 'success' && '✅' || '❌' }}<br>
+              Performance Tests: ${{ needs.performance-tests.outputs.status == 'success' && '✅' || '❌' }}<br>
+              Stress Tests: ${{ needs.stress-tests.outputs.status == 'success' && '✅' || '❌' }}
             </p>
             
             <p>For detailed results, please check the workflow artifacts in GitHub Actions.</p>
