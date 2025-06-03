@@ -13,11 +13,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    outputs:
-      ui_status: ${{ steps.set_ui_status.outputs.status }}
-      api_status: ${{ steps.set_api_status.outputs.status }}
-      performance_status: ${{ steps.set_performance_status.outputs.status }}
-      stress_status: ${{ steps.set_stress_status.outputs.status }}
 
     strategy:
       matrix:
@@ -40,113 +35,28 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run API tests
-        id: api_tests
         if: matrix.test-group == 'api'
-        continue-on-error: true
         run: npx playwright test api_tests/
         env:
           CI: true
 
-      - name: Set API Tests Status
-        if: matrix.test-group == 'api'
-        id: set_api_status
-        run: |
-          if [ ${{ steps.api_tests.outcome }} == 'success' ]; then
-            echo "status=passed" >> $GITHUB_OUTPUT
-          else
-            echo "status=failed" >> $GITHUB_OUTPUT
-          fi
-
       - name: Run UI tests
-        id: ui_tests
         if: matrix.test-group == 'ui'
-        continue-on-error: true
         run: npx playwright test ui_tests/
         env:
           CI: true
 
-      - name: Set UI Tests Status
-        if: matrix.test-group == 'ui'
-        id: set_ui_status
-        run: |
-          if [ ${{ steps.ui_tests.outcome }} == 'success' ]; then
-            echo "status=passed" >> $GITHUB_OUTPUT
-          else
-            echo "status=failed" >> $GITHUB_OUTPUT
-          fi
-
       - name: Run Performance tests
-        id: performance_tests
         if: matrix.test-group == 'performance'
-        continue-on-error: true
         run: npx playwright test performance_tests/
         env:
           CI: true
 
-      - name: Set Performance Tests Status
-        if: matrix.test-group == 'performance'
-        id: set_performance_status
-        run: |
-          if [ ${{ steps.performance_tests.outcome }} == 'success' ]; then
-            echo "status=passed" >> $GITHUB_OUTPUT
-          else
-            echo "status=failed" >> $GITHUB_OUTPUT
-          fi
-
       - name: Run Stress tests
-        id: stress_tests
         if: matrix.test-group == 'stress'
-        continue-on-error: true
         run: npx playwright test stress_tests/
         env:
           CI: true
-
-      - name: Set Stress Tests Status
-        if: matrix.test-group == 'stress'
-        id: set_stress_status
-        run: |
-          if [ ${{ steps.stress_tests.outcome }} == 'success' ]; then
-            echo "status=passed" >> $GITHUB_OUTPUT
-          else
-            echo "status=failed" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Count test result lines
-        if: always() && matrix.test-group != ''
-        id: test-count
-        run: |
-          # Get the total number of tests
-          if [ -d "test-results" ]; then
-            TOTAL_COUNT=$(find test-results -name "*.txt" -o -name "*.webm" -o -name "*.png" -o -name "*.zip" | wc -l)
-            FAILED_COUNT=$(find test-results -name "*failed*" | wc -l)
-            echo "total=$TOTAL_COUNT" >> $GITHUB_OUTPUT
-            echo "failed=$FAILED_COUNT" >> $GITHUB_OUTPUT
-            echo "Found $FAILED_COUNT failures out of $TOTAL_COUNT total tests"
-          else
-            echo "total=0" >> $GITHUB_OUTPUT
-            echo "failed=0" >> $GITHUB_OUTPUT
-            echo "No test-results directory found"
-          fi
-
-      - name: Extract Test Results
-        if: always() && matrix.test-group != ''
-        run: |
-          # Let's see what results we have
-          echo "Test Group: ${{ matrix.test-group }}"
-          echo "Test outcome: ${{ steps[format('{0}_tests', matrix.test-group)].outcome }}"
-          
-          if [ -e playwright-report/results.json ]; then
-            cat playwright-report/results.json | grep -E "passed|failed|flaky" || echo "No matching patterns found"
-          fi
-          
-          # Capture test results from various sources
-          FAILED_TESTS=$(grep -l "failed" playwright-report/*.html 2>/dev/null | wc -l || echo 0)
-          FAILED_SCREENSHOTS=$(find test-results -name "*failed*.png" 2>/dev/null | wc -l || echo 0)
-          TOTAL_TESTS=$(ls playwright-report/*.html 2>/dev/null | wc -l || echo 0)
-          
-          echo "Failed tests (from HTML): $FAILED_TESTS"
-          echo "Failed screenshots: $FAILED_SCREENSHOTS" 
-          echo "Total tests (approx): $TOTAL_TESTS"
 
       - name: Upload test results
         if: always()
@@ -157,95 +67,18 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 30
-          
+
   notify:
     needs: test
     runs-on: ubuntu-latest
     if: always()
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
-      
-      - name: Set aggregate test status
-        id: test-status
-        run: |
-          # UI Tests
-          UI_STATUS="${{ needs.test.outputs.ui_status }}"
-          [ "$UI_STATUS" == "" ] && UI_STATUS="unknown"
-          echo "ui_status=$UI_STATUS" >> $GITHUB_OUTPUT
-          echo "UI tests status: $UI_STATUS"
-          
-          # API Tests
-          API_STATUS="${{ needs.test.outputs.api_status }}"
-          [ "$API_STATUS" == "" ] && API_STATUS="unknown" 
-          echo "api_status=$API_STATUS" >> $GITHUB_OUTPUT
-          echo "API tests status: $API_STATUS"
-          
-          # Performance Tests
-          PERF_STATUS="${{ needs.test.outputs.performance_status }}"
-          [ "$PERF_STATUS" == "" ] && PERF_STATUS="unknown"
-          echo "performance_status=$PERF_STATUS" >> $GITHUB_OUTPUT
-          echo "Performance tests status: $PERF_STATUS"
-          
-          # Stress Tests
-          STRESS_STATUS="${{ needs.test.outputs.stress_status }}"
-          [ "$STRESS_STATUS" == "" ] && STRESS_STATUS="unknown"
-          echo "stress_status=$STRESS_STATUS" >> $GITHUB_OUTPUT
-          echo "Stress tests status: $STRESS_STATUS"
-          
-          # Count total passes and failures
-          PASSED=0
-          FAILED=0
-          UNKNOWN=0
-          
-          # Count UI Test
-          if [ "$UI_STATUS" == "passed" ]; then
-            PASSED=$((PASSED+1))
-          elif [ "$UI_STATUS" == "failed" ]; then
-            FAILED=$((FAILED+1))
-          else
-            UNKNOWN=$((UNKNOWN+1))
-          fi
-          
-          # Count API Test
-          if [ "$API_STATUS" == "passed" ]; then
-            PASSED=$((PASSED+1))
-          elif [ "$API_STATUS" == "failed" ]; then
-            FAILED=$((FAILED+1))
-          else
-            UNKNOWN=$((UNKNOWN+1))
-          fi
-          
-          # Count Performance Test
-          if [ "$PERF_STATUS" == "passed" ]; then
-            PASSED=$((PASSED+1))
-          elif [ "$PERF_STATUS" == "failed" ]; then
-            FAILED=$((FAILED+1))
-          else
-            UNKNOWN=$((UNKNOWN+1))
-          fi
-          
-          # Count Stress Test
-          if [ "$STRESS_STATUS" == "passed" ]; then
-            PASSED=$((PASSED+1))
-          elif [ "$STRESS_STATUS" == "failed" ]; then
-            FAILED=$((FAILED+1))
-          else
-            UNKNOWN=$((UNKNOWN+1))
-          fi
-          
-          # Output the totals
-          echo "total_passed=$PASSED" >> $GITHUB_OUTPUT
-          echo "total_failed=$FAILED" >> $GITHUB_OUTPUT
-          echo "total_unknown=$UNKNOWN" >> $GITHUB_OUTPUT
-          
-          echo "Total passed: $PASSED"
-          echo "Total failed: $FAILED"
-          echo "Total unknown: $UNKNOWN"
           
       - name: Send email notification
         uses: dawidd6/action-send-mail@v3
@@ -263,34 +96,12 @@ jobs:
             <p>Status: <strong>${{ needs.test.result }}</strong></p>
             <p>Workflow: <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">${{ github.workflow }}</a></p>
             
-            <p>
-              <strong>Overall Summary:</strong>
-              <span style="color:green; font-weight:bold;">${{ steps.test-status.outputs.total_passed }} Passed</span>,
-              <span style="color:red; font-weight:bold;">${{ steps.test-status.outputs.total_failed }} Failed</span>
-            </p>
-            
             <h3>Test Groups Results:</h3>
             <ul>
-              <li>UI Tests: 
-                <span style="color:${{ steps.test-status.outputs.ui_status == 'passed' && 'green' || 'red' }}; font-weight:bold;">
-                  ${{ steps.test-status.outputs.ui_status }}
-                </span>
-              </li>
-              <li>API Tests: 
-                <span style="color:${{ steps.test-status.outputs.api_status == 'passed' && 'green' || 'red' }}; font-weight:bold;">
-                  ${{ steps.test-status.outputs.api_status }}
-                </span>
-              </li>
-              <li>Performance Tests: 
-                <span style="color:${{ steps.test-status.outputs.performance_status == 'passed' && 'green' || 'red' }}; font-weight:bold;">
-                  ${{ steps.test-status.outputs.performance_status }}
-                </span>
-              </li>
-              <li>Stress Tests: 
-                <span style="color:${{ steps.test-status.outputs.stress_status == 'passed' && 'green' || 'red' }}; font-weight:bold;">
-                  ${{ steps.test-status.outputs.stress_status }}
-                </span>
-              </li>
+              <li>UI Tests</li>
+              <li>API Tests</li>
+              <li>Performance Tests</li>
+              <li>Stress Tests</li>
             </ul>
             
             <p>For detailed results, please check the workflow artifacts in GitHub Actions.</p>
