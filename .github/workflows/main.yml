@@ -207,13 +207,55 @@ jobs:
             test-results/
             stress_test_output.log
           retention-days: 30
-
   notify:
     needs: [ui-tests, api-tests, performance-tests, stress-tests]
     runs-on: ubuntu-latest
     if: always()
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Calculate totals and pass rate
+        id: calculate
+        run: |
+          # Get passed and failed counts
+          UI_PASSED=${{ needs.ui-tests.outputs.passed }}
+          UI_FAILED=${{ needs.ui-tests.outputs.failed }}
+          API_PASSED=${{ needs.api-tests.outputs.passed }}
+          API_FAILED=${{ needs.api-tests.outputs.failed }}
+          PERF_PASSED=${{ needs.performance-tests.outputs.passed }}
+          PERF_FAILED=${{ needs.performance-tests.outputs.failed }}
+          STRESS_PASSED=${{ needs.stress-tests.outputs.passed }}
+          STRESS_FAILED=${{ needs.stress-tests.outputs.failed }}
+          
+          # Calculate totals
+          TOTAL_PASSED=$((UI_PASSED + API_PASSED + PERF_PASSED + STRESS_PASSED))
+          TOTAL_FAILED=$((UI_FAILED + API_FAILED + PERF_FAILED + STRESS_FAILED))
+          TOTAL_TESTS=$((TOTAL_PASSED + TOTAL_FAILED))
+          
+          # Calculate pass rate (using bc for floating point)
+          if [ $TOTAL_TESTS -gt 0 ]; then
+            PASS_RATE=$(echo "scale=2; $TOTAL_PASSED * 100 / $TOTAL_TESTS" | bc)
+          else
+            PASS_RATE="0.00"
+          fi
+          
+          # Calculate individual totals
+          UI_TOTAL=$((UI_PASSED + UI_FAILED))
+          API_TOTAL=$((API_PASSED + API_FAILED))
+          PERF_TOTAL=$((PERF_PASSED + PERF_FAILED))
+          STRESS_TOTAL=$((STRESS_PASSED + STRESS_FAILED))
+          
+          echo "total_passed=$TOTAL_PASSED" >> $GITHUB_OUTPUT
+          echo "total_failed=$TOTAL_FAILED" >> $GITHUB_OUTPUT
+          echo "total_tests=$TOTAL_TESTS" >> $GITHUB_OUTPUT
+          echo "pass_rate=$PASS_RATE" >> $GITHUB_OUTPUT
+          echo "ui_total=$UI_TOTAL" >> $GITHUB_OUTPUT
+          echo "api_total=$API_TOTAL" >> $GITHUB_OUTPUT
+          echo "perf_total=$PERF_TOTAL" >> $GITHUB_OUTPUT
+          echo "stress_total=$STRESS_TOTAL" >> $GITHUB_OUTPUT
+          
+          echo "Calculated totals: Passed=$TOTAL_PASSED, Failed=$TOTAL_FAILED, Total=$TOTAL_TESTS, Pass Rate=$PASS_RATE%"
+        shell: bash
       
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
@@ -246,6 +288,25 @@ jobs:
               API Tests: ${{ needs.api-tests.outputs.passed }}✅ and ${{ needs.api-tests.outputs.failed }}❌<br>
               Performance Tests: ${{ needs.performance-tests.outputs.passed }}✅ and ${{ needs.performance-tests.outputs.failed }}❌<br>
               Stress Tests: ${{ needs.stress-tests.outputs.passed }}✅ and ${{ needs.stress-tests.outputs.failed }}❌
+            </p>
+            
+            <h3>Test Results Breakdown:</h3>
+            <ul>
+              <li>UI Tests: ${{ needs.ui-tests.outputs.passed }} ✅, ${{ needs.ui-tests.outputs.failed }} ❌ (Total: ${{ steps.calculate.outputs.ui_total }})</li>
+              <li>API Tests: ${{ needs.api-tests.outputs.passed }} ✅, ${{ needs.api-tests.outputs.failed }} ❌ (Total: ${{ steps.calculate.outputs.api_total }})</li>
+              <li>Performance Tests: ${{ needs.performance-tests.outputs.passed }} ✅, ${{ needs.performance-tests.outputs.failed }} ❌ (Total: ${{ steps.calculate.outputs.perf_total }})</li>
+              <li>Stress Tests: ${{ needs.stress-tests.outputs.passed }} ✅, ${{ needs.stress-tests.outputs.failed }} ❌ (Total: ${{ steps.calculate.outputs.stress_total }})</li>
+            </ul>
+            
+            <h3>Total Counts:</h3>
+            <p>
+              <strong>Total Passed Tests:</strong> ${{ needs.ui-tests.outputs.passed }} + ${{ needs.api-tests.outputs.passed }} + ${{ needs.performance-tests.outputs.passed }} + ${{ needs.stress-tests.outputs.passed }} = ${{ steps.calculate.outputs.total_passed }}<br>
+              <strong>Total Tests:</strong> ${{ steps.calculate.outputs.ui_total }} + ${{ steps.calculate.outputs.api_total }} + ${{ steps.calculate.outputs.perf_total }} + ${{ steps.calculate.outputs.stress_total }} = ${{ steps.calculate.outputs.total_tests }}
+            </p>
+            
+            <h3>Pass Rate:</h3>
+            <p>
+              <strong>Pass Rate = ${{ steps.calculate.outputs.total_passed }} / ${{ steps.calculate.outputs.total_tests }} × 100 = ${{ steps.calculate.outputs.pass_rate }}%</strong>
             </p>
             
             <p>For detailed results, please check the workflow artifacts in GitHub Actions.</p>
