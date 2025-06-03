@@ -79,7 +79,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
-          
+
       - name: Parse test results
         id: test-summary
         run: |
@@ -97,57 +97,164 @@ jobs:
           echo "stress_flaky=0" >> $GITHUB_OUTPUT
           echo "stress_failed=0" >> $GITHUB_OUTPUT
           
-          # Parse UI tests results if they exist
+          # Print directory structure for debugging
+          echo "=== Directory Structure ==="
+          find artifacts -type f -name "*.json" | sort
+          
+          # More robust parsing for UI tests 
           if [ -d "artifacts/playwright-report-ui" ]; then
-            if [ -f "artifacts/playwright-report-ui/report.json" ]; then
-              UI_PASSED=$(grep -o '"passed":[0-9]*' artifacts/playwright-report-ui/report.json | head -1 | cut -d':' -f2)
-              UI_FAILED=$(grep -o '"failed":[0-9]*' artifacts/playwright-report-ui/report.json | head -1 | cut -d':' -f2)
-              UI_FLAKY=$(grep -o '"flaky":[0-9]*' artifacts/playwright-report-ui/report.json | head -1 | cut -d':' -f2)
+            echo "Checking UI test results..."
+            # Try multiple potential JSON result formats
+            for result_file in $(find artifacts/playwright-report-ui -name "*.json"); do
+              echo "Analyzing $result_file"
+              # Count tests in HTML report
+              UI_HTML_COUNT=$(find artifacts/playwright-report-ui -name "*.html" | wc -l)
+              UI_FAILED_HTML=$(grep -l "Failed" artifacts/playwright-report-ui/*.html 2>/dev/null | wc -l)
               
+              # Try to extract from JSON
+              UI_PASSED=$(grep -o '"passed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
+              UI_FAILED=$(grep -o '"failed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
+              UI_FLAKY=$(grep -o '"flaky":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
+              
+              # If values found, use them
               [ ! -z "$UI_PASSED" ] && echo "ui_passed=$UI_PASSED" >> $GITHUB_OUTPUT
               [ ! -z "$UI_FAILED" ] && echo "ui_failed=$UI_FAILED" >> $GITHUB_OUTPUT
               [ ! -z "$UI_FLAKY" ] && echo "ui_flaky=$UI_FLAKY" >> $GITHUB_OUTPUT
-            fi
+              
+              # If no values found but HTML failures detected
+              if [ -z "$UI_FAILED" ] && [ "$UI_FAILED_HTML" -gt 0 ]; then
+                echo "ui_failed=$UI_FAILED_HTML" >> $GITHUB_OUTPUT
+              fi
+              
+              # Check test-results directory for failures
+              TEST_FAILURES=$(find artifacts/playwright-report-ui -name "test-failed-*.png" 2>/dev/null | wc -l)
+              if [ "$TEST_FAILURES" -gt 0 ]; then
+                echo "Found $TEST_FAILURES UI test failures based on screenshots"
+                echo "ui_failed=$TEST_FAILURES" >> $GITHUB_OUTPUT
+              fi
+            done
           fi
           
-          # Parse API tests results if they exist
+          # More robust parsing for API tests
           if [ -d "artifacts/playwright-report-api" ]; then
-            if [ -f "artifacts/playwright-report-api/report.json" ]; then
-              API_PASSED=$(grep -o '"passed":[0-9]*' artifacts/playwright-report-api/report.json | head -1 | cut -d':' -f2)
-              API_FAILED=$(grep -o '"failed":[0-9]*' artifacts/playwright-report-api/report.json | head -1 | cut -d':' -f2)
-              API_FLAKY=$(grep -o '"flaky":[0-9]*' artifacts/playwright-report-api/report.json | head -1 | cut -d':' -f2)
+            echo "Checking API test results..."
+            # Try multiple potential JSON result formats
+            for result_file in $(find artifacts/playwright-report-api -name "*.json"); do
+              echo "Analyzing $result_file"
+              # Count tests in HTML report
+              API_HTML_COUNT=$(find artifacts/playwright-report-api -name "*.html" | wc -l)
+              API_FAILED_HTML=$(grep -l "Failed" artifacts/playwright-report-api/*.html 2>/dev/null | wc -l)
               
+              # Try to extract from JSON
+              API_PASSED=$(grep -o '"passed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
+              API_FAILED=$(grep -o '"failed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
+              API_FLAKY=$(grep -o '"flaky":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
+              
+              # If values found, use them
               [ ! -z "$API_PASSED" ] && echo "api_passed=$API_PASSED" >> $GITHUB_OUTPUT
               [ ! -z "$API_FAILED" ] && echo "api_failed=$API_FAILED" >> $GITHUB_OUTPUT
               [ ! -z "$API_FLAKY" ] && echo "api_flaky=$API_FLAKY" >> $GITHUB_OUTPUT
-            fi
+              
+              # If no values found but HTML failures detected
+              if [ -z "$API_FAILED" ] && [ "$API_FAILED_HTML" -gt 0 ]; then
+                echo "api_failed=$API_FAILED_HTML" >> $GITHUB_OUTPUT
+              fi
+              
+              # Check test-results directory for failures
+              TEST_FAILURES=$(find artifacts/playwright-report-api -name "test-failed-*.png" 2>/dev/null | wc -l)
+              if [ "$TEST_FAILURES" -gt 0 ]; then
+                echo "Found $TEST_FAILURES API test failures based on screenshots"
+                echo "api_failed=$TEST_FAILURES" >> $GITHUB_OUTPUT
+              fi
+            done
           fi
           
-          # Parse Performance tests results if they exist
+          # More robust parsing for Performance tests
           if [ -d "artifacts/playwright-report-performance" ]; then
-            if [ -f "artifacts/playwright-report-performance/report.json" ]; then
-              PERF_PASSED=$(grep -o '"passed":[0-9]*' artifacts/playwright-report-performance/report.json | head -1 | cut -d':' -f2)
-              PERF_FAILED=$(grep -o '"failed":[0-9]*' artifacts/playwright-report-performance/report.json | head -1 | cut -d':' -f2)
-              PERF_FLAKY=$(grep -o '"flaky":[0-9]*' artifacts/playwright-report-performance/report.json | head -1 | cut -d':' -f2)
+            echo "Checking Performance test results..."
+            # Try multiple potential JSON result formats
+            for result_file in $(find artifacts/playwright-report-performance -name "*.json"); do
+              echo "Analyzing $result_file"
+              # Count tests in HTML report
+              PERF_HTML_COUNT=$(find artifacts/playwright-report-performance -name "*.html" | wc -l)
+              PERF_FAILED_HTML=$(grep -l "Failed" artifacts/playwright-report-performance/*.html 2>/dev/null | wc -l)
               
+              # Try to extract from JSON
+              PERF_PASSED=$(grep -o '"passed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
+              PERF_FAILED=$(grep -o '"failed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
+              PERF_FLAKY=$(grep -o '"flaky":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
+              
+              # If values found, use them
               [ ! -z "$PERF_PASSED" ] && echo "performance_passed=$PERF_PASSED" >> $GITHUB_OUTPUT
               [ ! -z "$PERF_FAILED" ] && echo "performance_failed=$PERF_FAILED" >> $GITHUB_OUTPUT
               [ ! -z "$PERF_FLAKY" ] && echo "performance_flaky=$PERF_FLAKY" >> $GITHUB_OUTPUT
-            fi
+              
+              # If no values found but HTML failures detected
+              if [ -z "$PERF_FAILED" ] && [ "$PERF_FAILED_HTML" -gt 0 ]; then
+                echo "performance_failed=$PERF_FAILED_HTML" >> $GITHUB_OUTPUT
+              fi
+              
+              # Check test-results directory for failures
+              TEST_FAILURES=$(find artifacts/playwright-report-performance -name "test-failed-*.png" 2>/dev/null | wc -l)
+              if [ "$TEST_FAILURES" -gt 0 ]; then
+                echo "Found $TEST_FAILURES Performance test failures based on screenshots"
+                echo "performance_failed=$TEST_FAILURES" >> $GITHUB_OUTPUT
+              fi
+            done
           fi
           
-          # Parse Stress tests results if they exist
+          # More robust parsing for Stress tests
           if [ -d "artifacts/playwright-report-stress" ]; then
-            if [ -f "artifacts/playwright-report-stress/report.json" ]; then
-              STRESS_PASSED=$(grep -o '"passed":[0-9]*' artifacts/playwright-report-stress/report.json | head -1 | cut -d':' -f2)
-              STRESS_FAILED=$(grep -o '"failed":[0-9]*' artifacts/playwright-report-stress/report.json | head -1 | cut -d':' -f2)
-              STRESS_FLAKY=$(grep -o '"flaky":[0-9]*' artifacts/playwright-report-stress/report.json | head -1 | cut -d':' -f2)
+            echo "Checking Stress test results..."
+            # Try multiple potential JSON result formats
+            for result_file in $(find artifacts/playwright-report-stress -name "*.json"); do
+              echo "Analyzing $result_file"
+              # Count tests in HTML report
+              STRESS_HTML_COUNT=$(find artifacts/playwright-report-stress -name "*.html" | wc -l)
+              STRESS_FAILED_HTML=$(grep -l "Failed" artifacts/playwright-report-stress/*.html 2>/dev/null | wc -l)
               
+              # Try to extract from JSON
+              STRESS_PASSED=$(grep -o '"passed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
+              STRESS_FAILED=$(grep -o '"failed":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
+              STRESS_FLAKY=$(grep -o '"flaky":[0-9]*' $result_file 2>/dev/null | head -1 | cut -d':' -f2)
+              
+              # If values found, use them
               [ ! -z "$STRESS_PASSED" ] && echo "stress_passed=$STRESS_PASSED" >> $GITHUB_OUTPUT
               [ ! -z "$STRESS_FAILED" ] && echo "stress_failed=$STRESS_FAILED" >> $GITHUB_OUTPUT
               [ ! -z "$STRESS_FLAKY" ] && echo "stress_flaky=$STRESS_FLAKY" >> $GITHUB_OUTPUT
-            fi
+              
+              # If no values found but HTML failures detected
+              if [ -z "$STRESS_FAILED" ] && [ "$STRESS_FAILED_HTML" -gt 0 ]; then
+                echo "stress_failed=$STRESS_FAILED_HTML" >> $GITHUB_OUTPUT
+              fi
+              
+              # Check test-results directory for failures
+              TEST_FAILURES=$(find artifacts/playwright-report-stress -name "test-failed-*.png" 2>/dev/null | wc -l)
+              if [ "$TEST_FAILURES" -gt 0 ]; then
+                echo "Found $TEST_FAILURES Stress test failures based on screenshots"
+                echo "stress_failed=$TEST_FAILURES" >> $GITHUB_OUTPUT
+              fi
+            done
           fi
+          
+          # Analyze test-results directory directly for failures if no other method found failures
+          echo "Checking test-results directory for failure evidence..."
+          for test_group in ui api performance stress; do
+            # Check for test-failed images, traces of failed tests, etc.
+            FAILED_IMGS=$(find artifacts/test-results -name "test-failed-*.png" -path "*$test_group*" 2>/dev/null | wc -l)
+            if [ "$FAILED_IMGS" -gt 0 ]; then
+              echo "Found $FAILED_IMGS failed tests for $test_group based on test-results screenshots"
+              if [ "$test_group" = "ui" ]; then
+                echo "ui_failed=$FAILED_IMGS" >> $GITHUB_OUTPUT
+              elif [ "$test_group" = "api" ]; then
+                echo "api_failed=$FAILED_IMGS" >> $GITHUB_OUTPUT
+              elif [ "$test_group" = "performance" ]; then
+                echo "performance_failed=$FAILED_IMGS" >> $GITHUB_OUTPUT
+              elif [ "$test_group" = "stress" ]; then
+                echo "stress_failed=$FAILED_IMGS" >> $GITHUB_OUTPUT
+              fi
+            fi
+          done
       
       - name: Calculate total summary
         id: total-summary
