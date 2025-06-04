@@ -296,8 +296,7 @@ jobs:
             </p>
 
             <p>
-              <strong>Pass Rate = ${{ steps.calculate.outputs.total_passed }} / ${{ steps.calculate.outputs.total_tests }} × 100 = ${{ steps.calculate.outputs.pass_rate }}%</strong>
-            </p>
+              <strong>Pass Rate = ${{ steps.calculate.outputs.total_passed }} / ${{ steps.calculate.outputs.total_tests }} × 100 = ${{ steps.calculate.outputs.pass_rate }}%</strong>            </p>
             
             <p>For detailed results, please check the workflow artifacts in GitHub Actions.</p>
             
@@ -308,26 +307,17 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_CHANNEL: '#testing-notifications'  # You can change this to the desired channel or use @username for DM
-          SLACK_COLOR: ${{ needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success' && 'good' || 'danger' }}
-          SLACK_ICON: https://github.com/actions.png?size=48
           SLACK_MESSAGE: |
-            🔍 *Kintsugi Test Suite Results*
+            🔍 Kintsugi Test Suite Results
             
-            *Overall Status:* ${{ needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success' && '✅ SUCCESS' || '❌ FAILURE' }}
+            Overall Status: ${{ needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success' && 'SUCCESS' || 'FAILURE' }}
             
-            📊 *Test Results Breakdown:*
-            • UI Tests: ${{ needs.ui-tests.outputs.passed }}✅ and ${{ needs.ui-tests.outputs.failed }}❌ (Total: ${{ steps.calculate.outputs.ui_total }})
-            • API Tests: ${{ needs.api-tests.outputs.passed }}✅ and ${{ needs.api-tests.outputs.failed }}❌ (Total: ${{ steps.calculate.outputs.api_total }})
-            • Performance Tests: ${{ needs.performance-tests.outputs.passed }}✅ and ${{ needs.performance-tests.outputs.failed }}❌ (Total: ${{ steps.calculate.outputs.perf_total }})
-            • Stress Tests: ${{ needs.stress-tests.outputs.passed }}✅ and ${{ needs.stress-tests.outputs.failed }}❌ (Total: ${{ steps.calculate.outputs.stress_total }})
+            Test Results:
+            • UI Tests: ${{ needs.ui-tests.outputs.passed }} passed, ${{ needs.ui-tests.outputs.failed }} failed
+            • API Tests: ${{ needs.api-tests.outputs.passed }} passed, ${{ needs.api-tests.outputs.failed }} failed
+            • Performance Tests: ${{ needs.performance-tests.outputs.passed }} passed, ${{ needs.performance-tests.outputs.failed }} failed
+            • Stress Tests: ${{ needs.stress-tests.outputs.passed }} passed, ${{ needs.stress-tests.outputs.failed }} failed
             
-            📈 *Summary:*
-            Total Passed: ${{ steps.calculate.outputs.total_passed }}
-            Total Tests: ${{ steps.calculate.outputs.total_tests }}
-            Pass Rate: ${{ steps.calculate.outputs.pass_rate }}%
+            Total: ${{ steps.calculate.outputs.total_passed }}/${{ steps.calculate.outputs.total_tests }} passed (${{ steps.calculate.outputs.pass_rate }}%)
             
-            🔗 <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Workflow Run>
-          SLACK_TITLE: Kintsugi Test Suite - ${{ github.event_name }}
-          SLACK_USERNAME: GitHub Actions
-          SLACK_FOOTER: Powered by GitHub Actions
+            Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
