@@ -274,7 +274,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: Kintsugi Test Results - ${{ needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success' && 'SUCCESS' || 'FAILURE' }}
-          to: gurovvic@gmail.com,rodionigor@gmail.com, svetlanalegkaya15@gmail.com, petushin@kpd-cargo.com
+          to: gurovvic@gmail.com,rodionigor@gmail.com, svetlanalegkaya15@gmail.com, petushin@kpd-cargo.com, atevs2789@gmail.com
           from: GitHub Actions
           html_body: |
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
