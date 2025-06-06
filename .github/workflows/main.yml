@@ -20,6 +20,16 @@ jobs:
       
     steps:
       - uses: actions/checkout@v4
+      - name: Create .env file from GitHub Secrets
+        run: |
+          echo "KINTSUGI_LOGIN=${{ secrets.KINTSUGI_LOGIN }}" >> .env
+          echo "KINTSUGI_PASSWORD=${{ secrets.KINTSUGI_PASSWORD }}" >> .env
+          echo "KINTSUGI_WRONG_LOGIN=${{ secrets.KINTSUGI_WRONG_LOGIN }}" >> .env
+          echo "KINTSUGI_WRONG_PASSWORD=${{ secrets.KINTSUGI_WRONG_PASSWORD }}" >> .env
+          echo "KINTSUGI_BASE_URL=${{ secrets.KINTSUGI_BASE_URL }}" >> .env
+          echo "KINTSUGI_LOGIN_URL=${{ secrets.KINTSUGI_LOGIN_URL }}" >> .env
+          echo "KINTSUGI_AUTH_TOKEN=${{ secrets.KINTSUGI_AUTH_TOKEN }}" >> .env
+          echo "TIMEOUT=${{ secrets.TIMEOUT }}" >> .env
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -70,6 +80,16 @@ jobs:
       
     steps:
       - uses: actions/checkout@v4
+      - name: Create .env file from GitHub Secrets
+        run: |
+          echo "KINTSUGI_LOGIN=${{ secrets.KINTSUGI_LOGIN }}" >> .env
+          echo "KINTSUGI_PASSWORD=${{ secrets.KINTSUGI_PASSWORD }}" >> .env
+          echo "KINTSUGI_WRONG_LOGIN=${{ secrets.KINTSUGI_WRONG_LOGIN }}" >> .env
+          echo "KINTSUGI_WRONG_PASSWORD=${{ secrets.KINTSUGI_WRONG_PASSWORD }}" >> .env
+          echo "KINTSUGI_BASE_URL=${{ secrets.KINTSUGI_BASE_URL }}" >> .env
+          echo "KINTSUGI_LOGIN_URL=${{ secrets.KINTSUGI_LOGIN_URL }}" >> .env
+          echo "KINTSUGI_AUTH_TOKEN=${{ secrets.KINTSUGI_AUTH_TOKEN }}" >> .env
+          echo "TIMEOUT=${{ secrets.TIMEOUT }}" >> .env
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -119,6 +139,16 @@ jobs:
       
     steps:
       - uses: actions/checkout@v4
+      - name: Create .env file from GitHub Secrets
+        run: |
+          echo "KINTSUGI_LOGIN=${{ secrets.KINTSUGI_LOGIN }}" >> .env
+          echo "KINTSUGI_PASSWORD=${{ secrets.KINTSUGI_PASSWORD }}" >> .env
+          echo "KINTSUGI_WRONG_LOGIN=${{ secrets.KINTSUGI_WRONG_LOGIN }}" >> .env
+          echo "KINTSUGI_WRONG_PASSWORD=${{ secrets.KINTSUGI_WRONG_PASSWORD }}" >> .env
+          echo "KINTSUGI_BASE_URL=${{ secrets.KINTSUGI_BASE_URL }}" >> .env
+          echo "KINTSUGI_LOGIN_URL=${{ secrets.KINTSUGI_LOGIN_URL }}" >> .env
+          echo "KINTSUGI_AUTH_TOKEN=${{ secrets.KINTSUGI_AUTH_TOKEN }}" >> .env
+          echo "TIMEOUT=${{ secrets.TIMEOUT }}" >> .env
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -168,6 +198,16 @@ jobs:
       
     steps:
       - uses: actions/checkout@v4
+      - name: Create .env file from GitHub Secrets
+        run: |
+          echo "KINTSUGI_LOGIN=${{ secrets.KINTSUGI_LOGIN }}" >> .env
+          echo "KINTSUGI_PASSWORD=${{ secrets.KINTSUGI_PASSWORD }}" >> .env
+          echo "KINTSUGI_WRONG_LOGIN=${{ secrets.KINTSUGI_WRONG_LOGIN }}" >> .env
+          echo "KINTSUGI_WRONG_PASSWORD=${{ secrets.KINTSUGI_WRONG_PASSWORD }}" >> .env
+          echo "KINTSUGI_BASE_URL=${{ secrets.KINTSUGI_BASE_URL }}" >> .env
+          echo "KINTSUGI_LOGIN_URL=${{ secrets.KINTSUGI_LOGIN_URL }}" >> .env
+          echo "KINTSUGI_AUTH_TOKEN=${{ secrets.KINTSUGI_AUTH_TOKEN }}" >> .env
+          echo "TIMEOUT=${{ secrets.TIMEOUT }}" >> .env
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
