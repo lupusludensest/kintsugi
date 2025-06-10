@@ -1,4 +1,4 @@
-name: Kintsugi Test Suite
+name: "Kintsugi Test Suite"
 
 on:
   push:
@@ -6,8 +6,23 @@ on:
   pull_request:
     branches: [main, develop]
   schedule:
-    - cron: "0 7 * * *" # Runs at 7:00 AM UTC (2:00 AM EST)
-  workflow_dispatch: # Allows manual triggering
+    - cron: "0 7 * * *" # Runs at 7:00 AM UTC (2:00 AM EST)  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Test suite to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - ui
+          - api
+          - performance
+      debug_mode:
+        description: 'Enable debug mode'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   ui-tests:
