@@ -12,7 +12,7 @@ on:
 jobs:
   ui-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     outputs:
       status: ${{ steps.test.outcome }}
       passed: ${{ steps.parse-results.outputs.passed }}
