@@ -24,9 +24,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-      - name: Install dependencies
-        run: npm ci      - name: Install Playwright browsers
+          cache: "npm"      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browsers
         run: npx playwright install --with-deps
       - name: Run UI tests
         id: test
