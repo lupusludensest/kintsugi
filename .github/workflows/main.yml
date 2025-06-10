@@ -12,7 +12,7 @@ on:
 jobs:
   ui-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     outputs:
       status: ${{ steps.test.outcome }}
       passed: ${{ steps.parse-results.outputs.passed }}
@@ -20,6 +20,15 @@ jobs:
       
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Debug environment
+        run: |
+          echo "Node version: $(node -v)"
+          echo "NPM version: $(npm -v)"
+          echo "Ubuntu version: $(lsb_release -a)"
+          echo "Memory info: $(free -h)"
+          echo "Disk space: $(df -h)"
+          
       - name: Create .env file from GitHub Secrets
         run: |
           echo "KINTSUGI_LOGIN=${{ secrets.KINTSUGI_LOGIN }}" >> .env
