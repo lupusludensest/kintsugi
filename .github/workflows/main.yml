@@ -20,16 +20,6 @@ jobs:
       
     steps:
       - uses: actions/checkout@v4
-      - name: Create .env file from GitHub Secrets
-        run: |
-          echo "KINTSUGI_LOGIN=${{ secrets.KINTSUGI_LOGIN }}" >> .env
-          echo "KINTSUGI_PASSWORD=${{ secrets.KINTSUGI_PASSWORD }}" >> .env
-          echo "KINTSUGI_WRONG_LOGIN=${{ secrets.KINTSUGI_WRONG_LOGIN }}" >> .env
-          echo "KINTSUGI_WRONG_PASSWORD=${{ secrets.KINTSUGI_WRONG_PASSWORD }}" >> .env
-          echo "KINTSUGI_BASE_URL=${{ secrets.KINTSUGI_BASE_URL }}" >> .env
-          echo "KINTSUGI_LOGIN_URL=${{ secrets.KINTSUGI_LOGIN_URL }}" >> .env
-          echo "KINTSUGI_AUTH_TOKEN=${{ secrets.KINTSUGI_AUTH_TOKEN }}" >> .env
-          echo "TIMEOUT=${{ secrets.TIMEOUT }}" >> .env
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -80,16 +70,6 @@ jobs:
       
     steps:
       - uses: actions/checkout@v4
-      - name: Create .env file from GitHub Secrets
-        run: |
-          echo "KINTSUGI_LOGIN=${{ secrets.KINTSUGI_LOGIN }}" >> .env
-          echo "KINTSUGI_PASSWORD=${{ secrets.KINTSUGI_PASSWORD }}" >> .env
-          echo "KINTSUGI_WRONG_LOGIN=${{ secrets.KINTSUGI_WRONG_LOGIN }}" >> .env
-          echo "KINTSUGI_WRONG_PASSWORD=${{ secrets.KINTSUGI_WRONG_PASSWORD }}" >> .env
-          echo "KINTSUGI_BASE_URL=${{ secrets.KINTSUGI_BASE_URL }}" >> .env
-          echo "KINTSUGI_LOGIN_URL=${{ secrets.KINTSUGI_LOGIN_URL }}" >> .env
-          echo "KINTSUGI_AUTH_TOKEN=${{ secrets.KINTSUGI_AUTH_TOKEN }}" >> .env
-          echo "TIMEOUT=${{ secrets.TIMEOUT }}" >> .env
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -139,16 +119,6 @@ jobs:
       
     steps:
       - uses: actions/checkout@v4
-      - name: Create .env file from GitHub Secrets
-        run: |
-          echo "KINTSUGI_LOGIN=${{ secrets.KINTSUGI_LOGIN }}" >> .env
-          echo "KINTSUGI_PASSWORD=${{ secrets.KINTSUGI_PASSWORD }}" >> .env
-          echo "KINTSUGI_WRONG_LOGIN=${{ secrets.KINTSUGI_WRONG_LOGIN }}" >> .env
-          echo "KINTSUGI_WRONG_PASSWORD=${{ secrets.KINTSUGI_WRONG_PASSWORD }}" >> .env
-          echo "KINTSUGI_BASE_URL=${{ secrets.KINTSUGI_BASE_URL }}" >> .env
-          echo "KINTSUGI_LOGIN_URL=${{ secrets.KINTSUGI_LOGIN_URL }}" >> .env
-          echo "KINTSUGI_AUTH_TOKEN=${{ secrets.KINTSUGI_AUTH_TOKEN }}" >> .env
-          echo "TIMEOUT=${{ secrets.TIMEOUT }}" >> .env
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -198,16 +168,6 @@ jobs:
       
     steps:
       - uses: actions/checkout@v4
-      - name: Create .env file from GitHub Secrets
-        run: |
-          echo "KINTSUGI_LOGIN=${{ secrets.KINTSUGI_LOGIN }}" >> .env
-          echo "KINTSUGI_PASSWORD=${{ secrets.KINTSUGI_PASSWORD }}" >> .env
-          echo "KINTSUGI_WRONG_LOGIN=${{ secrets.KINTSUGI_WRONG_LOGIN }}" >> .env
-          echo "KINTSUGI_WRONG_PASSWORD=${{ secrets.KINTSUGI_WRONG_PASSWORD }}" >> .env
-          echo "KINTSUGI_BASE_URL=${{ secrets.KINTSUGI_BASE_URL }}" >> .env
-          echo "KINTSUGI_LOGIN_URL=${{ secrets.KINTSUGI_LOGIN_URL }}" >> .env
-          echo "KINTSUGI_AUTH_TOKEN=${{ secrets.KINTSUGI_AUTH_TOKEN }}" >> .env
-          echo "TIMEOUT=${{ secrets.TIMEOUT }}" >> .env
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -314,7 +274,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: Kintsugi Test Results - ${{ needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success' && 'SUCCESS' || 'FAILURE' }}
-          to: gurovvic@gmail.com,rodionigor@gmail.com, petushin@kpd-cargo.com, atevs2789@gmail.com
+          to: gurovvic@gmail.com,rodionigor@gmail.com, svetlanalegkaya15@gmail.com, petushin@kpd-cargo.com, atevs2789@gmail.com
           from: GitHub Actions
           html_body: |
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -348,18 +308,13 @@ jobs:
                 <p style="margin: 5px 0; font-size: 16px;"><strong>Total Tests:</strong> ${{ steps.calculate.outputs.total_tests }}</p>
                 <p style="margin: 5px 0; font-size: 18px; color: #059669;"><strong>Pass Rate: ${{ steps.calculate.outputs.pass_rate }}%</strong></p>
               </div>
-              <h3 style="color: #374151; margin-top: 30px;">🗂 Sub-Reports:</h3>
-              <ul style="list-style: none; padding: 0;">
-                <li><strong>API Report:</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts" target="_blank">Download api_report (artifact: playwright-report-api)</a></li>
-                <li><strong>Performance Report:</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts" target="_blank">Download performance_report (artifact: playwright-report-performance)</a></li>
-                <li><strong>Stress Report:</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts" target="_blank">Download stress_report (artifact: playwright-report-stress)</a></li>
-                <li><strong>UI Report:</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts" target="_blank">Download ui_report (artifact: playwright-report-ui)</a></li>
-              </ul>
+              
               <div style="margin-top: 30px; padding: 15px; background-color: #f8fafc; border-radius: 6px;">
                 <p style="margin: 0;">
                   🔗 <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" style="color: #2563eb; text-decoration: none;">View Workflow Run</a>
                 </p>
               </div>
+              
               <hr style="margin-top: 30px; border: none; border-top: 1px solid #e5e7eb;">
               <p style="text-align: center; color: #6b7280; font-size: 12px; margin: 10px 0;">
                 <small>This is an automated message from GitHub Actions</small>
@@ -382,11 +337,5 @@ jobs:
             • Stress Tests: ${{ needs.stress-tests.outputs.passed }} passed, ${{ needs.stress-tests.outputs.failed }} failed
             
             Total: ${{ steps.calculate.outputs.total_passed }}/${{ steps.calculate.outputs.total_tests }} passed (${{ steps.calculate.outputs.pass_rate }}%)
-            
-            Sub-Reports:
-            • API Report: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts|Download api_report (playwright-report-api)>
-            • Performance Report: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts|Download performance_report (playwright-report-performance)>
-            • Stress Report: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts|Download stress_report (playwright-report-stress)>
-            • UI Report: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts|Download ui_report (playwright-report-ui)>
             
             Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
