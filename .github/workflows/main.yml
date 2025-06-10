@@ -1,28 +1,13 @@
 name: "Kintsugi Test Suite"
 
 on:
+  workflow_dispatch:
   push:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
   schedule:
-    - cron: "0 7 * * *" # Runs at 7:00 AM UTC (2:00 AM EST)  workflow_dispatch:
-    inputs:
-      test_suite:
-        description: 'Test suite to run'
-        required: true
-        default: 'all'
-        type: choice
-        options:
-          - all
-          - ui
-          - api
-          - performance
-      debug_mode:
-        description: 'Enable debug mode'
-        required: false
-        type: boolean
-        default: false
+    - cron: "0 7 * * *" # Runs at 7:00 AM UTC (2:00 AM EST)
 
 jobs:
   ui-tests:
@@ -41,9 +26,9 @@ jobs:
           node-version: "20"
           cache: "npm"
       - name: Install dependencies
-        run: npm ci
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps      - name: Run UI tests
+        run: npm ci      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Run UI tests
         id: test
         run: |
           echo "Running UI tests with debug logging..."
