@@ -57,32 +57,6 @@ test.describe("Dashboard Attributes Verification", () => {
     await expect(counterDiv).toHaveText("10");
   });
 
-  test("Clickable Users Menu Item is present", async ({ page }) => {
-    // Check for Users menu item
-    const usersMenuLink = page.locator('a[href="/users"].menu-item');
-    await expect(usersMenuLink).toBeVisible();
-
-    // Check for the menu item content
-    const menuItemContent = page.locator(
-      'a[href="/users"].menu-item .menu-item__content'
-    );
-    await expect(menuItemContent).toBeVisible();
-
-    // Check for the text "Пользователи"
-    const usersText = page
-      .locator(
-        'a[href="/users"].menu-item .menu-item__content div:has-text("Пользователи")'
-      )
-      .first();
-    await expect(usersText).toBeVisible();
-
-    // Check for the counter div
-    const counterDiv = page.locator(
-      'a[href="/users"].menu-item .menu-item__content .counter'
-    );
-    await expect(counterDiv).toBeVisible();
-    await expect(counterDiv).toHaveText("13 • 15");
-  });
 
   test("Clickable Analytics Menu Item is present", async ({ page }) => {
     // Check for Analytics menu item

@@ -28,13 +28,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-      - name: Run UI tests
+        run: npx playwright install --with-deps      - name: Run UI tests
         id: test
-        run: npx playwright test ui_tests/ 2>&1 | tee ui_test_output.log
+        run: |
+          echo "Running UI tests with debug logging..."
+          export DEBUG=pw:api
+          export PWDEBUG=1
+          npx playwright test ui_tests/ --reporter=list,html --trace on 2>&1 | tee ui_test_output.log
         continue-on-error: true
         env:
           CI: true
+          DEBUG: pw:api
+          NODE_ENV: ci
       - name: Parse test results
         id: parse-results
         run: |
