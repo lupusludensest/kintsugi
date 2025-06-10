@@ -54,7 +54,9 @@ test.describe("Dashboard Attributes Verification", () => {
       'a[href="/partners"].menu-item .menu-item__content .counter'
     );
     await expect(counterDiv).toBeVisible();
-    await expect(counterDiv).toHaveText("10");  });
+    await expect(counterDiv).toHaveText("10");
+  });
+
 
   test("Clickable Analytics Menu Item is present", async ({ page }) => {
     // Check for Analytics menu item

@@ -15,27 +15,27 @@ export default defineConfig({
     "performance_tests/**/*.js",
     "stress_tests/**/*.spec.js", // Changed to match .spec.js pattern
     "ui_tests/**/*.spec.js",
-  ],  timeout: process.env.CI ? 120000 : 60000,
+  ],
+  timeout: 60000,
   expect: {
-    timeout: process.env.CI ? 30000 : 15000,
+    timeout: 15000,
   },
-  fullyParallel: true,  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 1,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: [["html"], ["list"]],
-  reportSlowTests: { max: 5, threshold: 15000 },
-  use: {
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: 1,
+  workers: 1,
+  reporter: "html",  use: {
     baseURL: "https://kintsugi.su",
     trace: "retain-on-failure",
-    screenshot: "only-on-failure",
+    screenshot: "on",
     headless: true,
     ignoreHTTPSErrors: true,
-    video: "retain-on-failure",
-    viewport: { width: 1920, height: 1080 },    navigationTimeout: process.env.CI ? 60000 : 30000,
-    actionTimeout: process.env.CI ? 30000 : 15000,
-    launchOptions: {
-      slowMo: process.env.CI ? 100 : 0,
-    },
+    video: "on",
+    retry: process.env.CI ? 3 : 0,
+    timeout: process.env.CI ? 90000 : 30000,
+    viewport: { width: 1920, height: 1080 },
+    navigationTimeout: 30000,
+    actionTimeout: 15000,
   },
   projects: [
     {
