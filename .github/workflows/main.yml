@@ -29,6 +29,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Ensure browsers are installed after npm ci, in project root
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
@@ -52,8 +53,9 @@ jobs:
           KINTSUGI_AUTH_TOKEN: ${{ secrets.KINTSUGI_AUTH_TOKEN }}
           TIMEOUT: ${{ secrets.TIMEOUT }}
 
-      - name: Print env vars for debug
-        run: cat .env
+      # Optional: print .env for debug (remove if secrets exposure is a concern)
+      #- name: Print env vars for debug
+      #  run: cat .env
 
       - name: Run UI tests
         id: test
@@ -61,7 +63,6 @@ jobs:
           echo "Running UI tests with debug logging..."
           export DEBUG=pw:api,pw:browser*
           export PWDEBUG=console
-          export PLAYWRIGHT_BROWSERS_PATH=0
           npx playwright test ui_tests/ --reporter=list,html --trace on --update-snapshots 2>&1 | tee ui_test_output.log || true
         continue-on-error: true
         env:
