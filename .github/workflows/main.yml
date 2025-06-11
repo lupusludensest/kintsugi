@@ -29,9 +29,11 @@ jobs:
           
       - name: Install dependencies
         run: npm ci
-        
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium- name: Run UI tests
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run UI tests
         id: test
         run: |
           echo "Running UI tests with debug logging..."
@@ -50,13 +52,13 @@ jobs:
           KINTSUGI_PASSWORD: ${{ secrets.KINTSUGI_PASSWORD }}
           TIMEOUT: 30000
           PWDEBUG: console
+
       - name: Parse test results
         id: parse-results
         run: |
           if [ -f ui_test_output.log ]; then
-            # Extract passed and failed counts from Playwright output
-            PASSED=$(grep -o '[0-9]\+ passed' ui_test_output.log | grep -o '[0-9]\+' || echo "0")
-            FAILED=$(grep -o '[0-9]\+ failed' ui_test_output.log | grep -o '[0-9]\+' || echo "0")
+            PASSED=$(grep -o '[0-9]\+ passed' ui_test_output.log | grep -o '[0-9]\+' | tail -1 || echo "0")
+            FAILED=$(grep -o '[0-9]\+ failed' ui_test_output.log | grep -o '[0-9]\+' | tail -1 || echo "0")
             echo "passed=$PASSED" >> $GITHUB_OUTPUT
             echo "failed=$FAILED" >> $GITHUB_OUTPUT
             echo "UI Tests - Passed: $PASSED, Failed: $FAILED"
@@ -65,6 +67,7 @@ jobs:
             echo "failed=0" >> $GITHUB_OUTPUT
           fi
         shell: bash
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -75,6 +78,7 @@ jobs:
             test-results/
             ui_test_output.log
           retention-days: 30
+
   api-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -96,7 +100,7 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run API tests
         id: test
-        run: npx playwright test api_tests/ 2>&1 | tee api_test_output.log
+        run: npx playwright test api_tests/ 2>&1 | tee api_test_output.log || true
         continue-on-error: true
         env:
           CI: true
@@ -104,8 +108,8 @@ jobs:
         id: parse-results
         run: |
           if [ -f api_test_output.log ]; then
-            PASSED=$(grep -o '[0-9]\+ passed' api_test_output.log | grep -o '[0-9]\+' || echo "0")
-            FAILED=$(grep -o '[0-9]\+ failed' api_test_output.log | grep -o '[0-9]\+' || echo "0")
+            PASSED=$(grep -o '[0-9]\+ passed' api_test_output.log | grep -o '[0-9]\+' | tail -1 || echo "0")
+            FAILED=$(grep -o '[0-9]\+ failed' api_test_output.log | grep -o '[0-9]\+' | tail -1 || echo "0")
             echo "passed=$PASSED" >> $GITHUB_OUTPUT
             echo "failed=$FAILED" >> $GITHUB_OUTPUT
             echo "API Tests - Passed: $PASSED, Failed: $FAILED"
@@ -124,6 +128,7 @@ jobs:
             test-results/
             api_test_output.log
           retention-days: 30
+
   performance-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -145,7 +150,7 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Performance tests
         id: test
-        run: npx playwright test performance_tests/ 2>&1 | tee performance_test_output.log
+        run: npx playwright test performance_tests/ 2>&1 | tee performance_test_output.log || true
         continue-on-error: true
         env:
           CI: true
@@ -153,8 +158,8 @@ jobs:
         id: parse-results
         run: |
           if [ -f performance_test_output.log ]; then
-            PASSED=$(grep -o '[0-9]\+ passed' performance_test_output.log | grep -o '[0-9]\+' || echo "0")
-            FAILED=$(grep -o '[0-9]\+ failed' performance_test_output.log | grep -o '[0-9]\+' || echo "0")
+            PASSED=$(grep -o '[0-9]\+ passed' performance_test_output.log | grep -o '[0-9]\+' | tail -1 || echo "0")
+            FAILED=$(grep -o '[0-9]\+ failed' performance_test_output.log | grep -o '[0-9]\+' | tail -1 || echo "0")
             echo "passed=$PASSED" >> $GITHUB_OUTPUT
             echo "failed=$FAILED" >> $GITHUB_OUTPUT
             echo "Performance Tests - Passed: $PASSED, Failed: $FAILED"
@@ -173,6 +178,7 @@ jobs:
             test-results/
             performance_test_output.log
           retention-days: 30
+
   stress-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -194,7 +200,7 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Stress tests
         id: test
-        run: npx playwright test stress_tests/ 2>&1 | tee stress_test_output.log
+        run: npx playwright test stress_tests/ 2>&1 | tee stress_test_output.log || true
         continue-on-error: true
         env:
           CI: true
@@ -202,8 +208,8 @@ jobs:
         id: parse-results
         run: |
           if [ -f stress_test_output.log ]; then
-            PASSED=$(grep -o '[0-9]\+ passed' stress_test_output.log | grep -o '[0-9]\+' || echo "0")
-            FAILED=$(grep -o '[0-9]\+ failed' stress_test_output.log | grep -o '[0-9]\+' || echo "0")
+            PASSED=$(grep -o '[0-9]\+ passed' stress_test_output.log | grep -o '[0-9]\+' | tail -1 || echo "0")
+            FAILED=$(grep -o '[0-9]\+ failed' stress_test_output.log | grep -o '[0-9]\+' | tail -1 || echo "0")
             echo "passed=$PASSED" >> $GITHUB_OUTPUT
             echo "failed=$FAILED" >> $GITHUB_OUTPUT
             echo "Stress Tests - Passed: $PASSED, Failed: $FAILED"
@@ -222,6 +228,7 @@ jobs:
             test-results/
             stress_test_output.log
           retention-days: 30
+
   notify:
     needs: [ui-tests, api-tests, performance-tests, stress-tests]
     runs-on: ubuntu-latest
