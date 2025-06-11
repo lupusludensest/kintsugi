@@ -68,6 +68,7 @@ jobs:
           DEBUG: pw:api,pw:browser*
           NODE_ENV: ci
           PWDEBUG: console
+          PLAYWRIGHT_HEADLESS: true
 
       - name: Parse test results
         id: parse-results
