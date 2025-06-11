@@ -43,7 +43,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
     }
 
     // Take screenshot for debugging
-    await page.screenshot({ path: "partners-page.png" });
+    await page.screenshot({ path: "ui_tests/pic_generated_in_tests/partners-page.png" });
   });
 
   test("Partners page title is visible", async ({ page }) => {
@@ -95,7 +95,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
     }
   });  test("Partners search field is functional", async ({ page }) => {
     // First take a screenshot of the page for debugging
-    await page.screenshot({ path: 'partners-search-field.png' });
+    await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/partners-search-field.png' });
     
     // Based on the error output, we know there are multiple icon elements
     // We'll take a safer approach and look for input fields directly
@@ -181,7 +181,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
     }
   });  test("Partners table or list is visible", async ({ page }) => {
     // Take a screenshot for debugging
-    await page.screenshot({ path: 'partners-table.png' });
+    await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/partners-table.png' });
     
     // Look for any table-like structure with multiple selectors
     const tableSelectors = [
@@ -252,7 +252,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
   });
   test("Partner item contains key information", async ({ page }) => {
     // Take screenshot for debugging
-    await page.screenshot({ path: 'partner-items.png' });
+    await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/partner-items.png' });
     
     // From the error output, we can see there are table rows with partner data
     // The error shows "АО \"ГСК \"ЮГОРИЯ\"" and other company names in table rows
@@ -307,7 +307,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
     page,
   }) => {
     // Take screenshot for debugging
-    await page.screenshot({ path: 'partner-items-interactivity.png' });
+    await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/partner-items-interactivity.png' });
     
     // Look for any interactive elements within partner items
     const itemSelectors = [
@@ -493,7 +493,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
     expect(page.url()).toContain("/dashboard");
   });  test("Partner IDs should be in ascending order", async ({ page }) => {
     // Take screenshot for debugging
-    await page.screenshot({ path: 'partners-id-ordering.png' });
+    await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/partners-id-ordering.png' });
     console.log("Checking partner ID ordering");
     console.log("DEFECT NOTE: Currently partner IDs are displayed in descending order, but the requirement is for ascending order");
     console.log("This test is expected to FAIL until the application is fixed to show partner IDs in ascending order (1 to 11)");

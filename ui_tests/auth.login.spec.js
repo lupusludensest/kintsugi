@@ -15,7 +15,7 @@ test.describe("Authentication - Login Tests", () => {
 
   test("should login successfully with valid credentials", async ({ page }) => {
     // Take initial screenshot for debugging
-    await page.screenshot({ path: 'login-start.png', fullPage: true });
+    await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/login-start.png', fullPage: true });
 
     // Use the correct selectors based on actual page structure
     // Email input: use name attribute which is reliable
@@ -45,7 +45,7 @@ test.describe("Authentication - Login Tests", () => {
     await expect(submitButton).toBeEnabled({ timeout: 5000 });
 
     // Take screenshot before submitting
-    await page.screenshot({ path: 'before-submit.png', fullPage: true });
+    await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/before-submit.png', fullPage: true });
 
     // Click submit and wait for navigation
     await Promise.all([
@@ -55,7 +55,7 @@ test.describe("Authentication - Login Tests", () => {
     ]);
 
     // Take screenshot after login
-    await page.screenshot({ path: 'after-login.png', fullPage: true });
+    await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/after-login.png', fullPage: true });
 
     // Wait for dashboard to load
     await page.waitForLoadState('networkidle', { timeout: 10000 });

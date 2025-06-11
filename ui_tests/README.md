@@ -48,6 +48,35 @@ npx playwright test ui_tests --debug
 - Form inputs: `input[name="fieldname"]`
 - Navigation links: `a.router-link-active`
 
+## Attribute Tests
+The framework includes comprehensive attribute tests for all main UI pages:
+
+### Core Pages
+- `analytics.attributes.spec.js` - Analytics page attribute verification
+- `dashboard.attributes.spec.js` - Dashboard menu and navigation verification
+- `partners.attributes.spec.js` - Partners list and management verification
+
+### Transaction Pages
+- `contracts.attributes.spec.js` - Contract management and details verification
+- `bordereaux.attributes.spec.js` - Bordereaux list and processing verification
+- `risks.attributes.spec.js` - Risk assessment and tracking verification
+- `losses.attributes.spec.js` - Loss recording and claims verification
+
+Each attribute test file follows a consistent structure:
+- Pre-test authentication and navigation
+- Element presence and visibility checks
+- Interactive element functionality verification
+- Data display and formatting validation
+- Error handling and edge cases
+- Navigation and state management
+
+Best practices implemented across all attribute tests:
+- Robust selectors with multiple fallbacks
+- Comprehensive error logging
+- Screenshot capture for debugging
+- Flexible timeout handling
+- Proper test isolation
+
 ## Viewing Reports
 To see the test results and screenshots:
 ```bash

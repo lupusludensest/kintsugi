@@ -8,6 +8,10 @@ dotenv.config();
 test.describe("Dashboard Attributes Verification", () => {
   test.beforeEach(async ({ page }) => {
     await loginUser(page);
+    // Take screenshot for debugging
+    await page.screenshot({
+      path: "ui_tests/pic_generated_in_tests/dashboard-initial.png",
+    });
   });
 
   test("Clickable Dashboard Menu Item is present", async ({ page }) => {
@@ -56,7 +60,6 @@ test.describe("Dashboard Attributes Verification", () => {
     await expect(counterDiv).toBeVisible();
     await expect(counterDiv).toHaveText("10");
   });
-
 
   test("Clickable Analytics Menu Item is present", async ({ page }) => {
     // Check for Analytics menu item

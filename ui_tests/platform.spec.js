@@ -4,6 +4,10 @@ import { expect } from "@playwright/test";
 test.describe("Platform Page Tests", () => {
   test("should load platform page correctly", async ({ platformPage }) => {
     await platformPage.navigateToPlatform();
+    // Take screenshot for debugging
+    await platformPage.page.screenshot({
+      path: "ui_tests/pic_generated_in_tests/platform-main.png",
+    });
     await platformPage.verifyPlatformTitleVisible();
   });
 

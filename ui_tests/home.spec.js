@@ -4,6 +4,10 @@ import { expect } from "@playwright/test";
 test.describe("Kintsugi Website Tests", () => {
   test("should display main heading and description", async ({ homePage }) => {
     await homePage.navigateToHome();
+    // Take screenshot for debugging
+    await homePage.page.screenshot({
+      path: "ui_tests/pic_generated_in_tests/home-heading.png",
+    });
     await homePage.verifyMainHeadingVisible();
     const description = await homePage.getMainDescription();
     expect(description).toContain("Комплексное цифровое решение");

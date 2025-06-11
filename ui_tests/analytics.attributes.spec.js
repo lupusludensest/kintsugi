@@ -25,7 +25,7 @@ test.describe("Analytics Page Attributes Verification", () => {
       await page.waitForLoadState("domcontentloaded");
       await page.waitForTimeout(2000);
     }
-    await page.screenshot({ path: "analytics-page.png" });
+    await page.screenshot({ path: "ui_tests/pic_generated_in_tests/analytics-page.png" });
   });
 
   test("Analytics page preview message or dashboard is visible", async ({ page }) => {
@@ -163,28 +163,73 @@ test.describe("Analytics Page Attributes Verification", () => {
     await expect(clearBtn).toBeDisabled();
   });
 
-  test("Mark all checkboxes, confirm, and verify all attributes are present in the new UI", async ({ page }) => {
-    // 1. Open the popup
-    const setupBtn = page.locator('.v-btn__content', { hasText: 'Настроить' });
+  test("Mark all checkboxes, confirm, and verify all attributes are present in the new UI", async ({ page }) => {    // 1. Open the popup
+    const setupBtn = page.locator('button, .v-btn', { hasText: 'Настроить' }).first();
     await expect(setupBtn).toBeVisible();
     await expect(setupBtn).toBeEnabled();
     await setupBtn.click();
 
-    // 2. Mark all checkboxes
-    const popup = page.locator('.v-dialog, .popup, .modal, [role="dialog"]');
-    await expect(popup).toBeVisible();
-    const checkboxes = popup.locator('input[type="checkbox"]');
-    const labels = popup.locator('label');
-    const checkboxCount = await checkboxes.count();
+    // 2. Wait for popup and find checkboxes
+    // First wait for the dialog to be present
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible({ timeout: 10000 });
+    
+    // Then find the content area within the dialog
+    const popup = dialog.locator('.v-overlay__content');
+    await expect(popup).toBeVisible({ timeout: 5000 });
+    
+    // Wait a bit for animation and content loading
+    await page.waitForTimeout(1000);
+    
+    // Try multiple selectors for checkboxes
+    const checkboxSelectors = [
+      'input[type="checkbox"]',
+      '.v-checkbox',
+      '.v-selection-control',
+      '[role="checkbox"]'
+    ];
+      let checkboxes = null;
+    let checkboxCount = 0;
+    
+    // Try each selector until we find checkboxes
+    for (const selector of checkboxSelectors) {
+      checkboxes = popup.locator(selector);
+      checkboxCount = await checkboxes.count();
+      if (checkboxCount > 0) {
+        console.log(`Found ${checkboxCount} checkboxes with selector: ${selector}`);
+        break;
+      }
+    }
+
+    // Get labels from elements next to checkboxes
+    const labelSelectors = [
+      '.checkbox-list__row-description div',
+      '.v-label',
+      'label',
+      '.checkbox-label'
+    ];
+
+    let labels = null;
+    // Try each label selector
+    for (const selector of labelSelectors) {
+      labels = popup.locator(selector);
+      const labelCount = await labels.count();
+      if (labelCount > 0) {
+        console.log(`Found ${labelCount} labels with selector: ${selector}`);
+        break;
+      }
+    }
+
     expect(checkboxCount).toBeGreaterThan(0);
     let checkedLabels = [];
     for (let i = 0; i < checkboxCount; i++) {
       const cb = checkboxes.nth(i);
-      const label = await labels.nth(i).innerText();
+      const labelElement = labels.nth(i);
+      const labelText = await labelElement.textContent();
       if (!(await cb.isChecked())) {
         await cb.check();
       }
-      checkedLabels.push(label.trim());
+      checkedLabels.push(labelText.trim());
     }
 
     // 3. Click 'Подтвердить'
