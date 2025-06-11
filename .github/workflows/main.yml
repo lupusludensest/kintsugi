@@ -29,7 +29,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Ensure browsers are installed after npm ci, in project root
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
@@ -53,9 +52,8 @@ jobs:
           KINTSUGI_AUTH_TOKEN: ${{ secrets.KINTSUGI_AUTH_TOKEN }}
           TIMEOUT: ${{ secrets.TIMEOUT }}
 
-      # Optional: print .env for debug (remove if secrets exposure is a concern)
-      #- name: Print env vars for debug
-      #  run: cat .env
+      - name: Check site availability from CI
+        run: curl -Iv --max-time 15 ${{ secrets.KINTSUGI_BASE_URL }} || true
 
       - name: Run UI tests
         id: test
