@@ -55,20 +55,19 @@ jobs:
       - name: Check site availability from CI
         run: curl -Iv --max-time 15 ${{ secrets.KINTSUGI_BASE_URL }} || true
 
-      - name: Run UI tests
+      - name: Run UI tests (headed mode with xvfb)
         id: test
         run: |
-          echo "Running UI tests with debug logging..."
+          echo "Running UI tests with debug logging and xvfb-run..."
           export DEBUG=pw:api,pw:browser*
           export PWDEBUG=console
-          npx playwright test ui_tests/ --reporter=list,html --trace on --update-snapshots 2>&1 | tee ui_test_output.log || true
+          xvfb-run --auto-servernum --server-args='-screen 0 1920x1080x24' npx playwright test ui_tests/ --reporter=list,html --trace on --update-snapshots 2>&1 | tee ui_test_output.log || true
         continue-on-error: true
         env:
           CI: true
           DEBUG: pw:api,pw:browser*
           NODE_ENV: ci
           PWDEBUG: console
-          PLAYWRIGHT_HEADLESS: true
 
       - name: Parse test results
         id: parse-results
@@ -340,107 +339,4 @@ jobs:
           TOTAL_FAILED=$((UI_FAILED + API_FAILED + PERF_FAILED + STRESS_FAILED))
           TOTAL_TESTS=$((TOTAL_PASSED + TOTAL_FAILED))
           
-          # Calculate pass rate (using bc for floating point)
-          if [ $TOTAL_TESTS -gt 0 ]; then
-            PASS_RATE=$(echo "scale=2; $TOTAL_PASSED * 100 / $TOTAL_TESTS" | bc)
-          else
-            PASS_RATE="0.00"
-          fi
-          
-          # Calculate individual totals
-          UI_TOTAL=$((UI_PASSED + UI_FAILED))
-          API_TOTAL=$((API_PASSED + API_FAILED))
-          PERF_TOTAL=$((PERF_PASSED + PERF_FAILED))
-          STRESS_TOTAL=$((STRESS_PASSED + STRESS_FAILED))
-          
-          echo "total_passed=$TOTAL_PASSED" >> $GITHUB_OUTPUT
-          echo "total_failed=$TOTAL_FAILED" >> $GITHUB_OUTPUT
-          echo "total_tests=$TOTAL_TESTS" >> $GITHUB_OUTPUT
-          echo "pass_rate=$PASS_RATE" >> $GITHUB_OUTPUT
-          echo "ui_total=$UI_TOTAL" >> $GITHUB_OUTPUT
-          echo "api_total=$API_TOTAL" >> $GITHUB_OUTPUT
-          echo "perf_total=$PERF_TOTAL" >> $GITHUB_OUTPUT
-          echo "stress_total=$STRESS_TOTAL" >> $GITHUB_OUTPUT
-          
-          echo "Calculated totals: Passed=$TOTAL_PASSED, Failed=$TOTAL_FAILED, Total=$TOTAL_TESTS, Pass Rate=$PASS_RATE%"
-        shell: bash
-      
-      - name: Download all workflow run artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-          
-      - name: Send email notification
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Kintsugi Test Results - ${{ needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success' && 'SUCCESS' || 'FAILURE' }}
-          to: gurovvic@gmail.com,rodionigor@gmail.com, svetlanalegkaya15@gmail.com, petushin@kpd-cargo.com, atevs2789@gmail.com
-          from: GitHub Actions
-          html_body: |
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <h2 style="color: #2563eb; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">🔍 Kintsugi Test Suite Results</h2>
-              
-              <div style="background-color: #f9fafb; border-left: 4px solid ${{ needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success' && '#10b981' || '#ef4444' }}; padding: 15px; margin: 20px 0;">
-                <p style="margin: 0; font-size: 18px; font-weight: bold;">
-                  Overall Status: ${{ needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success' && '✅ SUCCESS' || '❌ FAILURE' }}
-                </p>
-              </div>
-              
-              <h3 style="color: #374151; margin-top: 30px;">📊 Test Results Breakdown:</h3>
-              <ul style="list-style: none; padding: 0;">
-                <li style="background-color: #f3f4f6; margin: 8px 0; padding: 12px; border-radius: 6px;">
-                  <strong>UI Tests:</strong> ${{ needs.ui-tests.outputs.passed }}✅ and ${{ needs.ui-tests.outputs.failed }}❌ (Total: ${{ steps.calculate.outputs.ui_total }})
-                </li>
-                <li style="background-color: #f3f4f6; margin: 8px 0; padding: 12px; border-radius: 6px;">
-                  <strong>API Tests:</strong> ${{ needs.api-tests.outputs.passed }}✅ and ${{ needs.api-tests.outputs.failed }}❌ (Total: ${{ steps.calculate.outputs.api_total }})
-                </li>
-                <li style="background-color: #f3f4f6; margin: 8px 0; padding: 12px; border-radius: 6px;">
-                  <strong>Performance Tests:</strong> ${{ needs.performance-tests.outputs.passed }}✅ and ${{ needs.performance-tests.outputs.failed }}❌ (Total: ${{ steps.calculate.outputs.perf_total }})
-                </li>
-                <li style="background-color: #f3f4f6; margin: 8px 0; padding: 12px; border-radius: 6px;">
-                  <strong>Stress Tests:</strong> ${{ needs.stress-tests.outputs.passed }}✅ and ${{ needs.stress-tests.outputs.failed }}❌ (Total: ${{ steps.calculate.outputs.stress_total }})
-                </li>
-              </ul>
-              
-              <h3 style="color: #374151; margin-top: 30px;">📈 Summary:</h3>
-              <div style="background-color: #ecfdf5; border: 1px solid #d1fae5; border-radius: 8px; padding: 20px; margin: 15px 0;">
-                <p style="margin: 5px 0; font-size: 16px;"><strong>Total Passed:</strong> ${{ steps.calculate.outputs.total_passed }}</p>
-                <p style="margin: 5px 0; font-size: 16px;"><strong>Total Tests:</strong> ${{ steps.calculate.outputs.total_tests }}</p>
-                <p style="margin: 5px 0; font-size: 18px; color: #059669;"><strong>Pass Rate: ${{ steps.calculate.outputs.pass_rate }}%</strong></p>
-              </div>
-              
-              <div style="margin-top: 30px; padding: 15px; background-color: #f8fafc; border-radius: 6px;">
-                <p style="margin: 0;">
-                  🔗 <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" style="color: #2563eb; text-decoration: none;">View Workflow Run</a>
-                </p>
-              </div>
-              
-              <hr style="margin-top: 30px; border: none; border-top: 1px solid #e5e7eb;">
-              <p style="text-align: center; color: #6b7280; font-size: 12px; margin: 10px 0;">
-                <small>This is an automated message from GitHub Actions</small>
-              </p>
-            </div>
-
-      - name: Send Slack notification
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: |
-            🔍 Kintsugi Test Suite Results
-            
-            Overall Status: ${{ needs.ui-tests.result == 'success' && needs.api-tests.result == 'success' && needs.performance-tests.result == 'success' && needs.stress-tests.result == 'success' && 'SUCCESS' || 'FAILURE' }}
-            
-            Test Results:
-            • UI Tests: ${{ needs.ui-tests.outputs.passed }} passed, ${{ needs.ui-tests.outputs.failed }} failed
-            • API Tests: ${{ needs.api-tests.outputs.passed }} passed, ${{ needs.api-tests.outputs.failed }} failed
-            • Performance Tests: ${{ needs.performance-tests.outputs.passed }} passed, ${{ needs.performance-tests.outputs.failed }} failed
-            • Stress Tests: ${{ needs.stress-tests.outputs.passed }} passed, ${{ needs.stress-tests.outputs.failed }} failed
-            
-            Total: ${{ steps.calculate.outputs.total_passed }}/${{ steps.calculate.outputs.total_tests }} passed (${{ steps.calculate.outputs.pass_rate }}%)
-            
-            Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          # Calculate pass rate (using bc
