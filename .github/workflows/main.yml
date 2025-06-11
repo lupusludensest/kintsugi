@@ -317,10 +317,10 @@ jobs:
     if: always()
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install bc for calculations
         run: sudo apt-get update && sudo apt-get install -y bc
-      
+
       - name: Calculate totals and pass rate
         id: calculate
         run: |
@@ -333,10 +333,10 @@ jobs:
           PERF_FAILED=${{ needs.performance-tests.outputs.failed }}
           STRESS_PASSED=${{ needs.stress-tests.outputs.passed }}
           STRESS_FAILED=${{ needs.stress-tests.outputs.failed }}
-          
+
           # Calculate totals
           TOTAL_PASSED=$((UI_PASSED + API_PASSED + PERF_PASSED + STRESS_PASSED))
           TOTAL_FAILED=$((UI_FAILED + API_FAILED + PERF_FAILED + STRESS_FAILED))
           TOTAL_TESTS=$((TOTAL_PASSED + TOTAL_FAILED))
-          
+
           # Calculate pass rate (using bc
