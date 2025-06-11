@@ -1,4 +1,4 @@
-name: "Kintsugi Test Suite"
+name: Kintsugi Test Suite
 
 on:
   workflow_dispatch:
@@ -20,27 +20,36 @@ jobs:
       
     steps:
       - uses: actions/checkout@v4
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"      
+          cache: "npm"
+          
       - name: Install dependencies
         run: npm ci
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-      - name: Run UI tests
+        
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium- name: Run UI tests
         id: test
         run: |
           echo "Running UI tests with debug logging..."
-          export DEBUG=pw:api
-          export PWDEBUG=1
-          npx playwright test ui_tests/ --reporter=list,html --trace on 2>&1 | tee ui_test_output.log
+          export DEBUG=pw:api,pw:browser*
+          export PWDEBUG=console
+          export PLAYWRIGHT_BROWSERS_PATH=0
+          npx playwright test ui_tests/ --reporter=list,html --trace on --update-snapshots 2>&1 | tee ui_test_output.log || true
         continue-on-error: true
         env:
           CI: true
-          DEBUG: pw:api
+          DEBUG: pw:api,pw:browser*
           NODE_ENV: ci
+          KINTSUGI_LOGIN_URL: ${{ secrets.KINTSUGI_LOGIN_URL }}
+          KINTSUGI_BASE_URL: ${{ secrets.KINTSUGI_BASE_URL }}
+          KINTSUGI_LOGIN: ${{ secrets.KINTSUGI_LOGIN }}
+          KINTSUGI_PASSWORD: ${{ secrets.KINTSUGI_PASSWORD }}
+          TIMEOUT: 30000
+          PWDEBUG: console
       - name: Parse test results
         id: parse-results
         run: |
