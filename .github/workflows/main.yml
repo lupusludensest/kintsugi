@@ -17,21 +17,43 @@ jobs:
       status: ${{ steps.test.outcome }}
       passed: ${{ steps.parse-results.outputs.passed }}
       failed: ${{ steps.parse-results.outputs.failed }}
-      
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
-          
+
       - name: Install dependencies
         run: npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+
+      - name: Create .env file from secrets
+        run: |
+          echo "KINTSUGI_LOGIN=${KINTSUGI_LOGIN}" >> .env
+          echo "KINTSUGI_PASSWORD=${KINTSUGI_PASSWORD}" >> .env
+          echo "KINTSUGI_WRONG_LOGIN=${KINTSUGI_WRONG_LOGIN}" >> .env
+          echo "KINTSUGI_WRONG_PASSWORD=${KINTSUGI_WRONG_PASSWORD}" >> .env
+          echo "KINTSUGI_BASE_URL=${KINTSUGI_BASE_URL}" >> .env
+          echo "KINTSUGI_LOGIN_URL=${KINTSUGI_LOGIN_URL}" >> .env
+          echo "KINTSUGI_AUTH_TOKEN=${KINTSUGI_AUTH_TOKEN}" >> .env
+          echo "TIMEOUT=${TIMEOUT}" >> .env
+        env:
+          KINTSUGI_LOGIN: ${{ secrets.KINTSUGI_LOGIN }}
+          KINTSUGI_PASSWORD: ${{ secrets.KINTSUGI_PASSWORD }}
+          KINTSUGI_WRONG_LOGIN: ${{ secrets.KINTSUGI_WRONG_LOGIN }}
+          KINTSUGI_WRONG_PASSWORD: ${{ secrets.KINTSUGI_WRONG_PASSWORD }}
+          KINTSUGI_BASE_URL: ${{ secrets.KINTSUGI_BASE_URL }}
+          KINTSUGI_LOGIN_URL: ${{ secrets.KINTSUGI_LOGIN_URL }}
+          KINTSUGI_AUTH_TOKEN: ${{ secrets.KINTSUGI_AUTH_TOKEN }}
+          TIMEOUT: ${{ secrets.TIMEOUT }}
+
+      - name: Print env vars for debug
+        run: cat .env
 
       - name: Run UI tests
         id: test
@@ -46,11 +68,6 @@ jobs:
           CI: true
           DEBUG: pw:api,pw:browser*
           NODE_ENV: ci
-          KINTSUGI_LOGIN_URL: ${{ secrets.KINTSUGI_LOGIN_URL }}
-          KINTSUGI_BASE_URL: ${{ secrets.KINTSUGI_BASE_URL }}
-          KINTSUGI_LOGIN: ${{ secrets.KINTSUGI_LOGIN }}
-          KINTSUGI_PASSWORD: ${{ secrets.KINTSUGI_PASSWORD }}
-          TIMEOUT: 30000
           PWDEBUG: console
 
       - name: Parse test results
@@ -86,7 +103,6 @@ jobs:
       status: ${{ steps.test.outcome }}
       passed: ${{ steps.parse-results.outputs.passed }}
       failed: ${{ steps.parse-results.outputs.failed }}
-      
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -98,6 +114,29 @@ jobs:
         run: npm ci
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+      - name: Create .env file from secrets
+        run: |
+          echo "KINTSUGI_LOGIN=${KINTSUGI_LOGIN}" >> .env
+          echo "KINTSUGI_PASSWORD=${KINTSUGI_PASSWORD}" >> .env
+          echo "KINTSUGI_WRONG_LOGIN=${KINTSUGI_WRONG_LOGIN}" >> .env
+          echo "KINTSUGI_WRONG_PASSWORD=${KINTSUGI_WRONG_PASSWORD}" >> .env
+          echo "KINTSUGI_BASE_URL=${KINTSUGI_BASE_URL}" >> .env
+          echo "KINTSUGI_LOGIN_URL=${KINTSUGI_LOGIN_URL}" >> .env
+          echo "KINTSUGI_AUTH_TOKEN=${KINTSUGI_AUTH_TOKEN}" >> .env
+          echo "TIMEOUT=${TIMEOUT}" >> .env
+        env:
+          KINTSUGI_LOGIN: ${{ secrets.KINTSUGI_LOGIN }}
+          KINTSUGI_PASSWORD: ${{ secrets.KINTSUGI_PASSWORD }}
+          KINTSUGI_WRONG_LOGIN: ${{ secrets.KINTSUGI_WRONG_LOGIN }}
+          KINTSUGI_WRONG_PASSWORD: ${{ secrets.KINTSUGI_WRONG_PASSWORD }}
+          KINTSUGI_BASE_URL: ${{ secrets.KINTSUGI_BASE_URL }}
+          KINTSUGI_LOGIN_URL: ${{ secrets.KINTSUGI_LOGIN_URL }}
+          KINTSUGI_AUTH_TOKEN: ${{ secrets.KINTSUGI_AUTH_TOKEN }}
+          TIMEOUT: ${{ secrets.TIMEOUT }}
+
+      - name: Print env vars for debug
+        run: cat .env
+
       - name: Run API tests
         id: test
         run: npx playwright test api_tests/ 2>&1 | tee api_test_output.log || true
@@ -136,7 +175,6 @@ jobs:
       status: ${{ steps.test.outcome }}
       passed: ${{ steps.parse-results.outputs.passed }}
       failed: ${{ steps.parse-results.outputs.failed }}
-      
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -148,6 +186,29 @@ jobs:
         run: npm ci
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+      - name: Create .env file from secrets
+        run: |
+          echo "KINTSUGI_LOGIN=${KINTSUGI_LOGIN}" >> .env
+          echo "KINTSUGI_PASSWORD=${KINTSUGI_PASSWORD}" >> .env
+          echo "KINTSUGI_WRONG_LOGIN=${KINTSUGI_WRONG_LOGIN}" >> .env
+          echo "KINTSUGI_WRONG_PASSWORD=${KINTSUGI_WRONG_PASSWORD}" >> .env
+          echo "KINTSUGI_BASE_URL=${KINTSUGI_BASE_URL}" >> .env
+          echo "KINTSUGI_LOGIN_URL=${KINTSUGI_LOGIN_URL}" >> .env
+          echo "KINTSUGI_AUTH_TOKEN=${KINTSUGI_AUTH_TOKEN}" >> .env
+          echo "TIMEOUT=${TIMEOUT}" >> .env
+        env:
+          KINTSUGI_LOGIN: ${{ secrets.KINTSUGI_LOGIN }}
+          KINTSUGI_PASSWORD: ${{ secrets.KINTSUGI_PASSWORD }}
+          KINTSUGI_WRONG_LOGIN: ${{ secrets.KINTSUGI_WRONG_LOGIN }}
+          KINTSUGI_WRONG_PASSWORD: ${{ secrets.KINTSUGI_WRONG_PASSWORD }}
+          KINTSUGI_BASE_URL: ${{ secrets.KINTSUGI_BASE_URL }}
+          KINTSUGI_LOGIN_URL: ${{ secrets.KINTSUGI_LOGIN_URL }}
+          KINTSUGI_AUTH_TOKEN: ${{ secrets.KINTSUGI_AUTH_TOKEN }}
+          TIMEOUT: ${{ secrets.TIMEOUT }}
+
+      - name: Print env vars for debug
+        run: cat .env
+
       - name: Run Performance tests
         id: test
         run: npx playwright test performance_tests/ 2>&1 | tee performance_test_output.log || true
@@ -186,7 +247,6 @@ jobs:
       status: ${{ steps.test.outcome }}
       passed: ${{ steps.parse-results.outputs.passed }}
       failed: ${{ steps.parse-results.outputs.failed }}
-      
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -198,6 +258,29 @@ jobs:
         run: npm ci
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+      - name: Create .env file from secrets
+        run: |
+          echo "KINTSUGI_LOGIN=${KINTSUGI_LOGIN}" >> .env
+          echo "KINTSUGI_PASSWORD=${KINTSUGI_PASSWORD}" >> .env
+          echo "KINTSUGI_WRONG_LOGIN=${KINTSUGI_WRONG_LOGIN}" >> .env
+          echo "KINTSUGI_WRONG_PASSWORD=${KINTSUGI_WRONG_PASSWORD}" >> .env
+          echo "KINTSUGI_BASE_URL=${KINTSUGI_BASE_URL}" >> .env
+          echo "KINTSUGI_LOGIN_URL=${KINTSUGI_LOGIN_URL}" >> .env
+          echo "KINTSUGI_AUTH_TOKEN=${KINTSUGI_AUTH_TOKEN}" >> .env
+          echo "TIMEOUT=${TIMEOUT}" >> .env
+        env:
+          KINTSUGI_LOGIN: ${{ secrets.KINTSUGI_LOGIN }}
+          KINTSUGI_PASSWORD: ${{ secrets.KINTSUGI_PASSWORD }}
+          KINTSUGI_WRONG_LOGIN: ${{ secrets.KINTSUGI_WRONG_LOGIN }}
+          KINTSUGI_WRONG_PASSWORD: ${{ secrets.KINTSUGI_WRONG_PASSWORD }}
+          KINTSUGI_BASE_URL: ${{ secrets.KINTSUGI_BASE_URL }}
+          KINTSUGI_LOGIN_URL: ${{ secrets.KINTSUGI_LOGIN_URL }}
+          KINTSUGI_AUTH_TOKEN: ${{ secrets.KINTSUGI_AUTH_TOKEN }}
+          TIMEOUT: ${{ secrets.TIMEOUT }}
+
+      - name: Print env vars for debug
+        run: cat .env
+
       - name: Run Stress tests
         id: test
         run: npx playwright test stress_tests/ 2>&1 | tee stress_test_output.log || true
