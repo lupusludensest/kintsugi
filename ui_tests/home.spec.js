@@ -2,8 +2,12 @@
 import { expect } from "@playwright/test";
 
 test.describe("Kintsugi Website Tests", () => {
-  test("should display main heading and description", async ({ homePage }) => {
+  test("should display main heading and description", { tag: '@ui_home_heading_visible' }, async ({ homePage }) => {
     await homePage.navigateToHome();
+    // Take screenshot for debugging
+    await homePage.page.screenshot({
+      path: "ui_tests/pic_generated_in_tests/home-heading.png",
+    });
     // Take screenshot for debugging
     await homePage.page.screenshot({
       path: "ui_tests/pic_generated_in_tests/home-heading.png",
@@ -13,17 +17,17 @@ test.describe("Kintsugi Website Tests", () => {
     expect(description).toContain("Комплексное цифровое решение");
   });
 
-  test("should have all navigation links visible", async ({ homePage }) => {
+  test("should have all navigation links visible", { tag: '@ui_nav_links_visible' }, async ({ homePage }) => {
     await homePage.navigateToHome();
     await homePage.verifyNavigationLinksVisible();
   });
 
-  test("should display contact information", async ({ homePage }) => {
+  test("should display contact information", { tag: '@ui_contact_info_visible' }, async ({ homePage }) => {
     await homePage.navigateToHome();
     await homePage.verifyContactInfoVisible();
   });
 
-  test("should navigate to different sections", async ({ homePage }) => {
+  test("should navigate to different sections", { tag: '@ui_section_navigation' }, async ({ homePage }) => {
     // Navigate to home page
     await homePage.navigateToHome();
 
@@ -48,7 +52,7 @@ test.describe("Kintsugi Website Tests", () => {
     await expect(homePage.page).toHaveURL(/.*\//);
   });
 
-  test("should toggle specific images using the data-testid toggle button", async ({
+  test("should toggle specific images using the data-testid toggle button", { tag: '@ui_image_toggle' }, async ({
     homePage,
   }) => {
     // Navigate to home page

@@ -127,7 +127,7 @@ test.describe("Load Testing", () => {
   // Configure tests to run serially
   test.describe.configure({ mode: "serial" });
 
-  test("advanced load test with multiple waves", async ({ request }) => {
+  test("advanced load test with multiple waves", {tag: '@stress_customized'},async ({ request }) => {
     // Initialize metrics
     metrics = {
       startTime: Date.now(),

@@ -35,7 +35,7 @@ test.describe("Bordereaux Page Attributes Verification", () => {
     await page.screenshot({ path: "ui_tests/pic_generated_in_tests/bordereaux-page.png" });
   });
 
-  test("Bordereaux page title is visible", async ({ page }) => {
+  test("Bordereaux page title is visible", {tag: '@ui_title_visible'},async ({ page }) => {
     // Look for any element containing the text "Бордеро" as main heading
     await page.waitForSelector("text=Бордеро", {
       state: "visible",
@@ -48,7 +48,7 @@ test.describe("Bordereaux Page Attributes Verification", () => {
     expect(page.url()).toContain("/bordereaux");
   });
 
-  test("Bordereaux count indicator is present", async ({ page }) => {
+  test("Bordereaux count indicator is present", {tag: '@ui_count_indicator_visible'}, async ({ page }) => {
     // Look for any text containing a count pattern
     const countIndicator = page.locator(
       "text=/Всего:?\\s*\\d+/i, text=/[Бб]ордеро:?\\s*\\d+/i"
@@ -74,7 +74,7 @@ test.describe("Bordereaux Page Attributes Verification", () => {
     }
   });
 
-  test("Bordereaux search field is functional", async ({ page }) => {
+  test("Bordereaux search field is functional", {tag: '@ui_search_field_functional'}, async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/bordereaux-search-field.png' });
     
     try {
@@ -115,7 +115,7 @@ test.describe("Bordereaux Page Attributes Verification", () => {
     }
   });
 
-  test("Bordereaux filter options are visible", async ({ page }) => {
+  test("Bordereaux filter options are visible", {tag: '@ui_filter_options_visible'}, async ({ page }) => {
     const filterSelectors = [
       ".filter-section",
       ".filters",
@@ -145,7 +145,7 @@ test.describe("Bordereaux Page Attributes Verification", () => {
     }
   });
 
-  test("Bordereaux table or list is visible", async ({ page }) => {
+  test("Bordereaux table or list is visible", {tag: '@ui_table_visible'}, async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/bordereaux-table.png' });
 
     const tableSelectors = [
@@ -205,7 +205,7 @@ test.describe("Bordereaux Page Attributes Verification", () => {
     }
   });
 
-  test("Bordereaux item contains key information", async ({ page }) => {
+  test("Bordereaux item contains key information", {tag: '@ui_bordereaux_item_info'}, async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/bordereaux-items.png' });
 
     const tableRows = page.locator('table tr, .v-data-table__tr');
@@ -248,7 +248,7 @@ test.describe("Bordereaux Page Attributes Verification", () => {
     }
   });
 
-  test("Interactive elements are present on bordereaux items", async ({ page }) => {
+  test("Interactive elements are present on bordereaux items", {tag: '@ui_elements_present'},async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/bordereaux-items-interactivity.png' });
 
     const itemSelectors = [
@@ -307,7 +307,7 @@ test.describe("Bordereaux Page Attributes Verification", () => {
     }
   });
 
-  test("Pagination or navigation controls are present if needed", async ({ page }) => {
+  test("Pagination or navigation controls are present if needed", {tag: '@ui_pagination_present'}, async ({ page }) => {
     const paginationSelectors = [
       ".v-pagination",
       ".pagination",
@@ -350,7 +350,7 @@ test.describe("Bordereaux Page Attributes Verification", () => {
     }
   });
 
-  test("Page contains upload action button for bordereaux", async ({ page }) => {
+  test("Page contains upload action button for bordereaux", {tag: '@ui_upload_button_present'}, async ({ page }) => {
     const uploadButtonSelectors = [
       'button:has-text("Загрузить бордеро")',
       'button:has-text("Загрузить")',
@@ -381,7 +381,7 @@ test.describe("Bordereaux Page Attributes Verification", () => {
     }
   });
 
-  test("Menu navigation is functional", async ({ page }) => {
+  test("Menu navigation is functional", {tag: '@ui_menu_navigation'}, async ({ page }) => {
     // Verify that the dashboard menu item is present
     const dashboardLink = page.locator('a[href="/dashboard"]');
     await expect(dashboardLink).toBeVisible();

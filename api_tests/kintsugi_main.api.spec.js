@@ -3,7 +3,7 @@ import test from '@playwright/test';
 import { BASE_URL, ENDPOINTS, URLS, URL_PATTERNS, CONTENT_TYPES } from './config/urls.js';
 
 test.describe('Kintsugi API Tests', () => {
-  test('basic GET request to homepage', async ({ request }) => {
+  test('basic GET request to homepage', {tag: '@api_get_homepage'}, async ({ request }) => {
     // Make GET request
     const response = await request.get(URLS.HOME);
     
@@ -43,7 +43,7 @@ test.describe('Kintsugi API Tests', () => {
   }
 
   // Test for API documentation
-  test('GET request to API docs should return HTML content', async ({ request }) => {
+  test('GET request to API docs should return HTML content', {tag: '@api_get_html'}, async ({ request }) => {
     const response = await request.get(URLS.API_DOCS);
     
     // Status code assertion

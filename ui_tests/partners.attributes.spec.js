@@ -46,7 +46,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
     await page.screenshot({ path: "ui_tests/pic_generated_in_tests/partners-page.png" });
   });
 
-  test("Partners page title is visible", async ({ page }) => {
+  test("Partners page title is visible", { tag: '@ui_partners_title_visible' }, async ({ page }) => {
     // The header might not be an h1 element, try multiple selectors
     // Look for any element containing the text "Партнеры" as main heading
     await page.waitForSelector("text=Партнеры", {
@@ -62,7 +62,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
 
     // Verify we're on the partners page
     expect(page.url()).toContain("/partners");
-  });  test("Partners count indicator is present", async ({ page }) => {
+  });  test("Partners count indicator is present", { tag: '@ui_partners_count_indicator' }, async ({ page }) => {
     // Look for any text containing the count pattern (e.g. "Всего: 10" or similar)
     // Use a more flexible selector that looks for text patterns
     const countIndicator = page.locator(
@@ -93,7 +93,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
         expect(anyText).toContain('Партнеры');
       }
     }
-  });  test("Partners search field is functional", async ({ page }) => {
+  });  test("Partners search field is functional", { tag: '@ui_partners_search' }, async ({ page }) => {
     // First take a screenshot of the page for debugging
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/partners-search-field.png' });
     
@@ -147,7 +147,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
     expect(page.url()).toContain("/partners");
   });
 
-  test("Partners filter options are visible", async ({ page }) => {
+  test("Partners filter options are visible", { tag: '@ui_partners_filters' }, async ({ page }) => {
     // Look for any filter elements with more generic selectors
     const filterSelectors = [
       ".filter-section",
@@ -179,7 +179,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
       // If no filter is found, simply log it rather than failing
       console.log("No filter elements found on partners page");
     }
-  });  test("Partners table or list is visible", async ({ page }) => {
+  });  test("Partners table or list is visible", { tag: '@ui_partners_table' }, async ({ page }) => {
     // Take a screenshot for debugging
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/partners-table.png' });
     
@@ -250,7 +250,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
       }
     }
   });
-  test("Partner item contains key information", async ({ page }) => {
+  test("Partner item contains key information", { tag: '@ui_partners_item_info' }, async ({ page }) => {
     // Take screenshot for debugging
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/partner-items.png' });
     
@@ -303,7 +303,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
       expect(hasPartnerContent).toBeTruthy();
       console.log("Page contains partner-related content");
     }
-  });test("Interactive elements are present on partner items", async ({
+  });test("Interactive elements are present on partner items", { tag: '@ui_partners_interactive' }, async ({
     page,
   }) => {
     // Take screenshot for debugging
@@ -374,7 +374,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
     }
   });
 
-  test("Pagination or navigation controls are present if needed", async ({
+  test("Pagination or navigation controls are present if needed", { tag: '@ui_partners_pagination' }, async ({
     page,
   }) => {
     // Check for standard pagination controls with multiple selectors
@@ -423,7 +423,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
     }
   });
 
-  test("Page contains action button for adding partners", async ({ page }) => {
+  test("Page contains action button for adding partners", { tag: '@ui_partners_add_button' }, async ({ page }) => {
     // Look for any button that might be used to add partners
     const addButtonSelectors = [
       'button:has-text("Добавить партнера")',
@@ -456,7 +456,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
     }
   });
 
-  test("Menu navigation is functional", async ({ page }) => {
+  test("Menu navigation is functional", { tag: '@ui_partners_menu_nav' }, async ({ page }) => {
     // Verify that the dashboard menu item is present
     const dashboardLink = page.locator('a[href="/dashboard"]');
     await expect(dashboardLink).toBeVisible();
@@ -491,7 +491,7 @@ test.describe("Partners Page Attributes Verification", () => {  test.beforeEach(
 
     expect(dashboardVerified).toBeTruthy();
     expect(page.url()).toContain("/dashboard");
-  });  test("Partner IDs should be in ascending order", async ({ page }) => {
+  });  test("Partner IDs should be in ascending order", { tag: '@ui_partners_id_order' }, async ({ page }) => {
     // Take screenshot for debugging
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/partners-id-ordering.png' });
     console.log("Checking partner ID ordering");

@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Test to find the correct login endpoint
-test("find correct login API endpoint", async ({ request }) => {
+// Test to find the correct login API endpoint
+test("find correct login API endpoint", {tag: '@api_find_endpoint'}, async ({ request }) => {
   const commonLoginPaths = [
     "/api/login",
     "/api/v1/login",
@@ -65,7 +65,7 @@ test("find correct login API endpoint", async ({ request }) => {
 });
 
 // Test using browser automation to intercept actual API calls
-test("intercept login API calls via browser", async ({ page, context }) => {
+test("intercept login API calls via browser", {tag: '@api_intercept_login'}, async ({ page, context }) => {
   const apiCalls = [];
 
   // Intercept all network requests
@@ -124,7 +124,7 @@ test("intercept login API calls via browser", async ({ page, context }) => {
 });
 
 // Test with session-based approach (cookies)
-test("test session-based login", async ({ request }) => {
+test("test session-based login", {tag: '@api_session_based_login'}, async ({ request }) => {
   console.log("Trying session-based login approach...");
 
   // First get the login page to establish session
@@ -163,7 +163,7 @@ test("test session-based login", async ({ request }) => {
 });
 
 // Fallback test - if API login doesn't work, test that browser login works
-test("verify browser login still works", async ({ page }) => {
+test("verify browser login still works", {tag: '@api_browser_still_works'}, async ({ page }) => {
   await page.setViewportSize({ width: 1920, height: 1080 });
   await page.goto(process.env.KINTSUGI_LOGIN_URL);
   await page.waitForLoadState("networkidle");

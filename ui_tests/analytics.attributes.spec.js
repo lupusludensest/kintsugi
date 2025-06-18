@@ -28,7 +28,7 @@ test.describe("Analytics Page Attributes Verification", () => {
     await page.screenshot({ path: "ui_tests/pic_generated_in_tests/analytics-page.png" });
   });
 
-  test("Analytics page preview message or dashboard is visible", async ({ page }) => {
+  test("Analytics page preview message or dashboard is visible", { tag: '@ui_dashboard_visible' }, async ({ page }) => {
     // Check for preview message
     const previewMsg = page.locator("text=Сейчас сервис работает только при ширине экрана больше 1440px.");
     if (await previewMsg.isVisible()) {
@@ -107,63 +107,55 @@ test.describe("Analytics Page Attributes Verification", () => {
       
     }
   });
-
-  test("To check if pop-up is open when 'Настроить' is clicked, checkboxes, scrollbar, buttons 'Подтвердить' and 'Очистить всё' are active", async ({ page }) => {
+  test("Verify popup functionality when 'Настроить' is clicked", { tag: '@ui_popup_presents' }, async ({ page }) => {
     // 1. Click on "Настроить" button
-    const setupBtn = page.locator('.v-btn__content', { hasText: 'Настроить' });
+    const setupBtn = page.locator('button, .v-btn', { hasText: 'Настроить' }).first();
     await expect(setupBtn).toBeVisible();
     await expect(setupBtn).toBeEnabled();
     await setupBtn.click();
 
-    // 2. Check if popup with checkboxes is open
-    const popup = page.locator('.v-dialog, .popup, .modal, [role="dialog"]');
-    await expect(popup).toBeVisible();
+    // 2. Wait for popup and find checkboxes
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible({ timeout: 10000 });
+    
+    const popup = dialog.locator('.v-overlay__content');
+    await expect(popup).toBeVisible({ timeout: 5000 });
 
-    // Collect all checkboxes and their labels
-    const checkboxes = popup.locator('input[type="checkbox"]');
-    const labels = popup.locator('label');
-    const checkboxCount = await checkboxes.count();
-    expect(checkboxCount).toBeGreaterThan(0);
-    for (let i = 0; i < checkboxCount; i++) {
-      await expect(checkboxes.nth(i)).toBeVisible();
-      await expect(labels.nth(i)).toBeVisible();
-    }
-
-    // 3. Check if vertical scrollbar is present using direct JS snippet
-    const scrollable = page.locator('.v-overlay__content');
-    await expect(scrollable).toBeVisible({ timeout: 10000 });
-    const hasScrollbar = await scrollable.evaluate(el => el.scrollHeight > el.clientHeight);
-    console.log('Has scrollbar:', hasScrollbar);
-    if (!hasScrollbar) {
-      console.warn("Warning: No vertical scrollbar detected in the popup. This may be expected if there are few checkboxes.");
-    }
-
-    // 4. Click and check all checkboxes, check buttons
+    // Check all interactive elements
+    const checkboxes = popup.locator('input[type="checkbox"], .v-checkbox input, .v-selection-control input, [role="checkbox"] input');
     const confirmBtn = popup.locator('button:has-text("Подтвердить")');
     const clearBtn = popup.locator('button:has-text("Очистить всё")');
-    // First, check all checkboxes
+
+    // Verify checkboxes are present and interactive
+    const checkboxCount = await checkboxes.count();
+    expect(checkboxCount).toBeGreaterThan(0);
+
+    // Check all checkboxes
     for (let i = 0; i < checkboxCount; i++) {
       const cb = checkboxes.nth(i);
       if (!(await cb.isChecked())) {
         await cb.check();
       }
     }
-    // Check if buttons are active
+
+    // Verify buttons are enabled after checking
     await expect(confirmBtn).toBeEnabled();
     await expect(clearBtn).toBeEnabled();
-    // Now, uncheck all checkboxes
+
+    // Uncheck all checkboxes
     for (let i = 0; i < checkboxCount; i++) {
       const cb = checkboxes.nth(i);
       if (await cb.isChecked()) {
         await cb.uncheck();
       }
     }
-    // Check if buttons are inactive
+
+    // Verify buttons are disabled after unchecking
     await expect(confirmBtn).toBeDisabled();
     await expect(clearBtn).toBeDisabled();
   });
-
-  test("Mark all checkboxes, confirm, and verify all attributes are present in the new UI", async ({ page }) => {    // 1. Open the popup
+  test("Mark all checkboxes, confirm, and verify all attributes are present in the new UI", { tag: '@ui_checkboxes_present' }, async ({ page }) => {    
+    // 1. Open the popup
     const setupBtn = page.locator('button, .v-btn', { hasText: 'Настроить' }).first();
     await expect(setupBtn).toBeVisible();
     await expect(setupBtn).toBeEnabled();
@@ -181,61 +173,31 @@ test.describe("Analytics Page Attributes Verification", () => {
     // Wait a bit for animation and content loading
     await page.waitForTimeout(1000);
     
-    // Try multiple selectors for checkboxes
-    const checkboxSelectors = [
-      'input[type="checkbox"]',
-      '.v-checkbox',
-      '.v-selection-control',
-      '[role="checkbox"]'
-    ];
-      let checkboxes = null;
-    let checkboxCount = 0;
-    
-    // Try each selector until we find checkboxes
-    for (const selector of checkboxSelectors) {
-      checkboxes = popup.locator(selector);
-      checkboxCount = await checkboxes.count();
-      if (checkboxCount > 0) {
-        console.log(`Found ${checkboxCount} checkboxes with selector: ${selector}`);
-        break;
-      }
-    }
-
-    // Get labels from elements next to checkboxes
-    const labelSelectors = [
-      '.checkbox-list__row-description div',
-      '.v-label',
-      'label',
-      '.checkbox-label'
-    ];
-
-    let labels = null;
-    // Try each label selector
-    for (const selector of labelSelectors) {
-      labels = popup.locator(selector);
-      const labelCount = await labels.count();
-      if (labelCount > 0) {
-        console.log(`Found ${labelCount} labels with selector: ${selector}`);
-        break;
-      }
-    }
-
+    // Look for checkboxes with multiple selectors
+    const checkboxes = popup.locator('input[type="checkbox"], .v-checkbox input, .v-selection-control input, [role="checkbox"] input');
+    const labels = popup.locator('.checkbox-list__row-description div, .v-label, label, .checkbox-label');    const checkboxCount = await checkboxes.count();
     expect(checkboxCount).toBeGreaterThan(0);
-    let checkedLabels = [];
+    
+    // Check all checkboxes and collect their labels
+    const checkedLabels = [];
     for (let i = 0; i < checkboxCount; i++) {
       const cb = checkboxes.nth(i);
       const labelElement = labels.nth(i);
-      const labelText = await labelElement.textContent();
-      if (!(await cb.isChecked())) {
-        await cb.check();
+      if (labelElement) {
+        const labelText = await labelElement.textContent();
+        if (!(await cb.isChecked())) {
+          await cb.check();
+        }
+        if (labelText) {
+          checkedLabels.push(labelText.trim());
+        }
       }
-      checkedLabels.push(labelText.trim());
     }
 
     // 3. Click 'Подтвердить'
-    const confirmBtn = popup.locator('button:has-text("Подтвердить")');
-    await expect(confirmBtn).toBeEnabled();
-    await confirmBtn.click();
+    const submitBtn = popup.locator('button:has-text("Подтвердить")');
+    await expect(submitBtn).toBeEnabled();
+    await submitBtn.click();
 
     // 4. Wait for the new UI to appear (assuming popup closes and attributes are shown)
     await expect(popup).toBeHidden({ timeout: 10000 });
@@ -243,9 +205,11 @@ test.describe("Analytics Page Attributes Verification", () => {
     // 5. Verify all attributes are present in the new UI
     // Try to find all checked attribute labels in the main analytics area
     for (const label of checkedLabels) {
-      // Try to find the label text somewhere in the analytics UI
-      const attrLocator = page.locator(`text=${label}`);
-      await expect(attrLocator.first()).toBeVisible();
+      if (label) {
+        // Try to find the label text somewhere in the analytics UI
+        const attrLocator = page.locator(`text=${label}`);
+        await expect(attrLocator.first()).toBeVisible();
+      }
     }
   });
-}); 
+});

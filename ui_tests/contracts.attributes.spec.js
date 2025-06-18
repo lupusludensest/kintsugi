@@ -43,7 +43,7 @@ test.describe("Contracts Page Attributes Verification", () => {
     await page.screenshot({ path: "ui_tests/pic_generated_in_tests/contracts-page.png" });
   });
 
-  test("Contracts page title is visible", async ({ page }) => {
+  test("Contracts page title is visible", {tag: '@aui_contracts_visible'},async ({ page }) => {
     await page.waitForSelector("text=Договоры", {
       state: "visible",
       timeout: 30000,
@@ -55,7 +55,7 @@ test.describe("Contracts Page Attributes Verification", () => {
     expect(page.url()).toContain("/contracts");
   });
 
-  test("Contracts count indicator is present", async ({ page }) => {
+  test("Contracts count indicator is present", {tag: '@aui_count_indicator_visible'}, async ({ page }) => {
     const countIndicator = page.locator(
       "text=/Всего:?\\s*\\d+/i, text=/[Дд]оговор(ов|а)?:?\\s*\\d+/i"
     );
@@ -80,7 +80,7 @@ test.describe("Contracts Page Attributes Verification", () => {
     }
   });
 
-  test("Contracts search field is functional", async ({ page }) => {
+  test("Contracts search field is functional", {tag: '@aui_search_field_functional'}, async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/contracts-search-field.png' });
 
     try {
@@ -120,7 +120,7 @@ test.describe("Contracts Page Attributes Verification", () => {
     expect(page.url()).toContain("/contracts");
   });
 
-  test("Contracts filter options are visible", async ({ page }) => {
+  test("Contracts filter options are visible", {tag: '@aui_filter_options_visible'}, async ({ page }) => {
     const filterSelectors = [
       ".filter-section",
       ".filters",
@@ -147,7 +147,7 @@ test.describe("Contracts Page Attributes Verification", () => {
     }
   });
 
-  test("Contracts table or list is visible", async ({ page }) => {
+  test("Contracts table or list is visible", {tag: '@aui_table_visible'}, async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/contracts-table.png' });
 
     const tableSelectors = [
@@ -204,7 +204,7 @@ test.describe("Contracts Page Attributes Verification", () => {
     }
   });
 
-  test("Contract item contains key information", async ({ page }) => {
+  test("Contract item contains key information", {tag: '@aui_contract_item_info'}, async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/contract-items.png' });
 
     const tableRows = page.locator('table tr');
@@ -247,7 +247,7 @@ test.describe("Contracts Page Attributes Verification", () => {
     }
   });
 
-  test("Interactive elements are present on contract items", async ({ page }) => {
+  test("Interactive elements are present on contract items", {tag: '@aui_interactive_elements_present'}, async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/contract-items-interactivity.png' });
 
     const interactiveElements = page.locator(
@@ -267,7 +267,7 @@ test.describe("Contracts Page Attributes Verification", () => {
     }
   });
 
-  test("Pagination or navigation controls are present if needed", async ({ page }) => {
+  test("Pagination or navigation controls are present if needed", {tag: '@aui_pagination_present'}, async ({ page }) => {
     const paginationSelectors = [
       ".v-pagination",
       ".pagination",
@@ -303,7 +303,7 @@ test.describe("Contracts Page Attributes Verification", () => {
     }
   });
 
-  test("Page contains action button for adding contracts", async ({ page }) => {
+  test("Page contains action button for adding contracts", {tag: '@aui_add_button_present'}, async ({ page }) => {
     const addButtonSelectors = [
       'button:has-text("Добавить договор")',
       'button:has-text("Добавить")',
@@ -329,7 +329,7 @@ test.describe("Contracts Page Attributes Verification", () => {
     }
   });
 
-  test("Menu navigation is functional", async ({ page }) => {
+  test("Menu navigation is functional", {tag: '@aui_menu_navigation'}, async ({ page }) => {
     const dashboardLink = page.locator('a[href="/dashboard"]');
     await expect(dashboardLink).toBeVisible();
 
@@ -359,7 +359,7 @@ test.describe("Contracts Page Attributes Verification", () => {
     expect(page.url()).toContain("/dashboard");
   });
 
-  test("Contract numbers should be in ascending order", async ({ page }) => {
+  test("Contract numbers should be in ascending order", {tag: '@aui_contracts_number_ordering'}, async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/contracts-number-ordering.png' });
     console.log("Checking contract number ordering");
     

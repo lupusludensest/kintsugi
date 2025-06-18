@@ -39,7 +39,7 @@ async function runLighthouse(url, options, config = null) {
 }
 
 test.describe('Performance Tests', () => {
-    test('should meet performance requirements', async () => {
+    test('should meet performance requirements', {tag: '@performance_lighthouse'}, async () => {
         // Set a longer timeout for this specific test
         test.setTimeout(120000); // 2 minutes
 

@@ -2,8 +2,12 @@
 import { expect } from "@playwright/test";
 
 test.describe("Platform Page Tests", () => {
-  test("should load platform page correctly", async ({ platformPage }) => {
+  test("should load platform page correctly", { tag: '@ui_platform_load' }, async ({ platformPage }) => {
     await platformPage.navigateToPlatform();
+    // Take screenshot for debugging
+    await platformPage.page.screenshot({
+      path: "ui_tests/pic_generated_in_tests/platform-main.png",
+    });
     // Take screenshot for debugging
     await platformPage.page.screenshot({
       path: "ui_tests/pic_generated_in_tests/platform-main.png",
@@ -11,12 +15,12 @@ test.describe("Platform Page Tests", () => {
     await platformPage.verifyPlatformTitleVisible();
   });
 
-  test("should display platform features", async ({ platformPage }) => {
+  test("should display platform features", { tag: '@ui_platform_features' }, async ({ platformPage }) => {
     await platformPage.navigateToPlatform();
     await platformPage.verifyFeaturesVisible();
   });
 
-  test("should have accessible documentation links and proper navigation", async ({
+  test("should have accessible documentation links and proper navigation", { tag: '@ui_platform_docs' }, async ({
     platformPage,
   }) => {
     await platformPage.navigateToPlatform();

@@ -13,7 +13,7 @@ test.describe("Authentication - Login Tests", () => {
     await page.waitForLoadState("networkidle");
   });
 
-  test("should login successfully with valid credentials", async ({ page }) => {
+  test("should login successfully with valid credentials", {tag: '@ui_login_happypath'},async ({ page }) => {
     // Take initial screenshot for debugging
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/login-start.png', fullPage: true });
 
@@ -75,7 +75,7 @@ test.describe("Authentication - Login Tests", () => {
     await expect(dashboardElements.first()).toBeVisible({ timeout: 10000 });
   });
 
-  test("should show validation for empty fields", async ({ page }) => {
+  test("should show validation for empty fields", {tag: '@ui_empty_fields_validation'}, async ({ page }) => {
     // Verify button is disabled when form is empty
     const submitButton = page.locator('button:has-text("Войти")');
     await expect(submitButton).toBeDisabled();
@@ -102,7 +102,7 @@ test.describe("Authentication - Login Tests", () => {
     await expect(submitButton).toBeEnabled();
   });
 
-  test("should handle invalid credentials gracefully", async ({ page }) => {
+  test("should handle invalid credentials gracefully", {tag: '@ui_login_invalid'}, async ({ page }) => {
     const emailInput = page.locator('input[name="email"]');
     const passwordInput = page.locator('input[name="password"]');
     const submitButton = page.locator('button:has-text("Войти")');
