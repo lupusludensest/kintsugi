@@ -492,3 +492,5 @@ test.describe("Losses Page Attributes Verification", () => {
     }
   );
 });
+// End of file
+        
