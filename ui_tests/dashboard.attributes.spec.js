@@ -13,7 +13,6 @@ test.describe("Dashboard Attributes Verification", () => {
       path: "ui_tests/pic_generated_in_tests/dashboard-initial.png",
     });
   });
-
   test("Clickable Dashboard Menu Item is present", { tag: '@ui_dashboard_menu_present' }, async ({ page }) => {
     // Check for the active dashboard menu item using exact structure from HTML
     const activeMenuLink = page.locator(
@@ -34,7 +33,7 @@ test.describe("Dashboard Attributes Verification", () => {
     await expect(dashboardText).toBeVisible();
   });
 
-  test("Clickable Partners Menu Item is present", async ({ page }) => {
+  test("Clickable Partners Menu Item is present", { tag: '@ui_partners_menu_present' }, async ({ page }) => {
     // Check for Partners menu item (not active, so different selector)
     const partnersMenuLink = page.locator('a[href="/partners"].menu-item');
     await expect(partnersMenuLink).toBeVisible();
@@ -59,7 +58,7 @@ test.describe("Dashboard Attributes Verification", () => {
     await expect(counterDiv).toHaveText("10");
   });
 
-  test("Clickable Analytics Menu Item is present", async ({ page }) => {
+  test("Clickable Analytics Menu Item is present", { tag: '@ui_analytics_menu_present' }, async ({ page }) => {
   // Check for Analytics menu item
   const analyticsMenuLink = page.locator('a[href="/analytics"].menu-item');
   await expect(analyticsMenuLink).toBeVisible();
@@ -106,7 +105,7 @@ test("Clickable Contracts Menu Item is present", { tag: '@ui_contracts_menu_pres
   await expect(counterDiv).toHaveText("1");
 });
 
-test("Clickable Risks Menu Item is present", async ({ page }) => {
+test("Clickable Risks Menu Item is present", { tag: '@ui_risks_menu_present' }, async ({ page }) => {
   // Check for Risks menu item
   const risksMenuLink = page.locator('a[href="/risks"].menu-item');
   await expect(risksMenuLink).toBeVisible();
@@ -159,7 +158,7 @@ test("Clickable Losses Menu Item is present", { tag: '@ui_losses_menu_present' }
   await expect(counterDiv).toHaveText("0");
 });
 
-test("User can logout successfully", async ({ page }) => {
+test("User can logout successfully", { tag: '@ui_user_logout' }, async ({ page }) => {
   // Click on profile dropdown icon
   const profileDropdown = page.locator(
     'div[class="profile-dropdown--icon v-btn--variant-text"] svg'

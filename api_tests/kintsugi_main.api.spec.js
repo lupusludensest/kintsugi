@@ -3,7 +3,7 @@ import test from '@playwright/test';
 import { BASE_URL, ENDPOINTS, URLS, URL_PATTERNS, CONTENT_TYPES } from './config/urls.js';
 
 test.describe('Kintsugi API Tests', () => {
-  test('basic GET request to homepage', {tag: '@api_get_homepage'}, async ({ request }) => {
+  test('Basic GET request to homepage', {tag: '@api_get_homepage'}, async ({ request }) => {
     // Make GET request
     const response = await request.get(URLS.HOME);
     
@@ -27,7 +27,7 @@ test.describe('Kintsugi API Tests', () => {
 
   // Test for all HTML pages
   for (const endpoint of [ENDPOINTS.APP, ENDPOINTS.ABOUT, ENDPOINTS.CONTACTS, ENDPOINTS.LEGISLATION]) {
-    test(`GET request to ${endpoint} should return HTML content`, async ({ request }) => {
+    test(`GET request to ${endpoint} should return HTML content`, {tag: '@api_get_html_content'}, async ({ request }) => {
       const response = await request.get(`${BASE_URL}${endpoint}`);
       
       // Status code assertion
@@ -62,7 +62,7 @@ test.describe('Kintsugi API Tests', () => {
     'Agreement': URLS.AGREEMENT_PDF,
     'Policy': URLS.POLICY_PDF
   })) {
-    test(`GET request to ${name} PDF should return PDF content`, async ({ request }) => {
+    test(`GET request to ${name} PDF should return PDF content`, {tag: '@api_get_pdf_content'}, async ({ request }) => {
       const response = await request.get(url);
       
       // Status code assertion

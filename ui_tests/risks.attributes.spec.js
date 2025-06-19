@@ -35,7 +35,7 @@ test.describe("Risks Page Attributes Verification", () => {
     await page.screenshot({ path: "ui_tests/pic_generated_in_tests/risks-page.png" });
   });
 
-  test("Risks page title is visible", async ({ page }) => {
+  test("Risks page title is visible", { tag: '@ui_risks_title' }, async ({ page }) => {
     // Look for any element containing the text "Риски" as main heading
     await page.waitForSelector(".list-title", {
       state: "visible",
@@ -50,7 +50,7 @@ test.describe("Risks Page Attributes Verification", () => {
     expect(page.url()).toContain("/risks");
   });
 
-  test("Risks count indicator is present", async ({ page }) => {
+  test("Risks count indicator is present", { tag: '@ui_risks_count' }, async ({ page }) => {
     // Look for any text containing a count pattern
     const countIndicator = page.locator(
       "text=/Всего:?\\s*\\d+/i, text=/[Рр]иск(ов|и)?:?\\s*\\d+/i"
@@ -78,7 +78,7 @@ test.describe("Risks Page Attributes Verification", () => {
     }
   });
 
-  test("Risks search field is functional", async ({ page }) => {
+  test("Risks search field is functional", { tag: '@ui_risks_search' }, async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/risks-search-field.png' });
 
     try {
@@ -118,7 +118,7 @@ test.describe("Risks Page Attributes Verification", () => {
     }
   });
 
-  test("Risks filter options are visible", async ({ page }) => {
+  test("Risks filter options are visible", { tag: "@ui_risks_filters" }, async ({ page }) => {
     const filterSelectors = [
       ".filter-section",
       ".filters",
@@ -129,26 +129,24 @@ test.describe("Risks Page Attributes Verification", () => {
       'div[role="combobox"]',
     ];
 
-    let filterFound = false;
+    let foundSelector = null;
     for (const selector of filterSelectors) {
-      const isVisible = await page
-        .locator(selector)
-        .isVisible()
-        .catch(() => false);
-      if (isVisible) {
-        filterFound = true;
+      const locator = page.locator(selector);
+      if (await locator.count() > 0 && await locator.first().isVisible().catch(() => false)) {
+        foundSelector = selector;
         break;
       }
     }
 
-    if (filterFound) {
-      await expect(page.locator(filterSelectors[0])).toBeVisible();
+    if (foundSelector) {
+      await expect(page.locator(foundSelector)).toBeVisible();
     } else {
-      console.log("No filter elements found on risks page");
+      await page.screenshot({ path: "risks-filter-not-found.png", fullPage: true });
+      throw new Error("No filter elements found on risks page. See risks-filter-not-found.png for details.");
     }
   });
 
-  test("Risks table or list is visible", async ({ page }) => {
+  test("Risks table or list is visible", { tag: '@ui_risks_table' }, async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/risks-table.png' });
 
     const tableSelectors = [
@@ -208,7 +206,7 @@ test.describe("Risks Page Attributes Verification", () => {
     }
   });
 
-  test("Risk item contains key information", async ({ page }) => {
+  test("Risk item contains key information", { tag: '@ui_risks_item_info' }, async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/risk-items.png' });
 
     const tableRows = page.locator('table tr, .v-data-table__tr');
@@ -252,7 +250,7 @@ test.describe("Risks Page Attributes Verification", () => {
     }
   });
 
-  test("Interactive elements are present on risk items", async ({ page }) => {
+  test("Interactive elements are present on risk items", { tag: '@ui_risks_interactive' }, async ({ page }) => {
     await page.screenshot({ path: 'ui_tests/pic_generated_in_tests/risk-items-interactivity.png' });
     
     const itemSelectors = [
@@ -311,7 +309,7 @@ test.describe("Risks Page Attributes Verification", () => {
     }
   });
 
-  test("Pagination or navigation controls are present if needed", async ({ page }) => {
+  test("Pagination or navigation controls are present if needed", { tag: '@ui_risks_pagination' }, async ({ page }) => {
     const paginationSelectors = [
       ".v-pagination",
       ".pagination",
@@ -354,7 +352,7 @@ test.describe("Risks Page Attributes Verification", () => {
     }
   });
 
-  test("Page contains action button for adding risks", async ({ page }) => {
+  test("Page contains action button for adding risks", { tag: '@ui_risks_add_button' }, async ({ page }) => {
     const addButtonSelectors = [
       'button:has-text("Добавить риск")',
       'button:has-text("Добавить")',
@@ -385,7 +383,7 @@ test.describe("Risks Page Attributes Verification", () => {
     }
   });
 
-  test("Menu navigation is functional", async ({ page }) => {
+  test("Menu navigation is functional", { tag: '@ui_risks_menu_nav' }, async ({ page }) => {
     // Verify that the dashboard menu item is present
     const dashboardLink = page.locator('a[href="/dashboard"]');
     await expect(dashboardLink).toBeVisible();

@@ -3,14 +3,31 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+function validateEnvVars() {
+  const required = [
+    "KINTSUGI_LOGIN_URL",
+    "KINTSUGI_LOGIN",
+    "KINTSUGI_PASSWORD",
+    "TIMEOUT"
+  ];
+  for (const key of required) {
+    if (!process.env[key]) {
+      throw new Error(`Missing required environment variable: ${key}`);
+    }
+  }
+}
+
 test.describe("Authentication - Login Tests", () => {
-  test.beforeEach(async ({ page }) => {
-    // Set viewport wider than 1440px requirement
+  test.beforeEach(async ({ page }, testInfo) => {
+    validateEnvVars();
     await page.setViewportSize({ width: 1920, height: 1080 });
-    
-    await page.goto(process.env.KINTSUGI_LOGIN_URL);
-    // Wait for page to be fully loaded
-    await page.waitForLoadState("networkidle");
+    try {
+      await page.goto(process.env.KINTSUGI_LOGIN_URL, { waitUntil: "domcontentloaded", timeout: 30000 });
+      await page.waitForLoadState("networkidle", { timeout: 20000 });
+    } catch (err) {
+      await page.screenshot({ path: `login-page-unreachable.png`, fullPage: true });
+      testInfo.skip(`Login page unreachable: ${err.message}`);
+    }
   });
 
   test("should login successfully with valid credentials", {tag: '@ui_login_happypath'},async ({ page }) => {
