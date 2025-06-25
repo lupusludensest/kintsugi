@@ -17,9 +17,9 @@ export default defineConfig({
     "stress_tests/**/*.spec.js",
     "ui_tests/**/*.spec.js",
   ],
-  timeout: 60000, // per test
+  timeout: 60000, // per test seconds
   expect: {
-    timeout: 15000, // per assertion
+    timeout: 15000, // per assertion seconds
   },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,

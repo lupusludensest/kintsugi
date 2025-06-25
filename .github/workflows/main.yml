@@ -10,7 +10,17 @@ on:
     - cron: "0 7 * * *" # Runs at 7:00 AM UTC (2:00 AM EST)
 
 jobs:
+  start-timer:
+    runs-on: ubuntu-latest
+    outputs:
+      start_time: ${{ steps.save-start-time.outputs.start_time }}
+    steps:
+      - name: Save start time
+        id: save-start-time
+        run: echo "start_time=$(date +%s)" >> $GITHUB_OUTPUT
+
   ui-tests:
+    needs: start-timer
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -100,6 +110,7 @@ jobs:
           retention-days: 30
 
   api-tests:
+    needs: start-timer
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -176,6 +187,7 @@ jobs:
           retention-days: 30
 
   performance-tests:
+    needs: start-timer
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -252,6 +264,7 @@ jobs:
           retention-days: 30
 
   stress-tests:
+    needs: start-timer
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -328,7 +341,7 @@ jobs:
           retention-days: 30
 
   notify:
-    needs: [ui-tests, api-tests, performance-tests, stress-tests]
+    needs: [start-timer, ui-tests, api-tests, performance-tests, stress-tests]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -336,9 +349,6 @@ jobs:
 
       - name: Install bc for calculations
         run: sudo apt-get update && sudo apt-get install -y bc
-
-      - name: Record start time
-        run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
 
       - name: Calculate totals and pass rate
         id: calculate
@@ -386,6 +396,7 @@ jobs:
       - name: Calculate execution duration
         id: duration
         run: |
+          START_TIME=${{ needs.start-timer.outputs.start_time }}
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
           MINUTES=$((DURATION / 60))
