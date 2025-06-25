@@ -337,6 +337,9 @@ jobs:
       - name: Install bc for calculations
         run: sudo apt-get update && sudo apt-get install -y bc
 
+      - name: Record start time
+        run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+
       - name: Calculate totals and pass rate
         id: calculate
         run: |
@@ -379,6 +382,15 @@ jobs:
 
           echo "Calculated totals: Passed=$TOTAL_PASSED, Failed=$TOTAL_FAILED, Total=$TOTAL_TESTS, Pass Rate=$PASS_RATE%"
         shell: bash
+
+      - name: Calculate execution duration
+        id: duration
+        run: |
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          MINUTES=$((DURATION / 60))
+          SECONDS=$((DURATION % 60))
+          echo "duration=${MINUTES}m ${SECONDS}s" >> $GITHUB_OUTPUT
 
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
@@ -424,6 +436,7 @@ jobs:
                 <p style="margin: 5px 0; font-size: 16px;"><strong>Total Passed:</strong> ${{ steps.calculate.outputs.total_passed }}</p>
                 <p style="margin: 5px 0; font-size: 16px;"><strong>Total Tests:</strong> ${{ steps.calculate.outputs.total_tests }}</p>
                 <p style="margin: 5px 0; font-size: 18px; color: #059669;"><strong>Pass Rate: ${{ steps.calculate.outputs.pass_rate }}%</strong></p>
+                <p style="margin: 5px 0; font-size: 16px;"><strong>Execution Time:</strong> ${{ steps.duration.outputs.duration }}</p>
               </div>
               <div style="margin-top: 30px; padding: 15px; background-color: #f8fafc; border-radius: 6px;">
                 <p style="margin: 0;">
@@ -519,6 +532,7 @@ jobs:
                 <p style="margin: 5px 0; font-size: 16px;"><strong>Total Passed:</strong> ${{ steps.calculate.outputs.total_passed }}</p>
                 <p style="margin: 5px 0; font-size: 16px;"><strong>Total Tests:</strong> ${{ steps.calculate.outputs.total_tests }}</p>
                 <p style="margin: 5px 0; font-size: 18px; color: #059669;"><strong>Pass Rate: ${{ steps.calculate.outputs.pass_rate }}%</strong></p>
+                <p style="margin: 5px 0; font-size: 16px;"><strong>Execution Time:</strong> ${{ steps.duration.outputs.duration }}</p>
               </div>
               <div style="margin-top: 30px; padding: 15px; background-color: #f8fafc; border-radius: 6px;">
                 <p style="margin: 0;">
@@ -547,5 +561,7 @@ jobs:
             • Stress Tests: ${{ needs.stress-tests.outputs.passed }} passed, ${{ needs.stress-tests.outputs.failed }} failed
 
             Total: ${{ steps.calculate.outputs.total_passed }}/${{ steps.calculate.outputs.total_tests }} passed (${{ steps.calculate.outputs.pass_rate }}%)
+
+            Execution Time: ${{ steps.duration.outputs.duration }}
 
             Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
