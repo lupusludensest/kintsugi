@@ -19,12 +19,12 @@ export default defineConfig({
   ],
   timeout: 60000, // per test
   expect: {
-    timeout: 15000,
+    timeout: 15000, // per assertion
   },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 1, // Retry failed tests once
-  workers: 1, // Set higher locally if you want more parallelism
+  workers: 2, // Set higher locally if you want more parallelism
   reporter: "html",
   use: {
     baseURL: process.env.KINTSUGI_BASE_URL || "https://kintsugi.su",
