@@ -24,7 +24,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 1, // Retry failed tests once
-  workers: 2, // Set higher locally if you want more parallelism
+  workers: 4 // Set higher locally if you want more parallelism
   reporter: "html",
   use: {
     baseURL: process.env.KINTSUGI_BASE_URL || "https://kintsugi.su",
