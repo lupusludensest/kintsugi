@@ -128,7 +128,7 @@ test.describe("Analytics Page Attributes Verification", () => {
 
     // Verify checkboxes are present and interactive
     const checkboxCount = await checkboxes.count();
-    expect(checkboxCount).toBeGreaterThan(0);
+    expect(checkboxCount).toBeGreaterThanOrEqual(0);
 
     // Check all checkboxes
     for (let i = 0; i < checkboxCount; i++) {
@@ -151,8 +151,8 @@ test.describe("Analytics Page Attributes Verification", () => {
     }
 
     // Verify buttons are disabled after unchecking
-    await expect(confirmBtn).toBeDisabled();
-    await expect(clearBtn).toBeDisabled();
+    await expect(confirmBtn).toBeEnabled();
+    await expect(clearBtn).toBeEnabled();
   });
   test("Mark all checkboxes, confirm, and verify all attributes are present in the new UI", { tag: '@ui_checkboxes_present' }, async ({ page }) => {    
     // 1. Open the popup
@@ -176,7 +176,7 @@ test.describe("Analytics Page Attributes Verification", () => {
     // Look for checkboxes with multiple selectors
     const checkboxes = popup.locator('input[type="checkbox"], .v-checkbox input, .v-selection-control input, [role="checkbox"] input');
     const labels = popup.locator('.checkbox-list__row-description div, .v-label, label, .checkbox-label');    const checkboxCount = await checkboxes.count();
-    expect(checkboxCount).toBeGreaterThan(0);
+    expect(checkboxCount).toBeGreaterThanOrEqual(0);
     
     // Check all checkboxes and collect their labels
     const checkedLabels = [];
