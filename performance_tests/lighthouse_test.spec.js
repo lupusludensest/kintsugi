@@ -43,7 +43,7 @@ test.describe('Performance Tests', () => {
         // Set a longer timeout for this specific test
         test.setTimeout(120000); // 2 minutes
 
-        const baseUrl = process.env.KINTSUGI_BASE_URL;
+        const baseUrl = process.env.KINTSUGI_BASE_URL || "https://kintsugi.su";
         const results = await runLighthouse(baseUrl, {
             output: ['html', 'json'],
             onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo']
